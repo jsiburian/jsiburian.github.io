@@ -83,7 +83,7 @@ sections:
           company_logo: org-x
           location: Kanagawa, Japan
           date_start: '2023-04-01'
-          date_end: '2023-09-31'
+          date_end: '2023-09-01'
           description: |2-
               Responsibilities include:
 
