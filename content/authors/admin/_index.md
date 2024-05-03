@@ -115,8 +115,10 @@ social:
 highlight_name: true
 ---
 
-Jeremy Siburian is an undergraduate researcher in Sugano Lab., Waseda University under the supervision of Prof. Shigeki Sugano and Dr. Alexander Schmitz. His current research focuses on tactile sensing for robot manipulation. 
+I am an undergraduate student majoring in Mechanical Engineering at Waseda University, Tokyo, Japan. Currently, I am an undergraduate researcher under the supervision of [Prof. Shigeki Sugano](https://www.sugano.mech.waseda.ac.jp/professor.html) and [Dr. Alexander Schmitz](https://scholar.google.com/citations?user=0thGZqIAAAAJ&hl=en). My current research focuses on tactile sensing for complex manipulation tasks. 
 
-From October 2023 to March 2024, he worked as a Robotics Research Intern at OMRON SINIC X.
+From April to September 2023, I worked as a Robotics R&D intern at [Mitsubishi Fuso Truck & Bus Corporation](https://www.mitsubishi-fuso.com/en/), where I worked on developing a bin picking system using tactile sensing for industrial assembly.
+
+From October 2023 to March 2024, I worked as a Robotics Research Intern at [OMRON SINIC X](https://www.omron.com/sinicx/en/), where I researched on integrated task and motion planning for long-horizon cooking manipulation.
 
 {style="text-align: justify;"}
