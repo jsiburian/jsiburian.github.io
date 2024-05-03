@@ -25,7 +25,7 @@ organizations:
     url: https://www.waseda.jp/top/en/
 
 # Short bio (displayed in user profile at end of posts)
-bio: ''
+bio: 'Undergraduate researcher focusing on complex robot manipulation with tactile sensing.'
 
 # Interests to show in About widget
 interests:
