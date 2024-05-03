@@ -8,6 +8,11 @@ date: '2024-04-01'
 publishDate: '2024-05-03T17:58:52.319655Z'
 publication_types:
 - paper-conference
+
+# Publication name and optional abbreviated publication name.
+publication: In *ICRA2024 Workshop on Cooking Robotics: Perception and Motion Planning*
+# publication_short: In *ICW*
+
 abstract: To fully realize robots in household environments, robots would need to
   be able to plan and execute a variety of tasks autonomously. However, task and motion
   planning for multi-step manipulation tasks is still an open challenge in robotics,
