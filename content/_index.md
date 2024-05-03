@@ -66,7 +66,7 @@ sections:
         - title: Robotics Research Intern
           company: OMRON SINIC X Corporation
           company_url: 'https://www.omron.com/sinicx/en/'
-          company_logo: org-gc
+          company_logo: ''
           location: Tokyo, Japan
           date_start: '2023-10-01'
           date_end: '2024-03-31'
@@ -81,7 +81,7 @@ sections:
         - title: Plant Automation Intern
           company: Mitsubishi Fuso Truck and Bus Corporation
           company_url: 'https://www.mitsubishi-fuso.com/en/'
-          company_logo: org-x
+          company_logo: ''
           location: Kanagawa, Japan
           date_start: '2023-04-01'
           date_end: '2023-09-01'
