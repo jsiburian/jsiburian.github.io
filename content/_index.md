@@ -62,27 +62,35 @@ sections:
       #   Leave `date_end` empty if it's your current employer.
       #   Begin multi-line descriptions with YAML's `|2-` multi-line prefix.
       items:
-        - title: CEO
-          company: GenCoin
-          company_url: ''
+        - title: Robotics Research Intern
+          company: OMRON SINIC X Corporation
+          company_url: 'https://www.omron.com/sinicx/en/'
           company_logo: org-gc
-          location: California
-          date_start: '2021-01-01'
-          date_end: ''
+          location: Tokyo, Japan
+          date_start: '2023-10-01'
+          date_end: '2024-03-31'
           description: |2-
               Responsibilities include:
 
-              * Analysing
-              * Modelling
-              * Deploying
-        - title: Professor of Semiconductor Physics
-          company: University X
-          company_url: ''
+              * Designed and developed an integrated task and motion planning framework for executing real-world cooking tasks using a dual-arm robotic system.
+              * Integrated the PDDLStream library with MoveIt Task Constructor multi-stage manipulation planner to enhance multi-step motion planning for interdependent tasks.
+              * Formulated PDDL-based predicates and action templates based on our proposed dual-arm slicing strategy and implemented policies to handle uncertainty in a dynamic environment, such as perception-based replanning.
+              * Demonstrated the proposed framework in simulation and real robot experiments through a case study of a cucumber slicing task. Augmented our framework with various cooking-related skills, such as object fixturing, force-based tip detection, and slicing using Reinforcement Learning (RL).
+              * Preliminary results of the proposed framework were accepted as a contribution (paper and demo video) and will be presented as a poster in the Cooking Robotics Workshop at ICRA 2024.
+        - title: Plant Automation Intern
+          company: Mitsubishi Fuso Truck and Bus Corporation
+          company_url: 'https://www.mitsubishi-fuso.com/en/'
           company_logo: org-x
-          location: California
-          date_start: '2016-01-01'
-          date_end: '2020-12-31'
-          description: Taught electronic engineering and researched semiconductor physics.
+          location: Kanagawa, Japan
+          date_start: '2023-04-01'
+          date_end: '2023-09-31'
+          description: |2-
+              Responsibilities include:
+
+              * Proposed and developed a novel bin-picking system using vision and 3D tactile sensors with an approved R&D budget of 1.5 million yen (Approx. $10k USD).
+              * Developed custom Python algorithms for performing adaptive grasping and slip detection from tactile sensor data.
+              * Developed custom Python-based middleware for external communication between TM5-900 collaborative robot, 2F-85 Robotiq gripper, and 3D tactile sensors using socket communication protocol.
+              *  Received official industrial robot operator training & certification from Omron Automation, covering the required safety standards, legal regulations, and general knowledge related to industrial robots in Japan.
     design:
       columns: '2'
   # - block: accomplishments
