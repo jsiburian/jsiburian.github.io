@@ -10,7 +10,7 @@ publication_types:
 - paper-conference
 
 # Publication name and optional abbreviated publication name.
-publication: In *ICRA2024 Workshop on Cooking Robotics: Perception and Motion Planning*
+publication: In *ICRA2024 Workshop on Cooking Robotics*
 # publication_short: In *ICW*
 
 abstract: To fully realize robots in household environments, robots would need to
