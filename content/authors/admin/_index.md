@@ -17,7 +17,7 @@ status:
 superuser: true
 
 # Role/position/tagline
-role: Undergraduate Student
+role: Undergraduate Researcher
 
 # Organizations/Affiliations to show in About widget
 organizations:
@@ -25,13 +25,13 @@ organizations:
     url: https://www.waseda.jp/top/en/
 
 # Short bio (displayed in user profile at end of posts)
-bio: My research interests include distributed robotics, mobile computing and programmable matter.
+bio: ''
 
 # Interests to show in About widget
 interests:
+  - Robot Manipulation
+  - Tactile Sensing
   - Deep Learning for Robotics
-  - Tactile Manipulation
-  - Task and Motion Planning
 
 # Education to show in About widget
 education:
@@ -87,22 +87,23 @@ skills:
 social:
   - icon: envelope
     icon_pack: fas
-    link: '/#contact'
+    # link: '/#contact'
+    link: 'mailto:jeremysiburian30@gmail.com'
   - icon: twitter
     icon_pack: fab
-    link: https://twitter.com/GeorgeCushen
-    label: Follow me on Twitter
+    link: https://twitter.com/jeremy_dasa
+    label: Follow me on Twitter!
     display:
       header: true
-  - icon: graduation-cap # Alternatively, use `google-scholar` icon from `ai` icon pack
-    icon_pack: fas
-    link: https://scholar.google.co.uk/citations?user=sIwtMXoAAAAJ
+  # - icon: graduation-cap # Alternatively, use `google-scholar` icon from `ai` icon pack
+  #   icon_pack: fas
+  #   link: https://scholar.google.co.uk/citations?user=sIwtMXoAAAAJ
   - icon: github
     icon_pack: fab
-    link: https://github.com/gcushen
+    link: https://github.com/jsiburian
   - icon: linkedin
     icon_pack: fab
-    link: https://www.linkedin.com/
+    link: https://www.linkedin.com/in/jeremy-siburian/
   # Link to a PDF of your resume/CV.
   # To use: copy your resume to `static/uploads/resume.pdf`, enable `ai` icons in `params.yaml`,
   # and uncomment the lines below.
@@ -114,5 +115,8 @@ social:
 highlight_name: true
 ---
 
-Chien Shiung Wu is a professor of artificial intelligence at the Stanford AI Lab. Her research interests include distributed robotics, mobile computing and programmable matter. She leads the Robotic Neurobiology group, which develops self-reconfiguring robots, systems of self-organizing robots, and mobile sensor networks.
+Jeremy Siburian is an undergraduate researcher in Sugano Lab., Waseda University under the supervision of Prof. Shigeki Sugano and Dr. Alexander Schmitz. His current research focuses on tactile sensing for robot manipulation. 
+
+From October 2023 to March 2024, he worked as a Robotics Research Intern at OMRON SINIC X.
+
 {style="text-align: justify;"}
