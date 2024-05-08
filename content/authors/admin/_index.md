@@ -29,9 +29,9 @@ bio: 'Undergraduate researcher focusing on complex robot manipulation with tacti
 
 # Interests to show in About widget
 interests:
-  - Robot Manipulation
-  - Tactile Sensing
-  - Deep Learning for Robotics
+  - Robot Learning 
+  - Grasping & Manipulation
+  - Data-driven Tactile Sensing
 
 # Education to show in About widget
 education:
@@ -115,10 +115,12 @@ social:
 highlight_name: true
 ---
 
-I am an undergraduate student majoring in Mechanical Engineering at Waseda University, Tokyo, Japan. Currently, I am an undergraduate researcher under the supervision of [Prof. Shigeki Sugano](https://www.sugano.mech.waseda.ac.jp/professor.html) and [Dr. Alexander Schmitz](https://scholar.google.com/citations?user=0thGZqIAAAAJ&hl=en). My current research focuses on tactile sensing for complex manipulation tasks. 
+I am an undergraduate researcher at Waseda University, under the supervision of [Prof. Shigeki Sugano](https://www.sugano.mech.waseda.ac.jp/professor.html) and [Dr. Alexander Schmitz](https://scholar.google.com/citations?user=0thGZqIAAAAJ&hl=en). I am broadly interested in robot learning and manipulation. Currently, my research focuses on solving complex manipulation tasks for robots through data-driven tactile sensing. 
 
-From April to September 2023, I worked as a Robotics R&D intern at [Mitsubishi Fuso Truck & Bus Corporation](https://www.mitsubishi-fuso.com/en/), where I worked on developing a bin picking system using tactile sensing for industrial assembly.
+Ultimately, I hope to contribute to creating intelligent robots that can perform general-purpose manipulation tasks.
 
-From October 2023 to March 2024, I worked as a Robotics Research Intern at [OMRON SINIC X](https://www.omron.com/sinicx/en/), where I researched on integrated task and motion planning for long-horizon cooking manipulation.
+Previously, I worked as a Robotics Research Intern at [OMRON SINIC X](https://www.omron.com/sinicx/en/), where I researched on integrated task and motion planning for long-horizon cooking manipulation.
+
+I have also worked as a Robotics R&D intern at [Mitsubishi Fuso Truck & Bus Corporation](https://www.mitsubishi-fuso.com/en/), where I worked on developing a bin picking system using tactile sensing for industrial assembly.
 
 {style="text-align: justify;"}
