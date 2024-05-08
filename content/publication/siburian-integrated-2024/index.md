@@ -29,5 +29,7 @@ abstract: To fully realize robots in household environments, robots would need t
 links:
 - name: URL
   url: https://openreview.net/forum?id=5nGIW3Ixo1
+- name: Video
+  url: https://youtu.be/PS0CYS2NgZY?si=tYz4NII-lwSlqWvr 
 url_pdf: https://openreview.net/attachment?id=5nGIW3Ixo1&name=pdf
 ---
