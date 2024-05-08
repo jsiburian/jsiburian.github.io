@@ -16,7 +16,7 @@ publication: In *ICRA2024 Workshop on Cooking Robotics*
 abstract: To fully realize robots in household environments, robots would need to
   be able to plan and execute a variety of tasks autonomously. However, task and motion
   planning for multi-step manipulation tasks is still an open challenge in robotics,
-  particularly for long-horizon tasks in textitdynamic environments. This work proposes
+  particularly for long-horizon tasks in dynamic environments. This work proposes
   an integrated task and motion planning (TAMP) robotic framework for real-world cooking
   tasks using a dual-arm robotic system. Our framework integrates PDDLStream, an existing
   TAMP framework, with the MoveIt Task Constructor, a multi-stage manipulation planner,
