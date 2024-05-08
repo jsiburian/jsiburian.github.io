@@ -115,7 +115,7 @@ social:
 highlight_name: true
 ---
 
-Welcome to my page! I am an undergraduate researcher at Waseda University, under the supervision of [Prof. Shigeki Sugano](https://www.sugano.mech.waseda.ac.jp/professor.html) and [Dr. Alexander Schmitz](https://scholar.google.com/citations?user=0thGZqIAAAAJ&hl=en). I am broadly interested in robot learning and manipulation. Currently, my research focuses on solving complex manipulation tasks for robots through data-driven tactile sensing. 
+I am an undergraduate researcher at Waseda University, under the supervision of [Prof. Shigeki Sugano](https://www.sugano.mech.waseda.ac.jp/professor.html) and [Dr. Alexander Schmitz](https://scholar.google.com/citations?user=0thGZqIAAAAJ&hl=en). I am broadly interested in robot learning and manipulation. Currently, my research focuses on solving complex manipulation tasks for robots through data-driven tactile sensing. 
 
 Ultimately, I hope to contribute to creating intelligent robots that can perform general-purpose manipulation tasks.
 
