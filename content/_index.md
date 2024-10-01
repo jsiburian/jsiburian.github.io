@@ -78,7 +78,7 @@ sections:
       #   Leave `date_end` empty if it's your current employer.
       #   Begin multi-line descriptions with YAML's `|2-` multi-line prefix.
       items:
-     - title: Research Assistant
+         - title: Research Assistant
           company: Matsuo-Iwasawa Laboratory, University of Tokyo
           company_url: 'https://weblab.t.u-tokyo.ac.jp/en/'
           company_logo: ''
