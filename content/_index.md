@@ -85,8 +85,7 @@ sections:
           location: Tokyo, Japan
           date_start: '2024-10-01'
           date_end: ''
-          description: |2-
-              
+          description: 
         - title: Robotics Research Intern
           company: OMRON SINIC X Corporation
           company_url: 'https://www.omron.com/sinicx/en/'
