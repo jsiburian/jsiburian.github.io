@@ -78,14 +78,15 @@ sections:
       #   Leave `date_end` empty if it's your current employer.
       #   Begin multi-line descriptions with YAML's `|2-` multi-line prefix.
       items:
-         - title: Research Assistant
+        - title: Research Assistant
           company: Matsuo-Iwasawa Laboratory, University of Tokyo
           company_url: 'https://weblab.t.u-tokyo.ac.jp/en/'
           company_logo: ''
           location: Tokyo, Japan
           date_start: '2024-10-01'
           date_end: ''
-          description: 
+          description: |2-
+              TRAIL Group
         - title: Robotics Research Intern
           company: OMRON SINIC X Corporation
           company_url: 'https://www.omron.com/sinicx/en/'
