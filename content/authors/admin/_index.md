@@ -17,28 +17,31 @@ status:
 superuser: true
 
 # Role/position/tagline
-role: Undergraduate Researcher
+role: Graduate Student
 
 # Organizations/Affiliations to show in About widget
 organizations:
-  - name: Waseda University
-    url: https://www.waseda.jp/top/en/
+  - name: The University of Tokyo
+    url: https://www.u-tokyo.ac.jp/en/ 
 
 # Short bio (displayed in user profile at end of posts)
-bio: 'Undergraduate researcher focusing on complex robot manipulation with tactile sensing.'
+bio: 'Graduate student at The University of Tokyo.'
 
 # Interests to show in About widget
 interests:
   - Robot Learning 
-  - Grasping & Manipulation
-  - Data-driven Tactile Sensing
+  - Contact-rich Manipulation
+  - Long-Horizon Planning
 
 # Education to show in About widget
 education:
   courses:
+    - course: MEng in Technology Management for Innovation
+      institution: The University of Tokyo
+      year: 2027
     - course: BEng in Mechanical Engineering
       institution: Waseda University
-      year: 2025 (Expected)
+      year: 2025
 
 # Skills
 # For available icons, see: https://docs.hugoblox.com/getting-started/page-builder/#icons
@@ -115,10 +118,10 @@ social:
 highlight_name: true
 ---
 
-I am an undergraduate researcher at Waseda University, under the supervision of [Prof. Shigeki Sugano](https://www.sugano.mech.waseda.ac.jp/professor.html) and [Dr. Alexander Schmitz](https://scholar.google.com/citations?user=0thGZqIAAAAJ&hl=en). I am broadly interested in robot learning and manipulation. Currently, my research focuses on solving complex manipulation tasks for robots through data-driven tactile sensing. 
+Hi, I'm Jeremy! I am a 1st-year master's student at The University of Tokyo. I am co-advised by [Yusuke Iwasawa](https://scholar.google.com/citations?user=nRLaJiQAAAAJ&hl=en&oi=ao) and [Yutaka Matsuo](https://scholar.google.com/citations?user=Dy8iau4AAAAJ&hl=en&oi=ao) in the [Matsuo-Iwasawa Laboratory](https://weblab.t.u-tokyo.ac.jp/en/).
 
-Ultimately, I hope to contribute to creating intelligent robots that can perform general-purpose manipulation tasks.
+Prior to UTokyo, I received my bachelor's degree from Waseda University, advised by [Shigeki Sugano](https://scholar.google.com/citations?user=J1lw6cwAAAAJ&hl=en&oi=ao) and [Dr. Alexander Schmitz](https://scholar.google.com/citations?user=0thGZqIAAAAJ&hl=en). During my undergrad, I worked on contact-rich manipulation tasks using tactile sensing.
 
-Previously, I worked as a Robotics Research Intern at [OMRON SINIC X](https://www.omron.com/sinicx/en/) with [Dr. Masashi Hamaya](https://sites.google.com/view/masashihamaya/home) and [Dr. Cristian C. Beltran-Hernandez](https://cristianbehe.me/), where I researched on integrated task and motion planning for long-horizon cooking manipulation. I was also a Robotics R&D intern at [Mitsubishi Fuso Truck & Bus Corporation](https://www.mitsubishi-fuso.com/en/), where I worked on developing a bin picking system using tactile sensing for industrial assembly.
+I am currently a part-time Robotics Research Intern at [OMRON SINIC X](https://www.omron.com/sinicx/en/) with [Dr. Masashi Hamaya](https://sites.google.com/view/masashihamaya/home) and [Dr. Cristian C. Beltran-Hernandez](https://cristianbehe.me/), working on integrated task and motion planning (TAMP) for long-horizon manipulation. I also spent some time as a Robotics R&D intern at [Mitsubishi Fuso Truck & Bus Corporation](https://www.mitsubishi-fuso.com/en/), where I worked on developing a bin picking system using tactile sensing for industrial assembly.
 
 {style="text-align: justify;"}
