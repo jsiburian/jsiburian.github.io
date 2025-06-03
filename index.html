@@ -58,14 +58,21 @@
       p {
         font-size: 18px;
       }
-      p strong:first-child {
+      /* TLDR specific styling */
+      .publications p strong:first-child {
         font-size: 16px;
         color: #006400;
         font-style: italic;
       }
-      p strong:first-child + * {
+      .publications p strong:first-child + * {
         font-size: 16px;
         font-style: italic;
+      }
+      /* Outreach specific styling */
+      .outreach p strong {
+        font-size: 18px;
+        color: #000;
+        font-style: normal;
       }
       .name {
         font-size: 36px;
@@ -190,7 +197,7 @@
             </table>
 
             <!-- Research Entry -->
-            <table style="width:100%;border-spacing:0px 10px;">
+            <table style="width:100%;border-spacing:0px 10px;" class="publications">
               <tbody>
                 <tr>
                   <td style="padding:20px;width:25%;text-align:center">
@@ -245,7 +252,7 @@
             <table style="width:100%;">
               <tbody>
                 <tr>
-                  <td style="padding:16px;vertical-align:middle">
+                  <td style="padding:16px;vertical-align:middle" class="outreach">
                     <h2>Outreach</h2>
                     <p>
                       I am a product of numerous people (family, friends, professors, mentors) who have helped and supported me along the way.
