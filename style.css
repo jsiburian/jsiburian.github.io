@@ -108,9 +108,9 @@ h1 {
 
 #intro-image img {
   width: 12em;
-  height: 12em; /* Ensure the image is square */
-  border-radius: 50%; /* Makes the edges fully curved */
-  object-fit: cover; /* Ensures the image fits within the circle */
+  height: auto; /* Adjust height automatically to maintain aspect ratio */
+  border-radius: 10px; /* Slightly curves the 4 edges */
+  object-fit: cover; /* Ensures the image fits within the frame */
 }
 
 /**************************************************/
