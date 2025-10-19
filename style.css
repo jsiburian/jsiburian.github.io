@@ -296,18 +296,6 @@ h3 a:hover {
   float: left;
 }
 
-#main-publications .project-description h3 {
-  font-size: 1.2em; /* Slightly increase the publication title text size */
-}
-
-#main-publications .project-description p strong {
-  font-size: 0.85em; /* Further reduce the TLDR text size */
-}
-
-#main-publications .project-description p strong {
-  font-size: 0.9em; /* Makes the TLDR text smaller */
-}
-
 /**************************************************/
 /* Subtle footer at the bottom of the page. */
 
