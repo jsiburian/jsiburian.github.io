@@ -206,6 +206,7 @@ h2 {
 
 .previews video {
   border-radius: 5px;
+  width: 100%; /* Ensure consistent width for all videos */
 }
 
 .previews a:hover {
