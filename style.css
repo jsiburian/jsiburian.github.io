@@ -109,7 +109,7 @@ h1 {
 #intro-image img {
   width: 12em;
   height: auto; /* Adjust height automatically to maintain aspect ratio */
-  border-radius: 10px; /* Slightly curves the 4 edges */
+  border-radius: 10px; /* Curves all four edges slightly */
   object-fit: cover; /* Ensures the image fits within the frame */
 }
 
