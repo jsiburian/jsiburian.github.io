@@ -1,1 +1,1 @@
-Feel free to open an issue if anything is unclear.
+Personal academic website ([jsiburian.github.io](https://jsiburian.github.io)).

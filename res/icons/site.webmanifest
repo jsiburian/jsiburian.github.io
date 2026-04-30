@@ -1,18 +1,12 @@
 {
-  "name": "MyWebSite",
-  "short_name": "MySite",
+  "name": "Jeremy Siburian",
+  "short_name": "Jeremy Siburian",
   "icons": [
     {
-      "src": "/web-app-manifest-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
-      "src": "/web-app-manifest-512x512.png",
+      "src": "utokyo.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any"
     }
   ],
   "theme_color": "#ffffff",
