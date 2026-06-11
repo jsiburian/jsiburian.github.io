@@ -20,7 +20,7 @@
   <meta name="theme-color" content="#ffffff">
 
   <link href="res/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
   <style>
     .header {
@@ -96,6 +96,19 @@
       color: #666666 !important;
       text-decoration: none;
     }
+
+    .social-icons {
+      font-size: 22px;
+      margin-top: 6px;
+    }
+    .social-icons a:link,
+    .social-icons a:visited {
+      margin-right: 14px;
+      color: #333333;
+    }
+    .social-icons a:hover {
+      color: #208799;
+    }
   </style>
 
   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -156,11 +169,13 @@
       <div class="col-md-9 align-column-center">
         <h2> Jeremy Siburian </h2>
         Email: jeremy.siburian [at] weblab.t.u-tokyo.ac.jp<br>
-        [<a href="./202512_CV_Jeremy_Siburian.pdf" target="_blank" rel="noopener noreferrer"> CV (Dec 2025) </a>] 
-        [<a href="https://scholar.google.com/citations?user=WssLotwAAAAJ&hl=en" target="_blank" rel="noopener noreferrer"> Google Scholar </a>]
-         [<a href="https://github.com/jsiburian" target="_blank" rel="noopener noreferrer"> GitHub </a>]
-         [<a href="https://x.com/jeremy_dasa" target="_blank" rel="noopener noreferrer"> X/Twitter </a>]
-         [<a href="https://linkedin.com/in/jeremy-siburian" target="_blank" rel="noopener noreferrer"> LinkedIn </a>]
+        [<a href="./202512_CV_Jeremy_Siburian.pdf" target="_blank" rel="noopener noreferrer"> CV (Dec 2025) </a>]
+        <div class="social-icons">
+          <a href="https://scholar.google.com/citations?user=WssLotwAAAAJ&hl=en" target="_blank" rel="noopener noreferrer" title="Google Scholar" aria-label="Google Scholar"><i class="fa-brands fa-google-scholar"></i></a>
+          <a href="https://github.com/jsiburian" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+          <a href="https://x.com/jeremy_dasa" target="_blank" rel="noopener noreferrer" title="X" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="https://linkedin.com/in/jeremy-siburian" target="_blank" rel="noopener noreferrer" title="LinkedIn" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+        </div>
 
         <div class="small-div"></div>
         I am a master's student at The University of Tokyo, advised by
@@ -218,13 +233,13 @@
 
 
   <div class="row align-items-center">
-    <div class="col-md-3 align-column-center">
+    <div class="col-md-4 align-column-center">
       <center>
         <video playsinline autoplay loop muted data-src="res/figs/PHASE_Teaser_Website.mp4" width="100%" preload="metadata"
                style="border-radius:10px;"></video>
       </center>
     </div>
-    <div class="col-md-9">
+    <div class="col-md-8">
       <font size="4"> <b> PHASE: Compliance-Enabled Tactile Phase Retrieval for Few-Shot Insertion Learning </b></font><br>
       <div class="authors">
         <b> Jeremy Siburian</b>,
@@ -235,22 +250,22 @@
         <script>document.write(nishimura);</script>
       </div>
       Under Review
-      <div class="authors">
+      <!-- <div class="authors">
         A retrieval-based approach for contact-rich robot manipulation that leverages multimodal tactile signals to extract structured phases, enabling efficient few-shot policy learning.
-      </div>
+      </div> -->
     </div>
   </div>
   <div class="content-div"></div>
 
 
   <div class="row align-items-center">
-    <div class="col-md-3 align-column-center">
+    <div class="col-md-4 align-column-center">
       <center>
         <video playsinline autoplay loop muted data-src="res/figs/vilain-tamp-demo-video.mp4" width="100%" preload="metadata"
                style="border-radius:10px;"></video>
       </center>
     </div>
-    <div class="col-md-9">
+    <div class="col-md-8">
       <font size="4"> <b> Grounded Vision-Language Interpreter for Integrated Task and Motion Planning </b></font><br>
       <div class="authors">
         <b> Jeremy Siburian</b>*,
@@ -270,22 +285,22 @@
         <!-- <a href="https://x.com/irmakkguzey/status/1991898960341193064" class="badge" target="_blank"><i
           class="fas fa-comment-dots"></i>Summary</a> -->
       </div>
-      <div class="authors">
+      <!-- <div class="authors">
         A neuro-symbolic framework that grounds multimodal inputs into structured programmatic representations with VLMs, then solves the low-level motion with TAMP.
-      </div>
+      </div> -->
     </div>
   </div>
   <div class="content-div"></div>
 
 
   <div class="row align-items-center">
-    <div class="col-md-3 align-column-center">
+    <div class="col-md-4 align-column-center">
       <center>
         <video playsinline autoplay loop muted data-src="res/figs/icra24_cooking.mp4" width="100%" preload="metadata"
                style="border-radius:10px;"></video>
       </center>
     </div>
-    <div class="col-md-9">
+    <div class="col-md-8">
       <font size="4"> <b> Integrated Task and Motion Planning for Real-World Cooking Tasks </b></font><br>
       <div class="authors">
         <b> Jeremy Siburian</b>*,
@@ -307,9 +322,9 @@
         <!-- <a href="https://x.com/ChaoyiPan/status/1989355247580729561" class="badge" target="_blank"><i
           class="fas fa-comment-dots"></i>Summary</a> -->
       </div>
-      <div class="authors">
+      <!-- <div class="authors">
         A modular, hybrid planning framework for bimanual manipulation that integrates task and motion planning (TAMP), VLM-based perception, and RL-learned skills.
-      </div>
+      </div> -->
     </div>
   </div>
   <div class="content-div"></div>
@@ -317,12 +332,9 @@
 </div>
 
 
-<div class="container">
-  <!-- publications come here -->
-  <!-- <h3> Papers <font size="3" style="font-weight:normal">(*Equal Technical Contribution, †Equal Advising)</font></h3> -->
-  <h3> Projects <font size="3" style="font-weight:normal"></font></h3>
+<!-- <div class="container">
+  <h3> Projects </h3>
 
-  <!---- Last Count is Jul 10 ---->
   <div class="small-div"></div>
 
 
@@ -335,21 +347,13 @@
     </div>
     <div class="col-md-9">
       <font size="4"> <b> Robotic Bin Picking System with Tactile Sensing for Assembly Line Deployment </b></font><br>
-      <!-- <div class="authors">
-        <b> Jeremy Siburian</b>
-      </div> -->
       Industry Internship Project at Daimler Trucks Asia, 2023
       <div class="authors">
-        Developed a robotic bin picking system for assembly line deployment using 3D tactile sensors for force control and slip detection. 
+        Developed a robotic bin picking system for assembly line deployment using 3D tactile sensors for force control and slip detection.
         Managed an R&D budget of 1.5 million yen (Approx. $10k USD).
       </div>
       <div class="link-badges">
-        <!-- <a href="https://openreview.net/forum?id=5nGIW3Ixo1" class="badge" target="_blank"><i class="fas fa-book"></i>Paper</a> -->
-        <!-- <a href="https://youtu.be/PS0CYS2NgZY?si=y9vyamVrVC72IeDK" class="badge" target="_blank"><i class="fas fa-video"></i> Video</a> -->
         <a href="https://github.com/jsiburian/XELA-uSkin-TM" class="badge" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github"></i>Code</a>
-        <!-- <a href="https://jc-bao.github.io/spider-project/" class="badge" target="_blank"><i class="fas fa-globe"></i>Website</a> -->
-        <!-- <a href="https://x.com/ChaoyiPan/status/1989355247580729561" class="badge" target="_blank"><i
-          class="fas fa-comment-dots"></i>Summary</a> -->
       </div>
     </div>
   </div>
@@ -364,26 +368,19 @@
     </div>
     <div class="col-md-9">
       <font size="4"> <b> Presentation Quality Assessment based on Audience Reactions using Neural Networks </b></font><br>
-      <!-- <div class="authors">
-        <b> Jeremy Siburian</b>
-      </div> -->
       Coursework Project at Waseda University, 2023
       <div class="authors">
         Developed a novel presentation scoring algorithm based on the level of audience engagements using machine learning (ML) and neural networks.
       </div>
       <div class="link-badges">
         <a href="https://drive.google.com/file/d/14y1oXmLZiOwyxoC7nW09B5-YDi0Qg-in/view?usp=sharing" class="badge" target="_blank" rel="noopener noreferrer"><i class="fas fa-book"></i>Paper</a>
-        <!-- <a href="https://youtu.be/PS0CYS2NgZY?si=y9vyamVrVC72IeDK" class="badge" target="_blank"><i class="fas fa-video"></i> Video</a> -->
         <a href="https://github.com/jsiburian/presentation-quality-ML" class="badge" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github"></i>Code</a>
-        <!-- <a href="https://jc-bao.github.io/spider-project/" class="badge" target="_blank"><i class="fas fa-globe"></i>Website</a> -->
-        <!-- <a href="https://x.com/ChaoyiPan/status/1989355247580729561" class="badge" target="_blank"><i
-          class="fas fa-comment-dots"></i>Summary</a> -->
       </div>
     </div>
   </div>
   <div class="content-div"></div>
 
-</div>
+</div> -->
 
 
 <!-- <div class="container">
