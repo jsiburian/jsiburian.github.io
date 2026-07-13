@@ -1,2 +1,5 @@
 .idea/
 .DS_Store
+
+# Full-resolution source assets (not served; web-optimized copies are committed)
+originals/
