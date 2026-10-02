@@ -109,6 +109,44 @@
     .social-icons a:hover {
       color: #208799;
     }
+
+    .paper-filter {
+      /* uneven so the visible gaps match: the description's line spacing adds extra space above */
+      margin: 22px 0 27px;
+      color: #999999;
+    }
+    .paper-filter button,
+    .news-toggle button {
+      padding: 0;
+      border: 0;
+      background: none;
+      font: inherit;
+      color: #0071bc;
+      cursor: pointer;
+    }
+    .paper-filter button:hover,
+    .news-toggle button:hover {
+      color: #208799;
+    }
+    .paper-filter button:focus:not(:focus-visible),
+    .news-toggle button:focus:not(:focus-visible) {
+      outline: none;
+    }
+    .paper-filter button[aria-pressed="true"] {
+      color: #333333;
+      font-weight: 600;
+      cursor: default;
+    }
+    .show-selected .paper:not(.selected),
+    .show-selected .paper:not(.selected) + .content-div {
+      display: none;
+    }
+    .news-toggle {
+      list-style: none;
+    }
+    .show-recent .older {
+      display: none;
+    }
   </style>
 
   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -154,6 +192,19 @@
     const nishimura        = '<a href="https://scholar.google.com/citations?user=he1RdFcAAAAJ&hl=en" target="_blank" rel="noopener noreferrer">Mai Nishimura</a>';
   </script>
 
+  <script>
+    function filterPapers(button, selectedOnly) {
+      document.getElementById("research").classList.toggle("show-selected", selectedOnly);
+      button.parentElement.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b === button)));
+    }
+
+    function toggleNews(button) {
+      const expanded = !document.getElementById("news").classList.toggle("show-recent");
+      button.textContent = expanded ? "Show less" : "Show more";
+      button.setAttribute("aria-expanded", String(expanded));
+    }
+  </script>
+
 </head>
 
 <div class="header">
@@ -170,7 +221,7 @@
         <h2> Jeremy Siburian </h2>
         Email: jeremy.siburian [at] weblab.t.u-tokyo.ac.jp<br>
         <div class="social-icons">
-          <a href="./202512_CV_Jeremy_Siburian.pdf" target="_blank" rel="noopener noreferrer" title="CV (Dec 2025)" aria-label="CV (Dec 2025)"><i class="fas fa-file-pdf"></i></a>
+          <!-- <a href="./202512_CV_Jeremy_Siburian.pdf" target="_blank" rel="noopener noreferrer" title="CV (Dec 2025)" aria-label="CV (Dec 2025)"><i class="fas fa-file-pdf"></i></a> -->
           <a href="https://scholar.google.com/citations?user=WssLotwAAAAJ&hl=en" target="_blank" rel="noopener noreferrer" title="Google Scholar" aria-label="Google Scholar"><i class="fa-brands fa-google-scholar"></i></a>
           <a href="https://github.com/jsiburian" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
           <a href="https://x.com/jeremy_dasa" target="_blank" rel="noopener noreferrer" title="X" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
@@ -195,7 +246,7 @@
   </div>
 </div>
 
-<div class="container">
+<div class="container show-recent" id="news">
   <h3> News </h3>
   <ul>
     <li>
@@ -210,55 +261,59 @@
     <li>
       Apr 2026: I received the <a href="https://www.friendsofutokyo.org/en/" target="_blank" rel="noopener noreferrer">Friends of UTokyo (FUTI)</a> scholarship for my visit to Cornell.
     </li>
-    <!-- <li>
+    <!-- <li class="older">
       Oct 2025: Attended CoRL 2025 in Seoul and presented <a href="https://omron-sinicx.github.io/ViLaIn-TAMP/" target="_blank" rel="noopener noreferrer">ViLaIn-TAMP</a> at the
       <a href="https://sites.google.com/view/corl-2025-safe-rol-workshop/home?authuser=0" target="_blank" rel="noopener noreferrer">SAFE-ROL Workshop</a>.
     </li> -->
-    <li>
+    <li class="older">
       Sep 2024: Invited Talk at <a href="https://www.tokyoai.jp/" target="_blank" rel="noopener noreferrer">Tokyo AI (TAI)</a> on "Task and Motion Planning for Long-Horizon Manipulation". See the speaker deck <a href="https://drive.google.com/file/d/1VlUE2Ai4MCHfHAC2poKhY1QgmwUosKgK/view?usp=drive_link" target="_blank" rel="noopener noreferrer">here</a>.
     </li>
-    <li>
+    <li class="older">
       May 2024: Our paper received the Best Video Award at the
       <a href="https://sites.google.com/view/icra2024cookingrobotics/accepted-works?authuser=0" target="_blank" rel="noopener noreferrer">ICRA 2024 Cooking Robotics Workshop</a>.
+    </li>
+    <li class="news-toggle">
+      <button type="button" aria-expanded="false" onclick="toggleNews(this)">Show more</button>
     </li>
   </ul>
 </div>
 
 
-<div class="container">
+<div class="container show-selected" id="research">
   <!-- publications come here -->
   <!-- <h3> Papers <font size="3" style="font-weight:normal">(*Equal Technical Contribution, †Equal Advising)</font></h3> -->
   <h3> Research <font size="3" style="font-weight:normal"></font></h3>
   <!-- My ultimate research goal is develop autonomous robots that can be incorporated in our daily lives. 
   I envision robots that can perform long-horizon planning in complex environments, continuously learn new skills throughout their lifetime, while interacting naturally with humans. 
   To this end, my current research interests revolve around <b>foundation models for decision-making</b>, <b>continual skill learning</b>, and <b>human-robot interaction</b>. -->
-  I develop learning and planning methods for sample-efficient, generalizable robot manipulation.
-  My central interest is enabling robots to <b>continually learn and self-improve</b> by reusing prior knowledge, adapting efficiently to new tasks, and learning from limited interaction rather than repeatedly training from scratch.
-  More broadly, I am interested in how robots can build useful representations of the physical world and use search, planning, and feedback to decide what to learn and how to improve.
-  I hope to develop physical agents whose capabilities grow over time as they encounter new tasks and environments, with a particular interest in <b>world models, inference-time adaptation, and self-directed learning</b>.
+  I develop learning and planning methods for sample-efficient, generalizable robot manipulation, with a focus on dexterous and long-horizon tasks.
+  I am interested in how robots can build useful models of the physical world and use them to reason, plan, and improve through interaction.
+  My goal is to develop world models that co-evolve with the agent’s experience and capabilities, enabling robots to reuse prior knowledge and continually learn over time.
+  I am particularly interested in world models, inference-time adaptation, and self-directed learning.
 
   <!---- Last Count is Jul 10 ---->
-  <div class="small-div"></div>
+  <div class="paper-filter">
+    <button type="button" aria-pressed="true" onclick="filterPapers(this, true)">Selected</button> /
+    <button type="button" aria-pressed="false" onclick="filterPapers(this, false)">All</button>
+  </div>
 
 
-  <div class="row align-items-center">
+  <div class="row align-items-center paper selected">
     <div class="col-md-4 align-column-center">
-      <div style="text-align: right;">
-        <video playsinline autoplay loop muted data-src="res/figs/clap_teaser.mp4" width="85%" preload="none"
-               style="border-radius:10px; margin-right: 4%;"></video>
-      </div>
+      <video playsinline autoplay loop muted data-src="res/figs/clap_teaser.mp4" width="96%" preload="none"
+             style="border-radius:10px;"></video>
     </div>
     <div class="col-md-8" style="padding-left: 0;">
       <font size="4"> <b> CLAP: Direct VLM-to-VLA Adaptation via Language-Action Grounding </b></font><br>
       <div class="authors">
-        <a href="https://ishity.github.io/" target="_blank" rel="noopener noreferrer">Yuri Ishitoya</a>&dagger;,
-        <b> Jeremy Siburian</b>&dagger;,
+        <a href="https://ishity.github.io/" target="_blank" rel="noopener noreferrer">Yuri Ishitoya</a>*,
+        <b> Jeremy Siburian</b>*,
         <script>document.write(hamaya);</script>,
         <a href="https://ksaito-ut.github.io/" target="_blank" rel="noopener noreferrer">Kuniaki Saito</a>,
         <script>document.write(cambel_cc);</script>,
-        <script>document.write(nishimura);</script>&dagger;
+        <script>document.write(nishimura);</script>*
       </div>
-      <span style="font-size:13px; color:#666;">&dagger;Equal contribution</span><br>
+      <span style="font-size:13px; color:#666;">*Equal contribution</span><br>
       <a href="https://2026.corl.org/" target="_blank" rel="noopener noreferrer">
         Conference on Robot Learning (CoRL) 2026
       </a>
@@ -271,55 +326,22 @@
   <div class="content-div"></div>
 
 
-  <div class="row align-items-center">
+  <div class="row align-items-center paper selected">
     <div class="col-md-4 align-column-center">
-      <div style="text-align: right;">
-        <video playsinline autoplay loop muted data-src="res/figs/PHASE_Teaser_Website.mp4" width="85%" preload="none"
-               style="border-radius:10px; margin-right: 4%;"></video>
-      </div>
-    </div>
-    <div class="col-md-8" style="padding-left: 0;">
-      <font size="4"> <b> PHASE: Compliance-Enabled Tactile Phase Retrieval for Few-Shot Insertion Learning </b></font><br>
-      <div class="authors">
-        <b> Jeremy Siburian</b>,
-        <script>document.write(cambel_cc);</script>,
-        <script>document.write(matsushima);</script>,
-        <script>document.write(iwasawa);</script>,
-        <script>document.write(hamaya);</script>,
-        <script>document.write(nishimura);</script>
-      </div>
-      <a href="https://iros-pittsburgh.org/" target="_blank" rel="noopener noreferrer">
-        International Conference on Intelligent Robots and Systems (IROS) 2026
-      </a>
-      <div class="link-badges">
-        <a href="https://omron-sinicx.github.io/phase/" class="badge" target="_blank" rel="noopener noreferrer"><i class="fas fa-globe"></i>Website</a>
-      </div>
-      <!-- <div class="authors">
-        A retrieval-based approach for contact-rich robot manipulation that leverages multimodal tactile signals to extract structured phases, enabling efficient few-shot policy learning.
-      </div> -->
-    </div>
-  </div>
-  <div class="content-div"></div>
-
-
-  <div class="row align-items-center">
-    <div class="col-md-4 align-column-center">
-      <div style="text-align: right;">
-        <video playsinline autoplay loop muted data-src="res/figs/vilain-tamp-demo-video.mp4" width="85%" preload="none"
-               style="border-radius:10px; margin-right: 4%;"></video>
-      </div>
+      <video playsinline autoplay loop muted data-src="res/figs/vilain-tamp-demo-video.mp4" width="96%" preload="none"
+             style="border-radius:10px;"></video>
     </div>
     <div class="col-md-8" style="padding-left: 0;">
       <font size="4"> <b> Grounded Vision-Language Interpreter for Integrated Task and Motion Planning </b></font><br>
       <div class="authors">
-        <b> Jeremy Siburian</b>&dagger;,
-        <script>document.write(shirai);</script>&dagger;,
-        <script>document.write(cambel_cc);</script>&dagger;,
+        <b> Jeremy Siburian</b>*,
+        <script>document.write(shirai);</script>*,
+        <script>document.write(cambel_cc);</script>*,
         <script>document.write(hamaya);</script>,
         <script>document.write(gorner);</script>,
         <script>document.write(hashimoto);</script>
       </div>
-      <span style="font-size:13px; color:#666;">&dagger;Equal contribution</span><br>
+      <span style="font-size:13px; color:#666;">*Equal contribution</span><br>
       <a href="https://iros-pittsburgh.org/" target="_blank" rel="noopener noreferrer">
         International Conference on Intelligent Robots and Systems (IROS) 2026
       </a> <br>
@@ -341,24 +363,52 @@
   <div class="content-div"></div>
 
 
-  <div class="row align-items-center">
+  <div class="row align-items-center paper selected">
     <div class="col-md-4 align-column-center">
-      <div style="text-align: right;">
-        <video playsinline autoplay loop muted data-src="res/figs/tameso.mp4" width="85%" preload="none"
-               style="border-radius:10px; margin-right: 4%;"></video>
+      <video playsinline autoplay loop muted data-src="res/figs/PHASE_Teaser_Website.mp4" width="96%" preload="none"
+             style="border-radius:10px;"></video>
+    </div>
+    <div class="col-md-8" style="padding-left: 0;">
+      <font size="4"> <b> PHASE: Compliance-Enabled Tactile Phase Retrieval for Few-Shot Insertion Learning </b></font><br>
+      <div class="authors">
+        <b> Jeremy Siburian</b>,
+        <script>document.write(cambel_cc);</script>,
+        <script>document.write(matsushima);</script>,
+        <script>document.write(iwasawa);</script>,
+        <script>document.write(hamaya);</script>,
+        <script>document.write(nishimura);</script>
       </div>
+      <a href="https://iros-pittsburgh.org/" target="_blank" rel="noopener noreferrer">
+        International Conference on Intelligent Robots and Systems (IROS) 2026
+      </a>
+      <div class="link-badges">
+        <a href="https://arxiv.org/abs/2609.30889" class="badge" target="_blank" rel="noopener noreferrer"><i class="fas fa-book"></i>Paper</a>
+        <a href="https://omron-sinicx.github.io/phase/" class="badge" target="_blank" rel="noopener noreferrer"><i class="fas fa-globe"></i>Website</a>
+      </div>
+      <!-- <div class="authors">
+        A retrieval-based approach for contact-rich robot manipulation that leverages multimodal tactile signals to extract structured phases, enabling efficient few-shot policy learning.
+      </div> -->
+    </div>
+  </div>
+  <div class="content-div"></div>
+
+
+  <div class="row align-items-center paper">
+    <div class="col-md-4 align-column-center">
+      <video playsinline autoplay loop muted data-src="res/figs/tameso.mp4" width="96%" preload="none"
+             style="border-radius:10px;"></video>
     </div>
     <div class="col-md-8" style="padding-left: 0;">
       <font size="4"> <b> Tactile Memory with Soft Robot: Robust Object Insertion via Masked Encoding and Soft Wrist</b></font><br>
       <div class="authors">
-        <a href="https://tatsukamijo.github.io/" target="_blank" rel="noopener noreferrer">Tatsuya Kamijo</a>&dagger;,
-        <script>document.write(nishimura);</script>&dagger;,
+        <a href="https://tatsukamijo.github.io/" target="_blank" rel="noopener noreferrer">Tatsuya Kamijo</a>*,
+        <script>document.write(nishimura);</script>*,
         <a href="https://nodokas.com/" target="_blank" rel="noopener noreferrer">Nodoka Shibasaki</a>,
         <b> Jeremy Siburian</b>,
         <script>document.write(cambel_cc);</script>,
         <script>document.write(hamaya);</script>
       </div>
-      <span style="font-size:13px; color:#666;">&dagger;Equal contribution</span><br>
+      <span style="font-size:13px; color:#666;">*Equal contribution</span><br>
       Robotics and Automation Letters (RA-L) 2026
       <div class="link-badges">
         <a href="https://arxiv.org/abs/2601.19275" class="badge" target="_blank" rel="noopener noreferrer"><i class="fas fa-book"></i>Paper</a>
@@ -368,21 +418,19 @@
   <div class="content-div"></div>
 
 
-  <div class="row align-items-center">
+  <div class="row align-items-center paper">
     <div class="col-md-4 align-column-center">
-      <div style="text-align: right;">
-        <video playsinline autoplay loop muted data-src="res/figs/icra24_cooking.mp4" width="85%" preload="none"
-               style="border-radius:10px; margin-right: 4%;"></video>
-      </div>
+      <video playsinline autoplay loop muted data-src="res/figs/icra24_cooking.mp4" width="96%" preload="none"
+             style="border-radius:10px;"></video>
     </div>
     <div class="col-md-8" style="padding-left: 0;">
       <font size="4"> <b> Integrated Task and Motion Planning for Real-World Cooking Tasks </b></font><br>
       <div class="authors">
-        <b> Jeremy Siburian</b>&dagger;,
-        <script>document.write(cambel_cc);</script>&dagger;,
+        <b> Jeremy Siburian</b>*,
+        <script>document.write(cambel_cc);</script>*,
         <script>document.write(hamaya);</script>
       </div>
-      <span style="font-size:13px; color:#666;">&dagger;Equal contribution</span><br>
+      <span style="font-size:13px; color:#666;">*Equal contribution</span><br>
       <a href="https://sice-si.org/SII2025/" target="_blank" rel="noopener noreferrer">
         International Symposium on System Integrations (SII) 2025
         </a> <br>
