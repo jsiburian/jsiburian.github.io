@@ -1,0 +1,1980 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code-as-Diffusion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=STIX+Two+Text:ital,wght@0,400;0,500;1,400;1,500&display=swap">
+<style>
+  /* review-deck look (Dual-Arm Base Review): one light visual world, every colour painted explicitly */
+  :root { --ink: #202528; --muted: #6d7376; --bg: #f7f6f2; --line: #d7d6d0; --accent: #355f78; --white: #ffffff;
+          --good: #2f7d4f; --bad: #a8432c; --soft: #e9e7e0; --page: #ecebe7; }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body { margin: 0; overflow: hidden; background: #16191b; color: var(--ink); font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  .deck { position: absolute; left: 50%; top: 50%; width: 1280px; height: 720px; transform-origin: center; }
+  .slide { position: absolute; inset: 0; width: 1280px; height: 720px; overflow: hidden; background: var(--bg); padding: 40px 72px 46px; }
+  .slide:not(.on) { display: none !important; }
+  .slide:not(#s-title) { display: flex; flex-direction: column; }
+  .slide > h2, .slide > .sub, .slide > .txt, .slide > .progress, .slide > .takeaway { flex: none; }
+  .body { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; gap: 14px; padding: 12px 0 8px; }
+  .body > * { margin-top: 0 !important; margin-bottom: 0 !important; }
+  .slide.fadein { animation: fadein 320ms ease both; }
+  @keyframes fadein { from { opacity: 0 } to { opacity: 1 } }
+  h1, h2, h3, p { margin-top: 0; }
+  h1 { max-width: 1040px; margin-bottom: 18px; font-size: 72px; line-height: 0.98; letter-spacing: -0.055em; font-weight: 700; }
+  h2 { margin-bottom: 10px; font-size: 44px; line-height: 1.04; letter-spacing: -0.045em; font-weight: 700; text-wrap: balance; }
+  h3 { font-size: 20px; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 8px; }
+  .part { color: var(--accent); font-size: 14px; font-weight: 750; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+  /* Google-deck layout: centered title, sub-heading bar, centered text */
+  .sec { position: absolute; top: 18px; left: 24px; padding: 4px 11px; border-radius: 999px; background: var(--soft); color: var(--muted); font-size: 12px; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; line-height: 1.4; }
+  .slide h2 { text-align: center; margin: 0 0 12px; font-size: 46px; letter-spacing: -0.04em; white-space: normal; }
+  .sub { margin: 0 0 10px; padding: 10px 28px; background: var(--soft); border-radius: 12px; text-align: center; font-size: 24px; line-height: 1.3; font-weight: 650; color: #454b4e; letter-spacing: -0.01em; }
+  .txt { margin: 2px auto 0; max-width: 1080px; text-align: center; font-size: 22px; line-height: 1.4; color: #5f6568; }
+  .txt b { color: var(--ink); } .txt em { font-style: normal; color: var(--accent); font-weight: 650; } .txt .neg { color: var(--bad); font-weight: 650; }
+  .vs { display: grid; grid-template-columns: repeat(2, 440px); justify-content: center; gap: 40px; }
+  .vs video { width: 440px; height: 330px; object-fit: cover; }
+  .sub .neg { color: var(--bad); }
+  .sub .sub2 { display: block; margin-top: 4px; font-size: 21px; font-weight: 500; color: var(--muted); }
+  .vc { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: start; margin-top: 10px !important; text-align: left !important; }
+  .vc .mk { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; color: var(--white); font-size: 17px; font-weight: 800; margin-top: 1px; }
+  .vc.good .mk { background: var(--good); } .vc.bad .mk { background: var(--bad); }
+  .vc .nm { font-size: 19px !important; } .vc.good .nm { color: var(--good) !important; } .vc.bad .nm { color: var(--bad) !important; }
+  .vc .ct { text-align: left !important; font-size: 16px !important; }
+  .subtitle { max-width: 1100px; color: var(--muted); font-size: 30px; line-height: 1.3; letter-spacing: -0.02em; }
+  .authors { margin-top: 26px; font-size: 20px; color: var(--muted); } .authors b { color: var(--ink); font-weight: 650; }
+  .lead { margin: 4px 0 0; font-size: 22px; line-height: 1.35; color: var(--ink); font-weight: 600; max-width: 1100px; }
+  .lead em { font-style: normal; color: var(--accent); } .lead .neg { color: var(--bad); }
+  .meta { margin: 6px 0 0; color: var(--muted); font-size: 18px; line-height: 1.4; max-width: 1100px; }
+  .meta b { color: var(--ink); }
+  .slide-number { position: absolute; right: 44px; bottom: 22px; color: var(--muted); font-size: 16px; letter-spacing: 0.08em; font-variant-numeric: tabular-nums; }
+  .foot { position: absolute; left: 72px; right: 140px; bottom: 22px; color: var(--muted); font-size: 13px; line-height: 1.35; }
+  .foot.warn { color: var(--bad); font-size: 15px; font-weight: 700; bottom: 18px; }
+  .takeaway { margin: 0 auto 6px; padding: 0; max-width: 1060px; text-align: center; font-size: 22px; line-height: 1.38; font-weight: 600; color: var(--ink); text-wrap: balance; }
+  .takeaway::before { content: ""; display: block; width: 48px; height: 3px; border-radius: 2px; background: var(--accent); margin: 0 auto 10px; }
+  .takeaway.c { margin-left: auto; margin-right: auto; }
+  figcaption .nm { display: block; color: var(--ink); font-size: 18px; font-weight: 650; }
+  figcaption .ct, .ct { display: block; color: var(--muted); font-size: 15px; font-weight: 500; margin-top: 2px; text-align: center; }
+  .pcard .ct { margin-top: -4px; }
+  ol.refs { margin: 0 auto; padding-left: 1.6em; max-width: 1100px; display: grid; gap: 8px; font-size: 18px; line-height: 1.33; }
+  ol.refs li { padding-left: 4px; } ol.refs .rt { color: var(--ink); font-weight: 600; } ol.refs .ra { color: var(--muted); margin-left: 8px; }
+  ol.refs .ra::before { content: "— "; }
+  /* figures */
+  .figs { display: grid; gap: 28px; margin-top: 22px; align-items: end; }
+  .figs.two { grid-template-columns: 1fr 1fr; } .figs.three { grid-template-columns: repeat(3, 1fr); }
+  .figs figure { margin: 0; min-width: 0; }
+  .figs img, .figs video { display: block; width: 100%; height: 300px; object-fit: contain; background: var(--white); border: 1px solid var(--line); border-radius: 8px; }
+  .figs img { padding: 8px; }
+  .figs video { background: #111; }
+  .figs.vids3 { grid-template-columns: 2.246fr 1.778fr; } .figs.vids3 video { height: auto; }
+  .figs.vids5 { grid-template-columns: 1.778fr 1.852fr; } .figs.vids5 video { height: auto; }
+  .figs.vids10 video { height: auto; aspect-ratio: 16 / 9; }
+  .figs figcaption, .vf figcaption { margin-top: 8px; text-align: center; font-size: 18px; color: var(--muted); font-weight: 600; line-height: 1.3; }
+  .figs figcaption b, .vf figcaption b { color: var(--ink); }
+  .panel2 { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 20px; }
+  .pcard { background: var(--white); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px 14px; display: grid; grid-template-rows: auto 1fr auto; gap: 10px; }
+  .pcard h3 { margin: 0; font-size: 17px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .pcard img { width: 100%; height: 240px; object-fit: contain; }
+  .pcard video { justify-self: center; width: auto; max-width: 100%; height: 200px; display: block; background: #111; border-radius: 6px; }
+  .pcard .verdict { font-size: 19px; line-height: 1.3; font-weight: 650; display: flex; align-items: flex-start; gap: 10px; }
+  .pcard .verdict .pill { flex: none; min-width: 84px; margin-top: 0; } .pcard .verdict + .verdict { margin-top: -4px; }
+  .takeaway .lbl { color: var(--accent); }
+  .takeaway.goal { max-width: 1100px; margin: 2px auto 0; padding: 14px 32px; background: #e6eef3; border: 1.5px solid #b7cbd8; border-radius: 12px; font-size: 27px; line-height: 1.3; font-weight: 650; }
+  .takeaway.goal.top { margin: 0 auto 6px; }
+  .takeaway.goal::before { content: none; } .takeaway.goal b { color: var(--accent); }
+  .panel2.rows4 { grid-template-rows: repeat(4, auto); } .panel2.rows4 .pcard { grid-row: span 4; grid-template-rows: subgrid; }
+  .pill { display: inline-grid; place-items: center; height: 26px; padding: 0 10px; border-radius: 999px; font-size: 13px; font-weight: 750; letter-spacing: .04em; color: var(--white); }
+  .pill.no { background: var(--bad); } .pill.yes { background: var(--good); } .pill.acc { background: var(--accent); }
+  /* pipeline */
+  .pipe { display: grid; grid-template-columns: 170px 46px 1fr 46px 170px; align-items: center; margin-top: 34px; }
+  .pipe .box { height: 92px; border: 1px solid var(--line); border-radius: 12px; background: var(--white); display: grid; place-items: center;
+               text-align: center; font-size: 22px; font-weight: 650; line-height: 1.2; cursor: pointer; transition: border-color .15s, background .15s; }
+  .pipe .box:hover, .pipe .box.on { border-color: var(--accent); background: #eef3f6; }
+  .idea3 { display: grid; grid-template-columns: 1fr 34px 1fr 34px 1fr; align-items: stretch; gap: 6px; } .idea3 .iarrow { align-self: center; }
+  .icard { background: var(--white); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px 12px; display: grid; grid-template-rows: auto 1fr auto; gap: 10px; min-width: 0; }
+  .ihead { text-align: center; font-size: 17px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .icode { margin: 0; height: 176px; display: grid; align-content: center; padding: 12px 14px; background: #1f2a30; color: #e4ebee; border-radius: 8px;
+           font: 13.5px/1.6 ui-monospace, "SF Mono", Menlo, Consolas, monospace; white-space: pre; overflow: hidden; }
+  .icode .cm { color: #8fa3ad; } .icode .kw { color: #8cc4e6; } .icode .fn { color: #b9dfc4; } .icode .st { color: #e7bd7e; }
+  .iflow { display: block; width: 100%; height: 176px; border-radius: 8px; background: #f3f5f6; }
+  .isub { text-align: center; font-size: 16px; line-height: 1.3; color: var(--muted); font-weight: 600; }
+  .iarrow { text-align: center; color: var(--muted); font-size: 30px; }
+  .isteps { display: flex; justify-content: center; align-items: center; gap: 10px; }
+  .istep { display: flex; align-items: center; gap: 8px; padding: 6px 15px 6px 7px; border-radius: 999px; border: 1px solid var(--line); background: var(--white);
+           color: var(--muted); font-size: 17px; font-weight: 700; transition: background .25s, color .25s, border-color .25s; }
+  .istep .n { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: var(--soft); font-size: 13px; }
+  .istep.done { color: var(--accent); border-color: #b7cbd8; }
+  .istep.on { background: var(--accent); border-color: var(--accent); color: var(--white); } .istep.on .n { background: rgba(255,255,255,.22); }
+  .iar { color: var(--muted); font-size: 22px; }
+  .istory { display: block; width: 100%; aspect-ratio: 1100 / 290; border: 1px solid var(--line); border-radius: 10px; background: var(--white); }
+  .s12 { position: relative; width: 1136px; height: 480px; margin: 0 auto; }
+  .s12-flow { position: absolute; inset: 0; width: 1136px; height: 480px; overflow: visible; }
+  .s12-flow path { fill: none; stroke: #9aa5ab; stroke-width: 2.5; marker-end: url(#s12h); }
+  .s12-tag { font: 700 12px Inter, sans-serif; fill: var(--accent); text-anchor: middle; }
+  .s12-dot { fill: var(--accent); }
+  .s12 figure { position: absolute; margin: 0; }
+  .s12 figure img { display: block; width: 100%; border: 1px solid var(--line); border-radius: 8px; background: var(--white); transition: box-shadow .3s, border-color .3s; }
+  .s12 figcaption { margin-top: 7px; text-align: center; font-size: 17px; font-weight: 650; color: var(--ink); }
+  .s12-obs { left: 0; width: 270px; } .s12-obs img { height: 150px; object-fit: cover; }
+  .s12-out { left: 828px; top: 175px; width: 270px; } .s12-out img { height: 270px; object-fit: cover; }
+  .s12-step { color: var(--accent); font-weight: 750; }
+  .s12-vlm { position: absolute; left: 340px; top: 30px; width: 420px; height: 90px; display: flex; align-items: center; gap: 14px; padding: 0 18px;
+             background: var(--white); border: 1px solid var(--line); border-radius: 10px; color: var(--ink); transition: box-shadow .3s, border-color .3s; }
+  .s12-vlm img { width: 54px; height: 54px; border-radius: 12px; }
+  .s12-vlm b { display: block; font-size: 18px; } .s12-vlm small { display: block; margin-top: 2px; font-size: 13.5px; color: var(--muted); font-weight: 600; }
+  .s12-prog { position: absolute; left: 340px; top: 175px; width: 420px; height: 270px; background: #1f2a30; border-radius: 10px; padding: 12px 14px;
+              border: 2px solid #1f2a30; transition: border-color .3s, box-shadow .3s; }
+  .s12-ph { font-size: 12px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; color: #8fa3ad; margin-bottom: 8px; }
+  .s12-prog pre { margin: 0; font: 11.5px/1.5 ui-monospace, "SF Mono", Menlo, Consolas, monospace; color: #e4ebee; white-space: pre; overflow: hidden; }
+  .s12-prog .kw { color: #8cc4e6; } .s12-prog .fn { color: #b9dfc4; } .s12-prog .nu { color: #e7bd7e; }
+  .s12 .hit { border-color: var(--accent) !important; box-shadow: 0 0 0 4px #355f7833; }
+  .figs.s15 { gap: 24px; align-items: start; }
+  .figs.s15 img { height: auto; aspect-ratio: 4 / 3; object-fit: cover; padding: 0; background: var(--white); border: 1px solid var(--line); border-radius: 10px; }
+  .figs.s15 figure:nth-child(3) img { object-position: 50% 100%; }
+  .figs.s15 figcaption { margin-top: 10px; font-size: 19px; color: var(--ink); }
+  .figs.s17 { grid-template-columns: 1.778fr 1.333fr; gap: 28px; }
+  .figs.s17 video { height: auto; border-radius: 10px; }
+  .s13 { display: grid; grid-template-columns: 1fr 64px 1fr 64px 1fr; align-items: center; }
+  .s13-p { margin: 0; opacity: .25; transition: opacity .6s; }
+  .s13-p img, .s13-p video { display: block; width: 100%; aspect-ratio: 1.06; object-fit: cover; background: #111; border: 2px solid var(--line); border-radius: 10px; transition: border-color .4s, box-shadow .4s; }
+  .s13-p figcaption { margin-top: 10px; text-align: center; font-size: 18px; font-weight: 650; color: var(--muted); transition: color .4s; }
+  .s13-p.shown { opacity: 1; } .s13-p.lit img, .s13-p.lit video { border-color: var(--accent); box-shadow: 0 0 0 4px #355f7826; } .s13-p.lit figcaption { color: var(--accent); font-weight: 800; }
+  .s13-ar { text-align: center; font-size: 34px; color: #a3adb2; transition: color .4s; } .s13-ar.lit { color: var(--accent); }
+  .ov { position: relative; width: 1136px; height: 470px; margin: 0 auto; }
+  #s-overview .ov { zoom: 1.1; margin-left: -52px !important; }
+  .ov-flow { position: absolute; inset: 0; width: 1136px; height: 470px; overflow: visible; }
+  .ov-flow path { fill: none; stroke: #9aa5ab; stroke-width: 2.5; marker-end: url(#ovh); }
+  .ov-zone { stroke: none; } .ov-zone.z1 { fill: #eef3f6; } .ov-zone.z2 { fill: #eef4ef; }
+  .ov-zl { font: 750 12.5px Inter, sans-serif; letter-spacing: .04em; fill: var(--accent); }
+  .ov-tag { font: 700 12px Inter, sans-serif; fill: var(--accent); text-anchor: middle; }
+  .ov-ll { font: 650 14px Inter, sans-serif; fill: var(--muted); text-anchor: middle; } .ov-step { fill: var(--accent); font-weight: 800; }
+  .ov-dot { fill: var(--accent); }
+  .ov figure { position: absolute; margin: 0; }
+  .ov-init { top: 5px; width: 130px; } .ov-init img { display: block; width: 130px; height: 80px; object-fit: cover; border: 1px solid var(--line); border-radius: 8px; transition: box-shadow .3s, border-color .3s; }
+  .ov-init figcaption { position: absolute; left: -10px; top: 86px; width: 150px; text-align: center; font-size: 13px; font-weight: 650; }
+  .ov-vlm { position: absolute; top: 21px; width: 292px; height: 48px; display: flex; align-items: center; gap: 10px; padding: 0 12px; background: var(--white);
+            border: 1px solid var(--line); border-radius: 10px; transition: box-shadow .3s, border-color .3s; }
+  .ov-vlm img { width: 32px; height: 32px; border-radius: 8px; } .ov-vlm b { display: block; font-size: 15px; } .ov-vlm small { display: block; font-size: 12px; color: var(--muted); font-weight: 600; }
+  .ov-c { top: 186px; width: 180px; }
+  .ov-m { width: 180px; height: 150px; border-radius: 8px; overflow: hidden; border: 2px solid var(--line); background: #111; transition: box-shadow .3s, border-color .3s; }
+  .ov-m img, .ov-m video { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .ov-c figcaption { margin: 7px -14px 0; text-align: center; font-size: 14px; font-weight: 650; color: var(--ink); white-space: nowrap; }
+  .ov-code { height: 100%; background: #1f2a30; display: grid; align-content: center; padding: 0 14px; }
+  .ov-code pre { margin: 0; font: 12px/1.45 ui-monospace, "SF Mono", Menlo, Consolas, monospace; color: #e4ebee; } .ov-code .fn { color: #b9dfc4; }
+  .ov .hit { border-color: var(--accent) !important; box-shadow: 0 0 0 4px #355f7833; }
+  .s15n { display: grid; grid-template-columns: repeat(2, 450px); justify-content: center; gap: 36px; }
+  .s15n figure { margin: 0; } .s15n figcaption { height: 26px; line-height: 26px; margin-bottom: 8px; text-align: center; font-size: 19px; font-weight: 750; color: var(--ink); }
+  .s15n video { display: block; width: 450px; aspect-ratio: 640 / 500; border: 1px solid var(--line); border-radius: 10px; background: #f4f4f4; }
+  .s15n-meta { text-align: center; font-size: 14px; color: var(--muted); }
+  .pdone { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .pd { margin: 0; background: var(--white); border: 1px solid var(--line); border-radius: 12px; padding: 14px 14px 14px; display: grid; gap: 12px; }
+  .pd-h { display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: center; min-height: 66px; }
+  .pd-h .mk { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--good); color: var(--white); font-weight: 800; font-size: 16px; }
+  .pd-h b { display: block; font-size: 21px; letter-spacing: -0.02em; } .pd-h span:not(.mk) { display: block; font-size: 16px; color: var(--muted); font-weight: 600; margin-top: 1px; }
+  .pd video { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 8px; background: #f4f4f4; border: 1px solid var(--line); }
+  .pd:first-child video { object-position: 50% 100%; }
+  .tk { display: grid; gap: 10px; }
+  .tk-row { display: grid; grid-template-columns: 150px repeat(4, 1fr); gap: 10px; align-items: center; background: var(--white); border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; }
+  .tk-h { display: grid; gap: 6px; justify-items: start; } .tk-h b { font-size: 19px; letter-spacing: -0.02em; line-height: 1.1; }
+  .tk-h span { padding: 2px 10px; border-radius: 999px; background: #e6eef3; color: var(--accent); font-size: 13px; font-weight: 750; }
+  .tk-row video, .tk-row img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 7px; background: #111; }
+  .bens { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .ben { margin: 0; background: var(--white); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: grid; grid-template-rows: auto 1fr; gap: 12px; }
+  .ben-h { display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start; min-height: 86px; }
+  .bmk { width: 30px; height: 30px; margin-top: 2px; border: 2.5px solid #a3adb2; border-radius: 8px; display: grid; place-items: center; }
+  .bmk.done { border: 0; border-radius: 50%; background: var(--good); color: var(--white); font-weight: 800; font-size: 17px; line-height: 1; }
+  .ben-h b { display: block; font-size: 20px; letter-spacing: -0.02em; line-height: 1.2; } .ben-h div > span { display: block; margin-top: 4px; font-size: 15px; color: var(--muted); line-height: 1.35; }
+  .ben video { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 8px; background: #111; align-self: end; }
+  .slide h2.thanks { font-size: 56px; margin-top: 18px; }
+  .agenda { display: grid; grid-template-columns: 1fr 22px 1fr 22px 1fr 22px 1fr 22px 1fr 22px 1fr; align-items: stretch; }
+  .ag { background: var(--white); border: 1px solid var(--line); border-radius: 12px; padding: 18px 14px 16px; display: grid; align-content: start; gap: 8px; }
+  .ag-n { color: var(--accent); font-size: 15px; font-weight: 800; letter-spacing: .08em; }
+  .ag b { font-size: 21px; letter-spacing: -0.02em; } .ag-d { font-size: 15px; line-height: 1.35; color: var(--muted); }
+  .ag-ar { align-self: center; text-align: center; color: #a3adb2; font-size: 22px; }
+  .teaser-cv { position: absolute; inset: 0; width: 1280px; height: 720px; z-index: 0; }
+  #s-title { cursor: crosshair; } #s-title h1, #s-title .subtitle, #s-title .authors { position: relative; z-index: 1; }
+  #s-title h1, #s-title .subtitle, #s-title .authors { text-shadow: 0 0 6px #f7f6f2, 0 0 14px #f7f6f2, 0 0 22px #f7f6f2; }
+  .gmm3 { display: block; width: 100%; aspect-ratio: 1136 / 340; }
+  .gmm4 { display: block; width: 100%; aspect-ratio: 1136 / 330; }
+  .gstage { display: grid; grid-template-columns: 1fr 390px; gap: 14px; align-items: stretch; }
+  .gmmflow { display: block; width: 100%; aspect-ratio: 720 / 290; border: 1px solid var(--line); border-radius: 10px; background: var(--white); }
+  .geq { border: 1px solid var(--line); border-radius: 10px; background: var(--white); padding: 12px 14px; display: grid; align-content: center; gap: 4px; }
+  .eqh { font-size: 13px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+  .eqr { padding: 6px 10px; border-radius: 8px; border: 1px solid transparent; transition: background .25s, border-color .25s, opacity .25s; opacity: .55; }
+  .eqr.on { background: #e6eef3; border-color: #b7cbd8; opacity: 1; }
+  .eql { display: block; font-size: 12.5px; font-weight: 700; color: var(--accent); }
+  .eqm { display: block; font: 19px/1.35 "STIX Two Text", "Cambria Math", "Times New Roman", serif; color: var(--ink); white-space: nowrap; }
+  .eqm sub, .eqm sup { font-size: 68%; } .eqm i { font-style: italic; }
+  .frac { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: 92%; line-height: 1.15; }
+  .frac > span:first-child { border-bottom: 1.4px solid currentColor; padding: 0 3px 1px; }
+  .eqn { font-size: 12.5px; color: var(--muted); padding: 0 10px; }
+  .pipe.static .box { cursor: default; } .pipe.static .box:hover { border-color: var(--line); background: var(--white); }
+  .pipe .arrow { text-align: center; color: var(--muted); font-size: 26px; }
+  .adp { border: 2px solid var(--accent); border-radius: 16px; padding: 30px 18px 18px; position: relative; display: grid; grid-template-columns: 1fr 36px 1fr 36px 1fr; align-items: center; }
+  .adp .lab { position: absolute; top: -13px; left: 18px; background: var(--bg); padding: 0 8px; color: var(--accent); font-size: 14px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
+  .pipe-note { margin: 22px 0 0; min-height: 90px; padding: 14px 20px; background: var(--white); border: 1px solid var(--line); border-radius: 8px; font-size: 21px; line-height: 1.4; }
+  .pipe-note b { color: var(--accent); }
+  .hint { color: var(--muted); font-size: 16px; margin: 8px 0 0; text-align: center; }
+  /* lists of claims / properties */
+  .claims { display: grid; gap: 18px; margin: 30px auto 0; max-width: 1080px; }
+  .claim { display: grid; grid-template-columns: 52px 1fr; gap: 16px; align-items: start; padding: 16px 0; border-top: 1px solid var(--line); }
+  .claim .n { font-size: 15px; color: var(--accent); font-weight: 750; letter-spacing: .08em; padding-top: 5px; }
+  .claim b { display: block; font-size: 29px; letter-spacing: -0.02em; margin-bottom: 4px; }
+  .claim span { color: var(--muted); font-size: 22px; line-height: 1.36; }
+  /* challenge checklist */
+  .checks { display: grid; gap: 14px; margin: 22px auto 0; max-width: 1080px; }
+  .check { display: grid; grid-template-columns: 44px 1fr auto; gap: 18px; align-items: center; padding: 16px 18px; border: 1px solid var(--line); border-radius: 10px;
+           background: var(--white); text-align: left; font: inherit; color: inherit; cursor: default; transition: border-color .15s; }
+  button.check { cursor: pointer; }
+  button.check:hover { border-color: var(--accent); }
+  .check .mk { width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--line); display: grid; place-items: center; font-weight: 800; font-size: 17px; color: var(--white); }
+  .check.done .mk { background: var(--good); border-color: var(--good); }
+  .check.now { border-color: var(--accent); box-shadow: inset 4px 0 0 var(--accent); }
+  .check.now .mk { border-color: var(--accent); }
+  .checks.focus .check:not(.now) { opacity: .32; }
+  .check b { display: block; font-size: 26px; letter-spacing: -0.02em; margin-bottom: 3px; }
+  .check span { color: var(--muted); font-size: 20px; line-height: 1.33; } .check span strong { color: var(--ink); font-weight: 650; }
+  .check .go { color: var(--accent); font-size: 16px; font-weight: 700; white-space: nowrap; }
+  .progress { display: flex; gap: 6px; justify-content: center; margin-top: 4px; }
+  .progress i { width: 34px; height: 6px; border-radius: 3px; background: var(--line); } .progress i.on { background: var(--good); }
+  /* method steps */
+  .steps { display: grid; grid-template-columns: 220px 60px 1fr 60px 250px; gap: 0; align-items: center; margin-top: 20px; }
+  .steps .col { display: grid; gap: 12px; }
+  .steps figure { margin: 0; } .steps img { width: 100%; display: block; border-radius: 6px; border: 1px solid var(--line); background: var(--white); }
+  .steps figcaption { text-align: center; font-size: 15px; color: var(--muted); font-weight: 600; margin-top: 4px; }
+  .steps .ar { text-align: center; font-size: 30px; color: var(--muted); }
+  .vlm { display: grid; grid-template-columns: 96px 1fr; gap: 14px; align-items: center; }
+  .vlm img { width: 84px; height: 84px; object-fit: contain; border: 0; background: transparent; }
+  .code { max-height: 300px; object-fit: contain; }
+  .arrowrow { display: grid; grid-template-columns: 1fr 56px 1fr 56px 1fr; align-items: center; margin-top: 26px; }
+  .arrowrow figure { margin: 0; } .arrowrow img { width: 100%; height: 290px; object-fit: contain; background: var(--white); border: 1px solid var(--line); border-radius: 6px; display: block; }
+  .arrowrow figcaption { text-align: center; font-size: 16px; color: var(--muted); font-weight: 600; margin-top: 8px; }
+  .arrowrow .ar { text-align: center; color: var(--muted); font-size: 32px; }
+  /* videos */
+  .vrow { display: grid; gap: 22px; margin-top: 18px; }
+  .vgrid4 { display: grid; grid-template-columns: repeat(2, 336px); justify-content: center; gap: 12px 32px; }
+  .vgrid4 .vf video { aspect-ratio: 16 / 9; object-fit: contain; }
+  .vgrid4 figcaption { margin-top: 6px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 2px 8px; }
+  .vgrid4 figcaption .ct { margin-top: 0; flex-basis: 100%; }
+  .vgrid4 .rep { padding: 2px 10px; border-radius: 999px; background: #e6eef3; color: var(--accent); font-size: 14px; font-weight: 700; line-height: 1.4; }
+  .vrow.two { grid-template-columns: 1fr 1fr; } .vrow.three { grid-template-columns: repeat(3, 1fr); } .vrow.one { grid-template-columns: 1fr; }
+  .vf { margin: 0; min-width: 0; }
+  .vf video { display: block; width: 100%; background: #111; border: 1px solid var(--line); border-radius: 6px; }
+  .vrow.two .vf video, .vrow.two .ph { aspect-ratio: 4 / 3; object-fit: contain; }
+  .vrow.wide .vf video, .vrow.wide .ph { aspect-ratio: 1280 / 528; object-fit: contain; }
+  .vrow.pano .vf video { aspect-ratio: 2560 / 800; object-fit: contain; }
+  .ph { position: relative; width: 100%; border: 1px dashed #b9b7ae; border-radius: 6px; background: var(--soft) center / cover no-repeat; display: grid; place-items: center; overflow: hidden; }
+  .ph::before { content: ""; position: absolute; inset: 0; background: rgba(247, 246, 242, .72); }
+  .ph span { position: relative; max-width: 80%; text-align: center; color: var(--muted); font-size: 15px; font-weight: 650; line-height: 1.35; }
+  .ph.slim { height: 92px; }
+  .vrow.wide { grid-template-columns: repeat(2, 470px) !important; justify-content: center; gap: 10px 26px; }
+  .vrow.wide figcaption { margin-top: 4px; font-size: 14px; }
+  .legendcard { width: 470px; aspect-ratio: 1280 / 528; border: 1px solid var(--line); border-radius: 6px; background: var(--white); padding: 14px 18px;
+                display: grid; align-content: center; gap: 6px; font-size: 15px; color: var(--muted); }
+  .legendcard { grid-template-columns: 1fr 1fr; column-gap: 14px; } .legendcard b, .legendcard .ln { grid-column: 1 / -1; }
+  .legendcard .ln { margin-top: 4px; font-size: 15px; }
+  .legendcard b { color: var(--ink); } .legendcard i { display: inline-block; width: 18px; height: 4px; border-radius: 2px; margin-right: 8px; vertical-align: 3px; }
+  .vtools { position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; }
+  .vtools b { color: var(--muted); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+  .speed { display: flex; gap: 4px; }
+  .speed button, .vtools .play { height: 28px; padding: 0 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); color: var(--muted);
+                                  font: inherit; font-size: 12.5px; font-weight: 680; cursor: pointer; }
+  .speed button.active { background: var(--accent); border-color: var(--accent); color: var(--white); }
+  .vtools .play { border-color: var(--accent); background: var(--accent); color: var(--white); }
+  /* charts */
+  .chart { margin-top: 10px; display: grid; place-items: center; }
+  .chart img { max-width: 100%; max-height: 520px; display: block; background: var(--white); border: 1px solid var(--line); border-radius: 6px; }
+  .chart.small img { max-height: 390px; }
+  .chart.quant img { max-height: 540px; border: 0; background: transparent; border-radius: 10px; }
+  .chart { margin-left: 0; margin-right: 0; } .chart figcaption.ct { margin-top: 10px; font-size: 17px; }
+  /* empty slides */
+  .todo { margin: 30px auto 0; padding: 22px 26px; border: 1px dashed #b9b7ae; border-radius: 10px; color: var(--muted); font-size: 22px; line-height: 1.45; max-width: 1080px; }
+  .todo b { color: var(--ink); }
+  ul.plain { margin: 16px auto 0; padding-left: 1.2em; display: grid; gap: 12px; font-size: 24px; line-height: 1.36; max-width: 1080px; }
+  ul.plain ul { margin-top: 8px; display: grid; gap: 6px; font-size: 21px; color: var(--muted); }
+  .appx { color: var(--muted); }
+  #hud { position: fixed; right: 16px; bottom: 14px; z-index: 20; display: flex; gap: 8px; align-items: center; opacity: 0; transition: opacity .3s; }
+  body.active #hud, #hud:focus-within { opacity: .92; }
+  #hud button { height: 34px; min-width: 38px; padding: 0 12px; border: 1px solid #56646a; border-radius: 6px; background: #1d2326e6; color: #f2f4f1; font: inherit; font-size: 14px; cursor: pointer; }
+  #hud .count { color: #f2f4f1; background: #1d2326e6; border: 1px solid #56646a; border-radius: 6px; padding: 7px 12px; font-size: 14px; font-variant-numeric: tabular-nums; }
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  /* scroll view: every slide stacked on one page */
+  body.scroll { overflow-y: auto; height: auto; }
+  body.scroll .deck { position: relative; left: auto; top: auto; height: auto; margin: 24px auto 72px; transform: none !important; display: grid; gap: 24px; }
+  body.scroll .slide { position: relative; inset: auto; box-shadow: 0 10px 30px rgba(0, 0, 0, .35); border-radius: 6px; }
+  body.scroll .slide:not(.on) { display: flex !important; } body.scroll #s-title { display: grid !important; }
+  body.scroll .slide.fadein { animation: none; }
+  body.scroll #hud { opacity: .92; }
+  @media (prefers-reduced-motion: reduce) { .slide.fadein { animation: none; } .check, .pipe .box, #hud, .istep, .eqr, .s13-p, .s13-ar { transition: none; } }
+
+  .outline { display: grid; gap: 10px; max-width: 1000px; margin: 0 auto; width: 100%; }
+  .orow { display: grid; grid-template-columns: 64px 260px 1fr; align-items: baseline; gap: 18px; padding: 14px 20px; border: 1px solid var(--line); border-radius: 10px;
+          background: var(--white); text-align: left; font: inherit; color: inherit; cursor: pointer; transition: border-color .15s; }
+  .orow:hover { border-color: var(--accent); }
+  .orow .onum { color: var(--accent); font-size: 20px; font-weight: 800; letter-spacing: .06em; }
+  .orow b { font-size: 26px; letter-spacing: -0.02em; } .orow .od { color: var(--muted); font-size: 20px; }
+  .speed button, .vtools .play { font-size: 14px !important; height: 30px !important; } .vtools b { font-size: 13px !important; }
+  .ph span { font-size: 17px !important; } .legendcard { font-size: 17px !important; }
+  .vrow.wide { grid-template-columns: repeat(2, 430px) !important; }
+  .vrow.pano .vf video { max-width: 1000px; margin: 0 auto; }
+  .vrow.pano.w2 { margin-top: 10px; } .vrow.pano.w2 .vf video, .vrow.pano.w2 .slotbox { max-width: 600px; margin: 0 auto; }
+  .slotbox { position: relative; } .slotbox video { background: var(--soft) !important; border-style: dashed !important; }
+  .slot-label { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); font-size: 17px; font-weight: 700; pointer-events: none;
+                background: rgba(247, 246, 242, .72); border-radius: 6px; }
+  .slotbox.ready .slot-label { display: none; } .slotbox.ready video { background: #111 !important; border-style: solid !important; }
+</style>
+</head>
+<body>
+<main class="deck">
+
+<!-- 1 -->
+<section class="slide" id="s-title" style="display:grid;align-content:center">
+  <h1>Code-as-Diffusion</h1>
+  <p class="subtitle">Your VLM Is Secretly a Steerable Diffusion Policy!</p>
+  <p class="authors"><b>Cory Fan, Jeremy Siburian</b>, Yixuan Li, Chuanruo Ning</p>
+  <canvas class="teaser-cv" role="img" aria-label="Interactive diffusion: noise particles flow into three action modes; moving the cursor steers them toward the nearest mode"></canvas>
+  <div class="slide-number"></div>
+</section>
+
+<template id="t-overview-talk"><!-- hidden for now -->
+<section class="slide" id="s-overview-talk">
+  <h2>Overview</h2>
+  <p class="takeaway goal top"><span aria-hidden="true">🚀</span> Our base maintains <b>VLM priors</b> while enabling <b>few&#8209;shot steering</b> across diverse tasks and embodiments</p>
+  <div class="body">
+    <div class="agenda">
+      <div class="ag"><span class="ag-n">01</span><b>Motivation</b><span class="ag-d">Pre-trained VLMs for robotic control</span></div>
+      <span class="ag-ar" aria-hidden="true">→</span>
+      <div class="ag"><span class="ag-n">02</span><b>Background</b><span class="ag-d">VLM-based control, policy steering, and the research goal</span></div>
+      <span class="ag-ar" aria-hidden="true">→</span>
+      <div class="ag"><span class="ag-n">03</span><b>Approach</b><span class="ag-d">Code-as-Diffusion: VLM code becomes an analytical diffusion policy</span></div>
+      <span class="ag-ar" aria-hidden="true">→</span>
+      <div class="ag"><span class="ag-n">04</span><b>Properties</b><span class="ag-d">Deterministic ODE, multimodality, strong priors</span></div>
+      <span class="ag-ar" aria-hidden="true">→</span>
+      <div class="ag"><span class="ag-n">05</span><b>Results</b><span class="ag-d">Tasks, quantitative results, and rollouts</span></div>
+      <span class="ag-ar" aria-hidden="true">→</span>
+      <div class="ag"><span class="ag-n">06</span><b>Summary</b><span class="ag-d">Summary and next steps</span></div>
+    </div>
+  </div>
+  <div class="slide-number"></div>
+</section>
+</template>
+
+<template id="t-outline"><!-- outline slide, hidden for now -->
+<section class="slide" id="s-outline">
+  <h2>Outline</h2>
+  <div class="body">
+    <div class="outline">
+      <button type="button" class="orow" data-go="s-motivation"><span class="onum">01</span><b>Motivation</b><span class="od">Pre-trained VLMs for robotic control</span></button>
+      <button type="button" class="orow" data-go="s-rw-vlm"><span class="onum">02</span><b>Background</b><span class="od">VLM-based control, policy steering, and the research goal</span></button>
+      <button type="button" class="orow" data-go="s-insight"><span class="onum">03</span><b>Approach</b><span class="od">Training-free diffusion and Code-as-Diffusion</span></button>
+      <button type="button" class="orow" data-go="s-ch0"><span class="onum">04</span><b>Properties</b><span class="od">Deterministic ODE, multimodality, strong priors</span></button>
+      <button type="button" class="orow" data-go="s-results"><span class="onum">05</span><b>Results</b><span class="od">Square and Weight with PPS; RoboDojo base only</span></button>
+      <button type="button" class="orow" data-go="s-open"><span class="onum">06</span><b>Discussion</b><span class="od">Open questions and next steps</span></button>
+    </div>
+  </div>
+  <div class="slide-number"></div>
+</section>
+</template>
+
+<!-- 2 -->
+<section class="slide" id="s-motivation">
+  <div class="sec">01 · Motivation</div>
+  <h2>Motivation</h2>
+  <p class="sub">How can we leverage pre-trained VLMs for robotic control?</p>
+  <p class="txt">VLMs are getting <b>better and better</b>!<br>But how to best maximize them for <b><u>robotic control</u></b>? 🤔🤖</p>
+  <div class="body">
+    <div class="figs two vids3">
+      <figure><video src="vid/s03_code_as_policies_tasks.mp4" poster="img/s03_cap_poster.jpg" muted loop playsinline preload="none" controls aria-label="Code as Policies: real-robot tasks, each with its language instruction"></video><figcaption><span class="nm">Code as Policies</span><span class="ct">Liang et al., ICRA 2023</span></figcaption></figure>
+      <figure><video src="vid/s03_aspire_table_bussing.mp4" poster="img/s03_aspire_poster.jpg" muted loop playsinline preload="none" controls aria-label="ASPIRE: a two-arm robot buses a table using skills learned in simulation"></video><figcaption><span class="nm">ASPIRE</span><span class="ct">2026</span></figcaption></figure>
+    </div>
+  </div>
+  <div class="slide-number"></div>
+
+</section>
+
+<!-- 3 -->
+<section class="slide" id="s-rw-vlm">
+  <div class="sec">02 · Background</div>
+  <h2>VLM-Based Robotic Control</h2>
+  <p class="sub">VLMs offer broad priors and promising zero-shot manipulation</p>
+  <div class="body">
+    <div class="vgrid4">
+      <figure class="vf"><video src="vid/s03_voxposer.mp4" poster="img/s03_voxposer_poster.jpg" muted loop playsinline preload="none" controls aria-label="VoxPoser demonstration"></video><figcaption><span class="nm">VoxPoser</span><span class="rep">3D value maps</span><span class="ct">Huang et al., CoRL 2023</span></figcaption></figure>
+      <figure class="vf"><video src="vid/s03_moka_teaser.mp4" poster="img/s03_moka_poster.jpg" muted loop playsinline preload="none" controls aria-label="MOKA: keypoint marks on the image guide a table-cleaning task, then a grid of other tasks"></video><figcaption><span class="nm">MOKA</span><span class="rep">Keypoint affordances</span><span class="ct">Liu et al., RSS 2024</span></figcaption></figure>
+      <figure class="vf"><video src="vid/s03_rekep.mp4" poster="img/image4.jpg" muted loop playsinline preload="none" controls aria-label="ReKep demonstration"></video><figcaption><span class="nm">ReKep</span><span class="rep">Keypoint constraints</span><span class="ct">Huang et al., CoRL 2024</span></figcaption></figure>
+      <figure class="vf"><video src="vid/s03_capx_red_objects.mp4" poster="img/s03_capx_poster.jpg" muted loop playsinline preload="none" controls aria-label="CaP-X: a two-arm robot puts all red objects into a bowl, zero-shot"></video><figcaption><span class="nm">CaP-X</span><span class="rep">Code</span><span class="ct">ICML 2026</span></figcaption></figure>
+    </div>
+  </div>
+  <div class="slide-number"></div>
+
+</section>
+
+<!-- 4 -->
+<section class="slide" id="s-rw-gap">
+  <div class="sec">02 · Background</div>
+  <h2>VLM-Based Robotic Control</h2>
+  <p class="sub">VLMs offer broad priors and promising zero-shot manipulation,<br><span class="neg">but lack a natural interface for fine-grained task specialization</span></p>
+  <div class="body">
+    <div class="vs">
+      <figure class="vf"><video src="vid/s05_general_pickup_layout13_success.mp4" poster="img/s05_pickup_poster.jpg" muted loop playsinline preload="none" controls aria-label="Code-as-Diffusion picks up the named spatula among many objects"></video>
+        <figcaption class="vc good"><span class="mk">✓</span><span><span class="nm">Good at reasoning and broad priors</span></span></figcaption></figure>
+      <figure class="vf"><video src="vid/s05_insert_tubes_layout5_failure.mp4" poster="img/s05_tubes_poster.jpg" muted loop playsinline preload="none" controls aria-label="Code-as-Diffusion holds a tube above the rack; it never goes into the hole"></video>
+        <figcaption class="vc bad"><span class="mk">✗</span><span><span class="nm">Fails at fine-grained dexterity and specialization</span></span></figcaption></figure>
+    </div>
+  </div>
+  <div class="slide-number"></div>
+</section>
+
+<!-- 5 -->
+<section class="slide" id="s-rw-steer">
+  <div class="sec">02 · Background</div>
+  <h2>Policy Steering</h2>
+  <p class="sub">Few-shot specialization without modifying the base policy,<br><span class="neg">but it assumes a trained diffusion or flow-matching policy</span></p>
+  <div class="body">
+    <div class="figs two vids5">
+      <figure><video src="vid/s05_dsrl_pi0_toaster.mp4" poster="img/s05_dsrl_poster.jpg" muted loop playsinline preload="none" controls aria-label="DSRL: nine rollouts of pi0 with the learned noise policy putting bread in a toaster"></video><figcaption><span class="nm">DSRL: Diffusion Steering via Reinforcement Learning</span><span class="ct">Wagenmaker et al., 2025</span></figcaption></figure>
+      <figure><video src="vid/s05_pps_jeans.mp4" poster="img/s05_pps_poster.jpg" muted loop playsinline preload="none" controls aria-label="PPS: a robot arm folds a pair of jeans"></video><figcaption><span class="nm">PPS: Proxy Policy Steering</span><span class="ct">2025</span></figcaption></figure>
+    </div>
+  </div>
+  <div class="slide-number"></div>
+
+</section>
+
+<!-- 6 -->
+<section class="slide" id="s-goal">
+  <div class="sec">02 · Background</div>
+  <h2>Research Goal</h2>
+  <p class="sub">How can we connect these two paradigms?</p>
+  <div class="body">
+    <div class="panel2 rows4">
+      <div class="pcard"><h3>VLM-based robotic control</h3><video src="vid/s06_cap_whiteboard_hexagon.mp4" poster="img/s06_cap_poster.jpg" muted loop playsinline preload="none" controls aria-label="Code as Policies: a robot draws a hexagon on a whiteboard"></video><div class="verdict"><span class="pill yes">Strength</span>Broad priors, zero-shot</div><div class="verdict"><span class="pill no">Gap</span>Cannot specialize: not a diffusion policy</div></div>
+      <div class="pcard"><h3>Policy steering</h3><video src="vid/s06_pps_flower.mp4" poster="img/s06_pps_poster.jpg" muted loop playsinline preload="none" controls aria-label="Proxy Policy Steering: a robot puts a flower into a vase"></video><div class="verdict"><span class="pill yes">Strength</span>Can specialize, few-shot</div><div class="verdict"><span class="pill no">Gap</span>Needs a diffusion policy, often from large-scale training</div></div>
+    </div>
+  </div>
+  <p class="takeaway goal"><span class="lbl">Goal:</span> can we turn VLM-based control into a <b>steerable diffusion process</b>, without large-scale training?</p>
+  <div class="slide-number"></div>
+
+</section>
+
+<!-- 7 -->
+<section class="slide" id="s-insight">
+  <div class="sec">03 · Approach</div>
+  <h2>Key Insight: Training-Free Diffusion</h2>
+  <p class="sub">Training-free diffusion enables analytical diffusion without training a denoiser,<br><span class="neg">but existing methods typically rely on predefined dynamics, costs, or constraints</span></p>
+  <div class="body">
+    <div class="figs two" style="grid-template-columns:0.9fr 1.1fr">
+      <figure><img src="img/image2.png" alt="Model-Based Diffusion: forward and backward process with a model-based score" style="height:280px"><figcaption><span class="nm">Model-Based Diffusion</span><span class="ct">Pan et al., NeurIPS 2024</span></figcaption></figure>
+      <figure><video src="vid/s07_dialmpc.mp4" poster="img/image3.jpg" muted loop playsinline preload="none" controls aria-label="DIAL-MPC" style="height:280px"></video><figcaption><span class="nm">DIAL-MPC</span><span class="ct">Xue et al., ICRA 2025</span></figcaption></figure>
+    </div>
+  </div>
+  <p class="takeaway goal"><span aria-hidden="true">🤔</span> What if we instead build the action distribution directly from <b>prompting a VLM</b>?</p>
+  <div class="slide-number"></div>
+
+</section>
+
+<!-- 8 -->
+<section class="slide" id="s-idea">
+  <div class="sec">03 · Approach</div>
+  <h2>Our Idea: Code-as-Diffusion</h2>
+  <p class="takeaway goal top"><span class="lbl">Key Idea:</span> Formalize VLM-generated code into an <b>analytical diffusion policy</b></p>
+  <template id="t-idea-sub"><p class="sub">Bridging zero-shot control and few-shot specialization</p></template>
+  <div class="body">
+    <div class="isteps" aria-hidden="true">
+      <div class="istep"><span class="n">1</span>VLM writes code</div><span class="iar">→</span>
+      <div class="istep"><span class="n">2</span>Analytical diffusion policy</div><span class="iar">→</span>
+      <div class="istep"><span class="n">3</span>Steerable actions</div>
+    </div>
+    <canvas class="istory" role="img" aria-label="A VLM writes code that proposes left and right grasps of a mug handle; noisy gripper paths denoise into these two path families; steering then sends every path to the left family"></canvas>
+  </div>
+  <template id="t-idea-cards"><!-- three-card version, hidden -->
+    <div class="idea3">
+      <div class="icard">
+        <div class="ihead">VLM</div>
+        <pre class="icode"><code><span class="cm"># "Put the mug on the rack"</span>
+handle = <span class="fn">find</span>(<span class="st">"mug handle"</span>)
+<span class="kw">for</span> side <span class="kw">in</span> [<span class="st">"left"</span>, <span class="st">"right"</span>]:
+  <span class="fn">propose</span>(<span class="fn">grasp</span>(handle, side))</code></pre>
+        <div class="isub">Writes code that proposes motions</div>
+      </div>
+      <div class="iarrow" aria-hidden="true">→</div>
+      <div class="icard">
+        <div class="ihead">Analytical diffusion policy</div>
+        <canvas class="iflow" data-mode="base" role="img" aria-label="Noise samples flow into two action modes"></canvas>
+        <div class="isub">Noise to actions, no training</div>
+      </div>
+      <div class="iarrow" aria-hidden="true">→</div>
+      <div class="icard">
+        <div class="ihead">Steerable actions</div>
+        <canvas class="iflow" data-mode="steer" role="img" aria-label="Steering moves most samples to one action mode"></canvas>
+        <div class="isub">Few-shot, e.g. with PPS or DSRL</div>
+      </div>
+    </div>
+  </template>
+  <template id="t-idea-pipe"><!-- previous pipeline, hidden -->
+  <div class="body">
+    <div class="pipe static">
+      <div class="box" data-k="vlm">VLM</div><div class="arrow">→</div>
+      <div class="adp"><span class="lab">Analytical diffusion policy</span>
+        <div class="box" data-k="prop">Motion<br>proposals</div><div class="arrow">→</div>
+        <div class="box" data-k="gmm">Gaussian<br>mixture</div><div class="arrow">→</div>
+        <div class="box" data-k="flow">Flow<br>sampling</div>
+      </div><div class="arrow">→</div>
+      <div class="box" data-k="act">Robot<br>actions</div>
+    </div>
+  </div>
+  </template>
+  <div class="slide-number"></div>
+
+</section>
+
+<!-- 9 -->
+
+
+<!-- 10 -->
+<!-- 11 -->
+<section class="slide" id="s-obs1">
+  <div class="sec">03 · Approach</div>
+  <h2>Our Idea: Code-as-Diffusion</h2>
+  <p class="sub">Observation 1: Agent Code Is Good at Manipulation</p>
+  <div class="body">
+    <div class="figs two vids10">
+      <figure><video src="vid/s10_capx_stack_everything.mp4" poster="img/s10_capx_poster.jpg" muted loop playsinline preload="none" controls aria-label="CaP-X: a two-arm robot stacks all objects as high as it can, zero-shot"></video><figcaption><span class="nm">CaP-X</span><span class="ct">ICML 2026</span></figcaption></figure>
+      <figure><video src="vid/s10_aspire_unscrew_cap.mp4" poster="img/s10_aspire_poster.jpg" muted loop playsinline preload="none" controls aria-label="ASPIRE: a two-arm robot unscrews a bottle cap; the agent's code calls show on screen"></video><figcaption><span class="nm">ASPIRE</span><span class="ct">2026</span></figcaption></figure>
+    </div>
+    <template id="t-obs1-img"><div class="figs" style="grid-template-columns:1fr;justify-items:center"><figure style="width:600px"><img src="img/image5.jpg" alt="Code-as-Policies policy code" style="height:330px"><figcaption><span class="nm">Figure: Code as Policies</span><span class="ct">Liang et al., ICRA 2023</span></figcaption></figure></div></template>
+  </div>
+  <p class="takeaway goal"><span aria-hidden="true">📝</span> <span class="lbl">Takeaway:</span> We can leverage <b>agent-generated code</b> to directly produce <b>robot action chunks</b>.</p>
+  <div class="slide-number"></div>
+
+</section>
+
+<!-- 12 -->
+<section class="slide" id="s-obs2">
+  <div class="sec">03 · Approach</div>
+  <h2>Our Idea: Code-as-Diffusion</h2>
+  <p class="sub">Observation 2: GMMs Have Closed-Form Diffusion Scores</p>
+  <div class="body">
+    <canvas class="gmm4" role="img" aria-label="Four panels: a Gaussian mixture; its three components decomposed; each component annealed wider by added noise; the components recomposed into the noisy mixture with score arrows"></canvas>
+    <template id="t-obs2-eq"><!-- equation version, hidden -->
+    <div class="isteps" aria-hidden="true">
+      <div class="istep"><span class="n">1</span>Decompose</div><span class="iar">→</span>
+      <div class="istep"><span class="n">2</span>Anneal</div><span class="iar">→</span>
+      <div class="istep"><span class="n">3</span>Recompose and compute score</div>
+    </div>
+    <div class="gstage">
+      <canvas class="gmmflow" role="img" aria-label="A three-component Gaussian mixture splits into its components; each component widens in closed form as noise grows; the components sum back into the noisy mixture and score arrows point toward its modes"></canvas>
+      <div class="geq">
+        <div class="eqh">Closed form at every noise level</div>
+        <div class="eqr"><span class="eql">Mixture</span><span class="eqm"><i>p</i><sub>0</sub>(<i>x</i>) = Σ<sub><i>k</i></sub> <i>w<sub>k</sub></i> 𝒩(<i>x</i>; <i>μ<sub>k</sub></i>, <i>σ<sub>k</sub></i><sup>2</sup>)</span></div>
+        <div class="eqr"><span class="eql">Each component, noised</span><span class="eqm">𝒩(<i>x</i>; <i>α<sub>t</sub>μ<sub>k</sub></i>, <i>α<sub>t</sub></i><sup>2</sup><i>σ<sub>k</sub></i><sup>2</sup> + <i>σ<sub>t</sub></i><sup>2</sup>)</span></div>
+        <div class="eqr"><span class="eql">Recomposed</span><span class="eqm"><i>p<sub>t</sub></i>(<i>x</i>) = Σ<sub><i>k</i></sub> <i>w<sub>k</sub></i> 𝒩<sub><i>k</i>,<i>t</i></sub>(<i>x</i>)</span></div>
+        <div class="eqr"><span class="eql">Score</span><span class="eqm">∇ log <i>p<sub>t</sub></i>(<i>x</i>) = Σ<sub><i>k</i></sub> <i>γ<sub>k</sub></i>(<i>x</i>) <span class="frac"><span><i>α<sub>t</sub>μ<sub>k</sub></i> − <i>x</i></span><span><i>α<sub>t</sub></i><sup>2</sup><i>σ<sub>k</sub></i><sup>2</sup> + <i>σ<sub>t</sub></i><sup>2</sup></span></span></span></div>
+        <div class="eqn"><i>γ<sub>k</sub></i>(<i>x</i>): weight of component <i>k</i> at <i>x</i></div>
+      </div>
+    </div>
+    </template>
+    <template id="t-obs2-img"><div class="figs" style="grid-template-columns:1fr;justify-items:center"><figure style="width:1080px"><img src="img/image7.png" alt="A mixture decomposed into components, annealed, and recomposed to compute the score" style="height:320px"></figure></div></template>
+  </div>
+  <p class="takeaway goal"><span aria-hidden="true">📝</span> <span class="lbl">Takeaway:</span> We should leverage <b>GMM structure</b> in our target distribution.</p>
+  <div class="slide-number"></div>
+
+</section>
+
+<!-- 13 -->
+<section class="slide" id="s-overview">
+  <div class="sec">03 · Approach</div>
+  <h2>Code-as-Diffusion Method Overview</h2>
+  <div class="body">
+    <div class="ov">
+      <svg class="ov-flow" viewBox="0 0 1136 470" aria-hidden="true">
+        <defs><marker id="ovh" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#9aa5ab"/></marker></defs>
+        <rect class="ov-zone z1" x="24" y="150" width="640" height="236" rx="12" />
+        <rect class="ov-zone z2" x="676" y="150" width="436" height="236" rx="12" />
+        <text class="ov-zl" x="652" y="172" text-anchor="end">Step 1 · VLM-defined implicit distribution</text>
+        <text class="ov-zl" x="1100" y="172" text-anchor="end">Step 2 · Gaussian mixture approximation</text>
+        <path id="ovp0" d="M156 45 L 199 45" />
+        <path id="ovp1" d="M346 70 L 346 183" />
+        <path id="ova1" d="M220 261 L 254 261" />
+        <path id="ova2" d="M436 261 L 470 261" />
+        <path id="ova3" d="M652 261 L 698 261" />
+        <path id="ova4" d="M880 261 L 914 261" />
+        <path id="ovl" d="M1006 374 L 1006 428 L 130 428 L 130 376" />
+        <text class="ov-tag" x="177" y="36">once</text>
+        <text class="ov-ll" x="568" y="452">Execute the action chunk, then observe again <tspan class="ov-step"></tspan></text>
+        <circle class="ov-dot" r="6" cx="-20" cy="-20" />
+      </svg>
+      <figure class="ov-init" data-k="init" style="left:24px"><img src="img/image35.jpg" alt="Initial observation of the scene"><figcaption>Initial Observation</figcaption></figure>
+      <div class="ov-vlm" data-k="vlm" style="left:200px"><img src="img/image6.png" alt="VLM"><span><b>VLM writes the program</b><small>once per task</small></span></div>
+      <figure class="ov-c" data-k="c1" style="left:40px"><div class="ov-m"><img src="img/image14.jpg" alt="Real-time observation"></div><figcaption>Real-time Observation</figcaption></figure>
+      <figure class="ov-c" data-k="c2" style="left:256px"><div class="ov-m"><div class="ov-code"><pre><code>weights = <span class="fn">dict</span>(
+  approach=…,
+  grasp=…,
+  lift=…,
+  carry=…,
+  release=…,
+)</code></pre></div></div><figcaption>Program → mode weights</figcaption></figure>
+      <figure class="ov-c" data-k="c3" style="left:472px"><div class="ov-m"><img src="img/s13_samples.jpg" alt="Action chunk samples"></div><figcaption>Action Chunk Samples</figcaption></figure>
+      <figure class="ov-c" data-k="c4" style="left:700px"><div class="ov-m"><img src="img/s13_gmm.jpg" alt="Gaussian mixture model fitted to the samples"></div><figcaption>Gaussian Mixture Model</figcaption></figure>
+      <figure class="ov-c" data-k="c5" style="left:916px"><div class="ov-m"><video src="vid/s13_diffusion_sampling.mp4" poster="img/s13_sampling_poster.jpg" muted loop playsinline preload="none" aria-label="Diffusion sampling from the mixture"></video></div><figcaption>Diffusion Sampling</figcaption></figure>
+    </div>
+  </div>
+  <div class="slide-number"></div>
+</section>
+
+<section class="slide" id="s-step1">
+  <div class="sec">03 · Approach</div>
+  <h2>Code-as-Diffusion Method Overview</h2>
+  <p class="sub">Step 1: VLM-Defined Implicit Distribution</p>
+  <div class="body">
+    <div class="s12">
+      <svg class="s12-flow" viewBox="0 0 1136 480" aria-hidden="true">
+        <defs><marker id="s12h" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#9aa5ab"/></marker></defs>
+        <path id="s12p1" d="M272 75 L 336 75" />
+        <path id="s12p1b" d="M550 120 L 550 171" />
+        <path id="s12p2" d="M272 310 L 336 310" />
+        <path id="s12p3" d="M762 310 L 826 310" />
+        <text x="304" y="64" class="s12-tag">once</text>
+        <text x="304" y="299" class="s12-tag">every step</text>
+        <circle class="s12-dot" r="6" cx="-20" cy="-20" />
+      </svg>
+      <figure class="s12-obs" style="top:0px"><img src="img/image35.jpg" alt="Initial observation of the scene"><figcaption>Initial Observation</figcaption></figure>
+      <figure class="s12-obs" style="top:235px"><img src="img/image14.jpg" alt="Real-time observation during the rollout"><figcaption>Real-time Observation</figcaption></figure>
+      <div class="s12-vlm"><img src="img/image6.png" alt="VLM"><span><b>VLM writes the program</b><small>once per task, from the prompt and the initial observation</small></span></div>
+      <div class="s12-prog"><div class="s12-ph">Program: observation → mode weights</div><pre><code>weights = <span class="fn">dict</span>(
+  approach=<span class="nu">normal</span>*(1-.70*failure)*(1-.72*purchase),
+  grasp=<span class="nu">normal</span>*purchase*(.85-.50*failure),
+  lift=retention*(1-up)*(1-aligned),
+  carry=retention*up*(1-aligned),
+  lower=retention*aligned*(1-.85*releasegate),
+  release=retention*releasegate*.95,
+  retry=<span class="nu">normal</span>*(.012+.95*failure),
+  hold=.008+.035*u/.03,
+)
+<span class="kw">if</span> complete:
+  weights = {k: 0. <span class="kw">for</span> k <span class="kw">in</span> weights}
+  weights['hold'] = .05</code></pre></div>
+      <figure class="s12-out"><img src="img/image15.jpg" alt="Action chunk samples drawn from the program's modes"><figcaption>Action Chunk Samples <span class="s12-step"></span></figcaption></figure>
+    </div>
+    <template id="t-step1-old"><!-- previous layout, hidden -->
+    <div class="steps">
+      <div class="col">
+        <figure><img src="img/image35.jpg" alt="Initial observation"><figcaption>Initial observation</figcaption></figure>
+        <figure><img src="img/image14.jpg" alt="Real-time observation"><figcaption>Real-time observation</figcaption></figure>
+      </div>
+      <div class="ar">→</div>
+      <div class="col" style="justify-items:center">
+        <div class="vlm"><img src="img/image6.png" alt="VLM"><span style="font-size:19px;color:var(--muted);font-weight:600">The VLM writes a program once; it maps each observation to weighted motion modes.</span></div>
+        <figure style="width:100%"><img class="code" src="img/image31.png" alt="Program code: mode weights from task state"></figure>
+      </div>
+      <div class="ar">→</div>
+      <figure><img src="img/image15.jpg" alt="Action chunk samples drawn from the program's modes"><figcaption>Action chunk samples</figcaption></figure>
+    </div>
+    </template>
+  </div>
+  <div class="slide-number"></div>
+
+</section>
+
+<!-- 14 -->
+<section class="slide" id="s-step2">
+  <div class="sec">03 · Approach</div>
+  <h2>Code-as-Diffusion Method Overview</h2>
+  <p class="sub">Step 2: Gaussian Mixture Approximation</p>
+  <div class="body">
+    <div class="s13">
+      <figure class="s13-p"><img src="img/s13_samples.jpg" alt="Action chunk samples: a fan of the program's proposed gripper paths"><figcaption>Action Chunk Samples</figcaption></figure>
+      <div class="s13-ar" aria-hidden="true">→</div>
+      <figure class="s13-p"><img src="img/s13_gmm.jpg" alt="Gaussian mixture model fitted to the samples, drawn as a tube"><figcaption>Gaussian Mixture Model</figcaption></figure>
+      <div class="s13-ar" aria-hidden="true">→</div>
+      <figure class="s13-p"><video src="vid/s13_diffusion_sampling.mp4" poster="img/s13_sampling_poster.jpg" muted loop playsinline preload="none" controls aria-label="Diffusion sampling: noisy gripper-path points denoise into an action chunk, three independent draws"></video><figcaption>Diffusion Sampling</figcaption></figure>
+    </div>
+    <template id="t-step2-schematic"><canvas class="gmm3" role="img" aria-label="Three panels: sampled action chunks fan out into three modes; a Gaussian mixture with one tube per mode, weighted by sample counts; noise trajectories denoise into the tubes"></canvas></template>
+    <template id="t-step2-old"><div class="arrowrow">
+      <figure><img src="img/image15.jpg" alt="Action chunk samples"><figcaption>Action chunk samples</figcaption></figure>
+      <div class="ar">→</div>
+      <figure><img src="img/image36.jpg" alt="Gaussian mixture model fitted to the samples"><figcaption>Gaussian mixture model</figcaption></figure>
+      <div class="ar">→</div>
+      <figure><img src="img/image9.gif" alt="Diffusion sampling from the mixture"><figcaption>Diffusion sampling</figcaption></figure>
+    </div></template>
+  </div>
+  <p class="takeaway goal"><span aria-hidden="true">💡</span> This procedure defines an <b>analytical diffusion ODE</b>.</p>
+  <div class="slide-number"></div>
+
+</section>
+
+<section class="slide" id="s-ch0" data-checks="0">
+  <div class="sec">04 · Properties</div>
+  <h2>What Makes a Good Diffusion Policy?</h2>
+  <p class="takeaway goal top"><span aria-hidden="true">🧐</span> Now, how do we know our method is a “good” diffusion-based policy?</p>
+  <div class="body">
+    <div class="checks"></div>
+  </div>
+  <div class="slide-number"></div>
+
+</section>
+
+<!-- 15 -->
+<section class="slide" id="s-ch0b" data-checks="0" data-focus="1">
+  <div class="sec">04 · Properties</div>
+  <h2>What Makes a Good Diffusion Policy?</h2>
+  <div class="body">
+    <div class="checks"></div>
+  </div>
+  <div class="slide-number"></div>
+
+</section>
+
+<section class="slide" id="s-noise">
+  <div class="sec">04 · Properties</div>
+  <h2>Deterministic Diffusion ODE</h2>
+  <p class="sub">Code-as-Diffusion is deterministic and as smooth as π<sub>0.5</sub></p>
+  <div class="body">
+    <div class="s15n">
+      <figure><figcaption>Code-as-Diffusion (Ours)</figcaption><video src="vid/s15_noise_vlm.mp4" poster="img/s15_noise_vlm_poster.png" muted loop playsinline preload="none" aria-label="Code-as-Diffusion: the wrist path of one action chunk moves smoothly from the red cube to the blue cube as the initial noise moves"></video></figure>
+      <figure><figcaption>π<sub>0.5</sub></figcaption><video src="vid/s15_noise_pi.mp4" poster="img/s15_noise_pi_poster.png" muted loop playsinline preload="none" aria-label="pi 0.5: the wrist path of one action chunk moves smoothly between the cubes as the initial noise moves"></video></figure>
+    </div>
+    <p class="s15n-meta">Two Cubes · “Pick up a cube.” · wrist path of one action chunk as the initial noise moves along one PCA direction</p>
+  </div>
+  <p class="takeaway goal"><span aria-hidden="true">💡</span> Our Step 2 GMM procedure defines an <b>analytical diffusion ODE</b>.</p>
+  <div class="slide-number"></div>
+</section>
+
+<section class="slide" id="s-ch1" data-checks="1">
+  <div class="sec">04 · Properties</div>
+  <h2>What Makes a Good Diffusion Policy?</h2>
+  <div class="body">
+    <div class="checks"></div>
+  </div>
+  <div class="slide-number"></div>
+
+</section>
+
+<!-- 16 -->
+<section class="slide" id="s-multi">
+  <div class="sec">04 · Properties</div>
+  <h2>Multimodality</h2>
+  <p class="sub">Code-as-Diffusion can induce diverse motions on a variety of states.</p>
+  <div class="body">
+    <div class="figs three s15">
+      <figure><img src="img/s15_cube.jpg" alt="Pick up a cube: sampled motions toward two cubes"><figcaption><i>Pick up a cube.</i></figcaption></figure>
+      <figure><img src="img/s15_banana.jpg" alt="Put a banana in the bin: sampled motions toward several bananas"><figcaption><i>Put a banana in the bin.</i></figcaption></figure>
+      <figure><img src="img/s15_square_nut.jpg" alt="Place the square nut onto the matching peg: sampled motions around the nut"><figcaption><i>Place the square nut onto the matching peg.</i></figcaption></figure>
+    </div>
+  </div>
+  <template id="t-multi-old"><div class="body">
+    <div class="figs two" style="max-width:960px">
+      <figure><img src="img/image17.jpg" alt="Pick up a cube: sampled motions toward two cubes"><figcaption><i>Pick up a cube.</i></figcaption></figure>
+      <figure><img src="img/image10.jpg" alt="Put a banana in the bin: sampled motions toward several bananas"><figcaption><i>Put a banana in the bin.</i></figcaption></figure>
+    </div>
+  </div>
+  <p class="takeaway c">Our base policy induces <b>diverse motions</b> in a variety of states.</p></template>
+  <div class="slide-number"></div>
+
+</section>
+
+<!-- 17 -->
+<section class="slide" id="s-ch2" data-checks="2">
+  <div class="sec">04 · Properties</div>
+  <h2>What Makes a Good Diffusion Policy?</h2>
+  <div class="body">
+    <div class="checks"></div>
+  </div>
+  <div class="slide-number"></div>
+
+</section>
+
+<!-- 18 -->
+<section class="slide" id="s-priors">
+  <div class="sec">04 · Properties</div>
+  <h2>Strong Priors</h2>
+  <p class="sub">Code-as-Diffusion can produce reasonable zero-shot actions.</p>
+  <div class="body">
+    <div class="figs two s17">
+      <figure><video src="vid/s17_weight_zero_shot.mp4" poster="img/s17_weight_poster.jpg" muted loop playsinline preload="none" controls aria-label="Weight task: Code-as-Diffusion moves a fruit onto the scale, zero-shot"></video></figure>
+      <figure><video src="vid/s17_square_zero_shot.mp4" poster="img/s17_square_poster.jpg" muted loop playsinline preload="none" controls aria-label="Square task: Code-as-Diffusion grasps the square nut, zero-shot"></video></figure>
+    </div>
+  </div>
+  <div class="slide-number"></div>
+
+</section>
+
+<!-- 19 -->
+<section class="slide" id="s-ch3">
+  <div class="sec">04 · Properties</div>
+  <h2>What Makes a Good Diffusion Policy?</h2>
+  <div class="body">
+    <div class="pdone">
+      <figure class="pd"><div class="pd-h"><span class="mk">✓</span><div><b>Deterministic diffusion ODE</b><span>Consistent noise-to-action mapping</span></div></div>
+        <video src="vid/s15_noise_vlm.mp4" poster="img/s15_noise_vlm_poster.png" muted loop playsinline preload="none" aria-label="One action chunk's wrist path moves smoothly between the cubes as the initial noise moves"></video></figure>
+      <figure class="pd"><div class="pd-h"><span class="mk">✓</span><div><b>Multimodality</b><span>Diverse, task-relevant action modes</span></div></div>
+        <video src="vid/s21_multimodal_cube.mp4" poster="img/s21_multimodal_poster.png" muted loop playsinline preload="none" aria-label="Thirty sampled action chunks fan out toward both cubes, across ten states"></video></figure>
+      <figure class="pd"><div class="pd-h"><span class="mk">✓</span><div><b>Strong priors</b><span>Meaningful, high-quality robot actions</span></div></div>
+        <video src="vid/s17_weight_zero_shot.mp4" poster="img/s17_weight_poster.jpg" muted loop playsinline preload="none" aria-label="Weight task: Code-as-Diffusion moves a fruit onto the scale, zero-shot"></video></figure>
+    </div>
+  </div>
+  <p class="takeaway goal"><span aria-hidden="true">🎉</span> Voila! Code-as-Diffusion is <b>deterministic, smooth, multimodal</b>, and has <b>strong priors</b>!</p>
+  <div class="slide-number"></div>
+  <template id="t-ch3-list"><!-- previous checklist version: <section class="slide" id="s-ch3" data-checks="3">
+  <div class="sec">04 · Properties</div>
+  <h2>What Makes a Good Diffusion Policy?</h2>
+  <div class="body">
+    <div class="checks"></div>
+  </div>
+  <div class="slide-number"></div>
+
+</section> --></template>
+</section>
+
+<!-- 20 -->
+<section class="slide" id="s-benefits">
+  <h2>Our Idea: Code-as-Diffusion</h2>
+  <p class="sub">What this formulation enables</p>
+  <div class="body">
+    <div class="bens">
+      <figure class="ben"><div class="ben-h"><span class="bmk"></span><div><b>Broad zero-shot capabilities</b><span>Use VLM priors without large-scale robot action pretraining</span></div></div><video src="vid/s05_general_pickup_layout13_success.mp4" poster="img/s05_pickup_poster.jpg" muted loop playsinline preload="none" aria-label="Zero-shot: two arms pick up the named spatula in clutter"></video></figure>
+      <figure class="ben"><div class="ben-h"><span class="bmk"></span><div><b>Few-shot steering for fine-grained specialization</b><span>Adapt Code-as-Diffusion with existing steering methods (e.g. PPS and DSRL)</span></div></div><video src="vid/enable_steer_square.mp4" poster="img/enable_steer_square_poster.jpg" muted loop playsinline preload="none" aria-label="PPS-steered Code-as-Diffusion places the square nut on the peg"></video></figure>
+      <figure class="ben"><div class="ben-h"><span class="bmk"></span><div><b>Embodiment flexibility</b><span>Efficiently adapt to single-arm, dual-arm and dexterous-hand robots</span></div></div><video src="vid/enable_embodiments.mp4" poster="img/enable_embodiments_poster.jpg" muted loop playsinline preload="none" aria-label="Four tasks: two single-arm PPS tasks, a two-arm RoboDojo task and a two-hand DexJoCo task"></video></figure>
+    </div>
+  </div>
+  <div class="slide-number"></div>
+</section>
+
+<section class="slide" id="s-tasks">
+  <div class="sec">05 · Results</div>
+  <h2>Tasks</h2>
+  <div class="body">
+    <div class="tk">
+      <div class="tk-row"><div class="tk-h"><b>Single-Arm</b><span>PPS Tasks</span></div>
+        <video src="vid/tasks_pps_fruit.mp4" poster="img/tasks_pps_fruit_poster.jpg" muted loop playsinline preload="none" aria-label="Fruit weighing"></video>
+        <video src="vid/tasks_pps_egg.mp4" poster="img/tasks_pps_egg_poster.jpg" muted loop playsinline preload="none" aria-label="Egg cooking"></video>
+        <video src="vid/tasks_pps_tea.mp4" poster="img/tasks_pps_tea_poster.jpg" muted loop playsinline preload="none" aria-label="Tea pouring"></video>
+        <video src="vid/tasks_pps_capsule.mp4" poster="img/tasks_pps_capsule_poster.jpg" muted loop playsinline preload="none" aria-label="Capsule loading"></video>
+      </div>
+      <div class="tk-row"><div class="tk-h"><b>Dual-Arm</b><span>RoboDojo</span></div>
+        <video src="vid/tasks_rd_stack_blocks_layout0.mp4" poster="img/tasks_rd_stack_blocks_layout0_poster.jpg" muted loop playsinline preload="none" aria-label="Stack blocks"></video>
+        <video src="vid/tasks_rd_stack_bowls_layout1.mp4" poster="img/tasks_rd_stack_bowls_layout1_poster.jpg" muted loop playsinline preload="none" aria-label="Stack bowls"></video>
+        <video src="vid/tasks_rd_general_pickup_layout3.mp4" poster="img/tasks_rd_general_pickup_layout3_poster.jpg" muted loop playsinline preload="none" aria-label="General pick-up"></video>
+        <video src="vid/tasks_rd_put_bottles_into_dustbin_layout1.mp4" poster="img/tasks_rd_put_bottles_into_dustbin_layout1_poster.jpg" muted loop playsinline preload="none" aria-label="Bottles to bin"></video>
+      </div>
+      <div class="tk-row"><div class="tk-h"><b>Dual-Dexterous</b><span>SpatialDex Tasks</span></div>
+        <video src="vid/tasks_dj_assembly.mp4" poster="img/tasks_dj_assembly_poster.jpg" muted loop playsinline preload="none" aria-label="DexJoCo bimanual assembly in simulation"></video>
+        <video src="vid/tasks_dj_microwave.mp4" poster="img/tasks_dj_microwave_poster.jpg" muted loop playsinline preload="none" aria-label="DexJoCo bimanual microwave in simulation"></video>
+        <img src="img/tasks_wuji_relocation.jpg" alt="SpatialDex Wuji + Tianji simulation: relocation of a ball with two dexterous hands">
+        <img src="img/tasks_wuji_handover.jpg" alt="SpatialDex Wuji + Tianji simulation: handover of a toy between two dexterous hands">
+      </div>
+    </div>
+  </div>
+  <p class="takeaway goal"><span aria-hidden="true">🦾</span> Now time to test it! Can we <b>maintain zero-shot priors</b> and also <b>steer</b> with our method to <b>improve performance</b>?</p>
+  <div class="foot warn">⚠ Note: Results are preliminary, and evaluations are still ongoing for some of the listed tasks.</div>
+  <div class="slide-number"></div>
+</section>
+
+<section class="slide" id="s-results">
+  <div class="sec">05 · Results</div>
+  <h2>Quantitative Results</h2>
+  <div class="body">
+    <figure class="chart quant"><img src="img/s23_quant_results_original.png" alt="Success rate on the Square task: base 55%, specialist 40%, PPS 67.5%. Weight task: base 85%, specialist 60%, PPS 72.5%."></figure>
+  </div>
+  <div class="foot warn">⚠ Note: Results are preliminary, and evaluations are still ongoing for some of the listed tasks.</div>
+  <div class="slide-number"></div>
+
+</section>
+
+<!-- 21 -->
+<section class="slide" id="s-weight-ok">
+  <div class="sec">05 · Results</div>
+  <h2>Rollout Visualization (Success)</h2>
+  <p class="sub">Weight Task</p>
+  <div class="body">
+    <div class="vrow one pano w2"><figure class="vf"><video src="vid/s21_weight_success.mp4" poster="img/s21_weight_success_poster.jpg" muted loop playsinline preload="none" controls aria-label="Weight task success"></video><figcaption>Success example 1</figcaption></figure></div>
+    <div class="vrow one pano w2"><figure class="vf"><div class="slotbox"><video src="vid/s21_weight_success_2.mp4" muted loop playsinline preload="none" aria-label="Weight task success, examples 2 and 3"></video><span class="slot-label">Video coming soon</span></div><figcaption>Success examples 2 and 3</figcaption></figure></div>
+  </div>
+  <div class="foot warn">⚠ Note: Results are preliminary, and evaluations are still ongoing for some of the listed tasks.</div>
+  <div class="slide-number"></div>
+
+</section>
+
+<!-- 22 -->
+<section class="slide" id="s-weight-fail">
+  <div class="sec">05 · Results</div>
+  <h2>Rollout Visualization (Failure)</h2>
+  <p class="sub">Weight Task</p>
+  <div class="body">
+    <div class="vrow one pano"><figure class="vf"><video src="vid/s22_weight_failure.mp4" poster="img/s22_weight_failure_poster.jpg" muted loop playsinline preload="none" controls aria-label="Weight task failure"></video><figcaption>Failure example</figcaption></figure></div>
+  </div>
+  <div class="foot warn">⚠ Note: Results are preliminary, and evaluations are still ongoing for some of the listed tasks.</div>
+  <div class="slide-number"></div>
+
+</section>
+
+<!-- 23 -->
+<section class="slide" id="s-square-ok">
+  <div class="sec">05 · Results</div>
+  <h2>Rollout Visualization (Success)</h2>
+  <p class="sub">Square Task</p>
+  <div class="body">
+    <div class="vrow wide" style="grid-template-columns:1fr 1fr;margin-top:12px">
+      <figure class="vf"><video src="vid/s23_square_success_seed20.mp4" poster="img/image18.jpg" muted loop playsinline preload="none" controls aria-label="Square success, seed 20"></video><figcaption><b>Seed 20</b></figcaption></figure>
+      <figure class="vf"><div class="slotbox"><video src="vid/s23_square_success_seed24.mp4" poster="img/image19.jpg" muted loop playsinline preload="none" aria-label="Square success, seed 24"></video><span class="slot-label">Video coming soon</span></div><figcaption><b>Seed 24</b></figcaption></figure>
+      <figure class="vf"><div class="slotbox"><video src="vid/s23_square_success_seed21.mp4" poster="img/image12.jpg" muted loop playsinline preload="none" aria-label="Square success, seed 21"></video><span class="slot-label">Video coming soon</span></div><figcaption><b>Seed 21</b></figcaption></figure>
+      <div class="legendcard"><b>Lines in each frame</b><span><i style="background:#c46bd6"></i>Code-as-Diffusion</span><span><i style="background:#f08a3c"></i>Reference</span><span><i style="background:#4f8fd8"></i>Task</span><span><i style="background:#3fae5a"></i>PPS (executed)</span><span class="ln">Same observation and noise · PPS weight 0.5</span></div>
+    </div>
+  </div>
+  <div class="foot warn">⚠ Note: Results are preliminary, and evaluations are still ongoing for some of the listed tasks.</div>
+  <div class="slide-number"></div>
+
+</section>
+
+<!-- 24 -->
+<section class="slide" id="s-square-fail">
+  <div class="sec">05 · Results</div>
+  <h2>Rollout Visualization (Failure)</h2>
+  <p class="sub">Square Task</p>
+  <div class="body">
+    <div class="vrow wide" style="grid-template-columns:1fr 1fr;margin-top:12px">
+      <figure class="vf"><video src="vid/s24_square_failure_seed16.mp4" poster="img/image16.jpg" muted loop playsinline preload="none" controls aria-label="Square failure, seed 16"></video><figcaption><b>Seed 16</b></figcaption></figure>
+      <figure class="vf"><div class="slotbox"><video src="vid/s24_square_failure_seed8.mp4" poster="img/image33.jpg" muted loop playsinline preload="none" aria-label="Square failure, seed 8"></video><span class="slot-label">Video coming soon</span></div><figcaption><b>Seed 8</b></figcaption></figure>
+      <figure class="vf"><div class="slotbox"><video src="vid/s24_square_failure_seed9.mp4" poster="img/image25.jpg" muted loop playsinline preload="none" aria-label="Square failure, seed 9"></video><span class="slot-label">Video coming soon</span></div><figcaption><b>Seed 9</b></figcaption></figure>
+      <div class="legendcard"><b>Lines in each frame</b><span><i style="background:#c46bd6"></i>Code-as-Diffusion</span><span><i style="background:#f08a3c"></i>Reference</span><span><i style="background:#4f8fd8"></i>Task</span><span><i style="background:#3fae5a"></i>PPS (executed)</span><span class="ln">Same observation and noise · PPS weight 0.5</span></div>
+    </div>
+  </div>
+  <div class="foot warn">⚠ Note: Results are preliminary, and evaluations are still ongoing for some of the listed tasks.</div>
+  <div class="slide-number"></div>
+
+</section>
+
+<!-- 25 -->
+<section class="slide" id="s-robodojo">
+  <div class="sec">05 · Results</div>
+  <h2>Quantitative Results</h2>
+  <div class="body">
+    <figure class="chart quant"><img src="img/robodojo_quant.png" alt="RoboDojo dual-arm success rate on five tasks: Code-as-Diffusion vs pi0.5 (official and our runs), GPT-6 Astra, GPT-as-Policy, GPT-Policy and RoboICL"></figure>
+  </div>
+  <template id="t-robodojo-old"><div class="body">
+    <div class="chart"><img src="img/robodojo_five_tasks.png" alt="Success rate on five RoboDojo tasks: Code-as-Diffusion vs pi0.5 and other systems" style="max-height:340px"><span class="ct" style="margin-top:6px">Published numbers: the RoboDojo leaderboard (robodojo-benchmark.com) and each project's page.</span></div>
+  </div>
+  <p class="takeaway c">Code-as-Diffusion is good at reasoning and pick-and-place, but bad at orientation and handover-coordination tasks, which we expect PPS and steering to help.</p></template>
+  <div class="foot warn">⚠ Note: Results are preliminary, and evaluations are still ongoing for some of the listed tasks.</div>
+  <div class="slide-number"></div>
+
+</section>
+
+<!-- 26 -->
+<section class="slide" id="s-rd-ok1">
+  <div class="sec">05 · Results</div>
+  <h2>Rollout Visualization (Success)</h2>
+  <p class="sub">RoboDojo: Stack Bowls</p>
+  <div class="body">
+    <div class="vrow two" style="max-width:1000px;margin-left:auto;margin-right:auto">
+      <figure class="vf"><video src="vid/s26_bowls_a.mp4" poster="img/image21.jpg" muted loop playsinline preload="none" controls aria-label="Stack bowls success"></video><figcaption><span class="nm">Layout 3</span><span class="ct">success · 10.9 s</span></figcaption></figure>
+      <figure class="vf"><video src="vid/s26_bowls_b.mp4" poster="img/image27.jpg" muted loop playsinline preload="none" controls aria-label="Stack bowls success"></video><figcaption><span class="nm">Layout 1</span><span class="ct">success · 11.5 s</span></figcaption></figure>
+    </div>
+  </div>
+  <div class="foot warn">⚠ Note: Results are preliminary, and evaluations are still ongoing for some of the listed tasks.</div>
+  <div class="slide-number"></div>
+
+</section>
+
+<!-- 27 -->
+<section class="slide" id="s-rd-ok2">
+  <div class="sec">05 · Results</div>
+  <h2>Rollout Visualization (Success)</h2>
+  <p class="sub">RoboDojo: General Pick-Up</p>
+  <div class="body">
+    <div class="vrow two" style="max-width:1000px;margin-left:auto;margin-right:auto">
+      <figure class="vf"><video src="vid/s27_pickup_a.mp4" poster="img/image29.jpg" muted loop playsinline preload="none" controls aria-label="General pick-up success"></video><figcaption><span class="nm">Layout 4 · “Pick up the blue race toy car”</span><span class="ct">success · 3.5 s</span></figcaption></figure>
+      <figure class="vf"><video src="vid/s27_pickup_b.mp4" poster="img/image28.jpg" muted loop playsinline preload="none" controls aria-label="General pick-up success"></video><figcaption><span class="nm">Layout 3 · “Pick up the white toy car”</span><span class="ct">success · 2.9 s</span></figcaption></figure>
+    </div>
+  </div>
+  <div class="foot warn">⚠ Note: Results are preliminary, and evaluations are still ongoing for some of the listed tasks.</div>
+  <div class="slide-number"></div>
+
+</section>
+
+<!-- 28 -->
+<section class="slide" id="s-rd-fail1">
+  <div class="sec">05 · Results</div>
+  <h2>Rollout Visualization (Failure)</h2>
+  <p class="sub">RoboDojo: Bottles to Bin</p>
+  <div class="body">
+    <div class="vrow two" style="max-width:1000px;margin-left:auto;margin-right:auto">
+      <figure class="vf"><video src="vid/s28_bottles_a.mp4" poster="img/image24.jpg" muted loop playsinline preload="none" controls aria-label="Bottles to bin failure"></video><figcaption><span class="nm">Layout 0 · score 10</span><span class="ct">one bottle in the bin; a lift toward the centre is dropped (~26 s)</span></figcaption></figure>
+      <figure class="vf"><video src="vid/s28_bottles_b.mp4" poster="img/image23.jpg" muted loop playsinline preload="none" controls aria-label="Bottles to bin failure"></video><figcaption><span class="nm">Layout 2 · score 25</span><span class="ct">two bottles in; the handover of the second drops it once (~15 s)</span></figcaption></figure>
+    </div>
+  </div>
+  <div class="foot warn">⚠ Note: Results are preliminary, and evaluations are still ongoing for some of the listed tasks.</div>
+  <div class="slide-number"></div>
+
+</section>
+
+<!-- 29 -->
+<section class="slide" id="s-rd-fail2">
+  <div class="sec">05 · Results</div>
+  <h2>Rollout Visualization (Failure)</h2>
+  <p class="sub">RoboDojo: Insert Tubes</p>
+  <div class="body">
+    <div class="vrow two" style="max-width:1000px;margin-left:auto;margin-right:auto">
+      <figure class="vf"><video src="vid/s29_tubes_a.mp4" poster="img/image22.jpg" muted loop playsinline preload="none" controls aria-label="Insert tubes failure"></video><figcaption><span class="nm">Layout 1 · score 40</span><span class="ct">two tubes in; the third is released 5 cm above the rack and rolls away</span></figcaption></figure>
+      <figure class="vf"><video src="vid/s29_tubes_b.mp4" poster="img/image32.jpg" muted loop playsinline preload="none" controls aria-label="Insert tubes failure"></video><figcaption><span class="nm">Layout 2 · score 20</span><span class="ct">one tube in; the second does not count; the third stays on the table</span></figcaption></figure>
+    </div>
+  </div>
+  <div class="foot warn">⚠ Note: Results are preliminary, and evaluations are still ongoing for some of the listed tasks.</div>
+  <div class="slide-number"></div>
+
+</section>
+
+<section class="slide" id="s-benefits-done">
+  <div class="sec">05 · Results</div>
+  <h2>Code-as-Diffusion</h2>
+  <p class="takeaway goal top"><span aria-hidden="true">🚀</span> Our base maintains <b>VLM priors</b> while enabling <b>few&#8209;shot steering</b> across diverse tasks and embodiments</p>
+  <div class="body">
+    <div class="bens">
+      <figure class="ben done"><div class="ben-h"><span class="bmk done">✓</span><div><b>Broad zero-shot capabilities</b><span>Use VLM priors without large-scale robot action pretraining</span></div></div><video src="vid/s05_general_pickup_layout13_success.mp4" poster="img/s05_pickup_poster.jpg" muted loop playsinline preload="none" aria-label="Zero-shot: two arms pick up the named spatula in clutter"></video></figure>
+      <figure class="ben done"><div class="ben-h"><span class="bmk done">✓</span><div><b>Few-shot steering for fine-grained specialization</b><span>Adapt Code-as-Diffusion with existing steering methods (e.g. PPS and DSRL)</span></div></div><video src="vid/enable_steer_square.mp4" poster="img/enable_steer_square_poster.jpg" muted loop playsinline preload="none" aria-label="PPS-steered Code-as-Diffusion places the square nut on the peg"></video></figure>
+      <figure class="ben done"><div class="ben-h"><span class="bmk done">✓</span><div><b>Embodiment flexibility</b><span>Efficiently adapt to single-arm, dual-arm and dexterous-hand robots</span></div></div><video src="vid/enable_embodiments.mp4" poster="img/enable_embodiments_poster.jpg" muted loop playsinline preload="none" aria-label="Four tasks: two single-arm PPS tasks, a two-arm RoboDojo task and a two-hand DexJoCo task"></video></figure>
+    </div>
+  </div>
+  <div class="foot warn">⚠ Note: Results are preliminary, and evaluations are still ongoing for some of the listed tasks.</div>
+  <div class="slide-number"></div>
+</section>
+
+<section class="slide" id="s-summary">
+  <div class="sec">06 · Discussion</div>
+  <h2>Summary &amp; Next Steps</h2>
+  <div class="body"></div>
+  <div class="slide-number"></div>
+</section>
+
+<section class="slide" id="s-thanks">
+  <h2 class="thanks">Thank you for listening!</h2>
+  <div class="body">
+    <div class="isteps" aria-hidden="true">
+      <div class="istep"><span class="n">1</span>VLM writes code</div><span class="iar">→</span>
+      <div class="istep"><span class="n">2</span>Analytical diffusion policy</div><span class="iar">→</span>
+      <div class="istep"><span class="n">3</span>Steerable actions</div>
+    </div>
+    <canvas class="istory" role="img" aria-label="A VLM writes code that proposes left and right grasps of a mug handle; noisy gripper paths denoise into these two path families; steering then sends every path to the left family"></canvas>
+  </div>
+  <div class="slide-number"></div>
+</section>
+
+<!-- 30 -->
+<template id="t-open"><!-- hidden for now -->
+<section class="slide" id="s-open">
+  <div class="sec">06 · Discussion</div>
+  <h2>Open Questions</h2>
+  <p class="sub">What we still need to answer</p>
+  <div class="body">
+    <div class="todo"><b>[Placeholder: this slide is empty in the Google deck.]</b></div>
+  </div>
+  <div class="slide-number"></div>
+
+</section>
+</template>
+
+<!-- 31 -->
+<template id="t-next"><!-- hidden for now -->
+<section class="slide" id="s-next">
+  <div class="sec">06 · Discussion</div>
+  <h2>Next Steps</h2>
+  <p class="sub">What we plan to do next</p>
+  <div class="body">
+    <div class="todo"><b>[Placeholder: this slide is empty in the Google deck.]</b></div>
+  </div>
+  <div class="slide-number"></div>
+
+</section>
+</template>
+
+<template id="t-enables-list"><!-- previous list version -->
+<section class="slide" id="s-enables">
+  <div class="sec">03 · Approach</div>
+  <h2>Our Idea: Code-as-Diffusion</h2>
+  <p class="sub">What this formulation enables</p>
+  <div class="body">
+    <div class="claims">
+      <div class="claim"><span class="n">01</span><div><b>Broad zero-shot capabilities</b><span>Use VLM priors without large-scale robot action pretraining.</span></div></div>
+      <div class="claim"><span class="n">02</span><div><b>Fine-grained task specialization</b><span>Adapt Code-as-Diffusion with existing steering methods (for example PPS and DSRL).</span></div></div>
+      <div class="claim"><span class="n">03</span><div><b>Embodiment flexibility</b><span>Apply the same framework to single-arm, dual-arm and dexterous-hand robots.</span></div></div>
+    </div>
+  </div>
+  <div class="slide-number"></div>
+
+</section>
+</template>
+
+<!-- 32 -->
+<template id="t-appendix"><!-- appendix slides, hidden -->
+<section class="slide appx" id="s-structure">
+  <div class="sec">Appendix</div>
+  <h2>Structure</h2>
+  <p class="sub">Draft outline</p>
+  <div class="body">
+    <ul class="plain">
+      <li><b>Intro</b></li>
+      <li><b>Related work / preliminaries</b><ul><li>VLM agentic control</li><li>Diffusion steering + analytical diffusion</li><li>Idea: combine them (VLM front end)</li></ul></li>
+      <li><b>Property analysis</b></li>
+      <li><b>(Initial) results</b></li>
+      <li>Next steps / future work</li>
+      <li>Open questions</li>
+    </ul>
+  </div>
+  <div class="slide-number"></div>
+
+</section>
+
+<!-- 33 -->
+<section class="slide appx" id="s-idea-notes">
+  <div class="sec">Appendix</div>
+  <h2>Idea: VLM as Diffusion Policy</h2>
+  <p class="sub">Formulate the VLM as a diffusion or flow-matching process</p>
+  <div class="body">
+    <ul class="plain">
+      <li>Zero-shot base with the VLM prior</li>
+      <li>Adapt to new, harder tasks through steering</li>
+      <li>Foundation policy (as VLAs; steerable as with DSRL)</li>
+      <li>Multiple embodiments</li>
+    </ul>
+  </div>
+  <p class="takeaway">This lets us formulate our base as a flow-matching or diffusion process.</p>
+  <div class="slide-number"></div>
+
+</section>
+
+<!-- 34 -->
+<section class="slide appx" id="s-rw-vla">
+  <div class="sec">Appendix</div>
+  <h2>Diffusion and Flow-Matching VLAs</h2>
+  <p class="sub">Related work</p>
+  <div class="body">
+    <div class="figs" style="grid-template-columns:1fr"><figure><img src="img/image34.png" alt="pi0 architecture: pre-trained VLM with an action expert" style="height:270px"><figcaption><span class="nm">Figure: π0</span><span class="ct">Black et al., 2024</span></figcaption></figure></div>
+    <ul class="plain" style="font-size:19px">
+      <li><b>Strengths:</b> broad priors, recovery behaviors and fine-tunability.</li>
+      <li><b>Limitations:</b> they need large-scale pretraining; fine-tuning is computationally expensive, risks degrading generalization, and needs access to the model weights, which excludes closed-source or API-only policies.</li>
+    </ul>
+  </div>
+  <div class="slide-number"></div>
+
+</section>
+
+<!-- 35 -->
+<section class="slide appx" id="s-rw-dsrl">
+  <div class="sec">Appendix</div>
+  <h2>Diffusion Steering via Reinforcement Learning</h2>
+  <p class="sub">Related work: DSRL</p>
+  <div class="body">
+    <div class="figs" style="grid-template-columns:1fr;justify-items:center"><figure style="width:760px"><img src="img/image8.png" alt="DSRL diagram" style="height:320px"><figcaption><span class="nm">Figure: DSRL</span><span class="ct">Wagenmaker et al., 2025</span></figcaption></figure></div>
+  </div>
+  <p class="takeaway c">DSRL optimizes the initial noise with RL. It needs non-zero base success or a large offline dataset, and it gains little on tasks the base can hardly solve.</p>
+  <div class="slide-number"></div>
+
+</section>
+
+<!-- 36 -->
+<section class="slide appx" id="s-rw-pps">
+  <div class="sec">Appendix</div>
+  <h2>Proxy Policy Steering</h2>
+  <p class="sub">Related work: PPS</p>
+  <div class="body">
+    <div class="figs" style="grid-template-columns:1.25fr 1fr;align-items:center">
+      <figure><img src="img/image38.png" alt="PPS: base, reference, task and steered scores" style="height:310px"><figcaption><span class="nm">Figure: Proxy Policy Steering</span><span class="ct">2025</span></figcaption></figure>
+      <figure><img src="img/image37.png" alt="PPS training and inference algorithms" style="height:200px"></figure>
+    </div>
+    <div class="todo" style="margin-top:18px;padding:12px 18px;font-size:17px"><b>[Placeholder]</b> "Compared to DSRL, PPS …" (unfinished in the Google deck)</div>
+  </div>
+  <div class="slide-number"></div>
+
+</section>
+
+<!-- 37 -->
+<section class="slide appx" id="s-rw-summary">
+  <div class="sec">Appendix</div>
+  <h2>Related Work: Summary</h2>
+  <p class="sub">What we have established</p>
+  <div class="body">
+    <div class="claims" style="margin-top:14px;gap:6px">
+      <div class="claim"><span class="n">VLA</span><div><b>VLAs</b><span>Broad generalist capabilities, but they need large-scale robot pretraining; fine-tuning is expensive and can degrade generalization.</span></div></div>
+      <div class="claim"><span class="n">STEER</span><div><b>Policy steering</b><span>Task specialization without modifying the base, but it needs a diffusion or flow-matching interface.</span></div></div>
+      <div class="claim"><span class="n">VLM</span><div><b>VLM-based control</b><span>Promising zero-shot capabilities without robot action pretraining, but no natural interface for few-shot specialization.</span></div></div>
+    </div>
+  </div>
+  <p class="takeaway">Can we combine the zero-shot generality of VLM-based control with the few-shot steerability of diffusion policies, without large-scale robot action pretraining?</p>
+  <div class="slide-number"></div>
+
+</section>
+
+<section class="slide appx" id="s-refs">
+  <div class="sec">Appendix</div>
+  <h2>References</h2>
+  <p class="sub">Works cited in this deck</p>
+  <div class="body">
+    <ol class="refs">
+      <li><span class="rt">Code as Policies: Language Model Programs for Embodied Control</span><span class="ra">Liang et al., ICRA 2023</span></li>
+      <li><span class="rt">VoxPoser: Composable 3D Value Maps for Robotic Manipulation with Language Models</span><span class="ra">Huang et al., CoRL 2023</span></li>
+      <li><span class="rt">ReKep: Spatio-Temporal Reasoning of Relational Keypoint Constraints for Robotic Manipulation</span><span class="ra">Huang et al., CoRL 2024</span></li>
+      <li><span class="rt">MOKA: Open-World Robotic Manipulation through Mark-Based Visual Prompting</span><span class="ra">Liu et al., RSS 2024</span></li>
+      <li><span class="rt">CaP-X: A Framework for Benchmarking and Improving Coding Agents for Robot Manipulation</span><span class="ra">ICML 2026</span></li>
+      <li><span class="rt">Model-Based Diffusion for Trajectory Optimization</span><span class="ra">Pan et al., NeurIPS 2024</span></li>
+      <li><span class="rt">Full-Order Sampling-Based MPC for Torque-Level Locomotion Control via Diffusion-Style Annealing (DIAL-MPC)</span><span class="ra">Xue et al., ICRA 2025</span></li>
+      <li><span class="rt">Steering Your Diffusion Policy with Latent Space Reinforcement Learning (DSRL)</span><span class="ra">Wagenmaker et al., 2025</span></li>
+      <li><span class="rt">Proxy Policy Steering (PPS)</span><span class="ra">2025</span></li>
+      <li><span class="rt">π0: A Vision-Language-Action Flow Model for General Robot Control</span><span class="ra">Black et al., 2024</span></li>
+      <li><span class="rt">ASPIRE</span><span class="ra">2026</span></li>
+      <li><span class="rt">RoboDojo benchmark and leaderboard</span><span class="ra">robodojo-benchmark.com</span></li>
+    </ol>
+  </div>
+  <div class="slide-number"></div>
+
+</section>
+</template>
+
+</main>
+<div id="hud" aria-label="Slide navigation">
+  <button type="button" id="prev" aria-label="Previous slide">←</button>
+  <span class="count" id="count" aria-live="polite"></span>
+  <button type="button" id="next" aria-label="Next slide">→</button>
+  <button type="button" id="view" aria-label="Switch between slideshow and scroll view">Scroll view</button>
+  <button type="button" id="fs" aria-label="Full screen">Full screen</button>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+const stage = document.querySelector('.deck');
+const slides = [...document.querySelectorAll('.slide')];
+slides.forEach((s, i) => { const n = s.querySelector('.slide-number'); if (n) n.textContent = String(i + 1).padStart(2, '0'); });
+let cur = 0;
+function loadNear() {   // fetch the videos of this slide and its neighbours only
+  [cur - 1, cur, cur + 1].forEach(k => { const s = slides[k]; if (s) s.querySelectorAll('video[preload="none"]').forEach(v => { v.preload = 'auto'; v.load(); }); });
+}
+function playIn(sec) { sec.querySelectorAll('video').forEach(v => { try { v.currentTime = 0; } catch (e) {} const p = v.play(); if (p) p.catch(() => {}); }); }
+function stopAll(sec) { sec.querySelectorAll('video').forEach(v => { v.pause(); try { v.currentTime = 0; } catch (e) {} }); }
+function show(i) {
+  i = Math.max(0, Math.min(slides.length - 1, i));
+  const prev = slides[cur];
+  if (prev && i !== cur) { prev.classList.remove('on', 'fadein'); stopAll(prev); }
+  const changed = i !== cur; cur = i;
+  const sec = slides[cur];
+  sec.classList.remove('fadein'); void sec.offsetWidth; sec.classList.add('on');
+  if (changed) sec.classList.add('fadein');
+  loadNear(); playIn(sec);
+  $('count').textContent = (cur + 1) + ' / ' + slides.length;
+  history.replaceState(null, '', '#' + (cur + 1));
+}
+let scrollMode = false, io = null;
+function goTo(i) {
+  i = Math.max(0, Math.min(slides.length - 1, i));
+  if (!scrollMode) return show(i);
+  slides[i].scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' });
+}
+const next = () => goTo(cur + 1), prev = () => goTo(cur - 1);
+const goId = id => goTo(slides.findIndex(s => s.id === id));
+function fit() {
+  if (scrollMode) { stage.style.transform = 'none'; stage.style.zoom = Math.min(1, (innerWidth - 32) / 1280); return; }
+  stage.style.zoom = '';
+  const s = Math.min(innerWidth / 1280, innerHeight / 720); stage.style.transform = `translate(-50%, -50%) scale(${s})`;
+}
+function setMode(scroll) {
+  scrollMode = scroll; document.body.classList.toggle('scroll', scroll);
+  $('view').textContent = scroll ? 'Slideshow' : 'Scroll view';
+  try { localStorage.setItem('cad-view', scroll ? 'scroll' : 'slides'); } catch (e) {}
+  fit();
+  if (scroll) {
+    slides.forEach(s => { s.classList.remove('fadein'); if (s !== slides[cur]) s.classList.remove('on'); });
+    const vis = new Map();
+    io = new IntersectionObserver(es => {
+      es.forEach(en => {
+        const s = en.target; vis.set(s, en.intersectionRatio);
+        if (en.intersectionRatio > 0.3) {
+          if (!s.classList.contains('on')) { s.classList.add('on'); s.querySelectorAll('video[preload="none"]').forEach(v => { v.preload = 'auto'; v.load(); }); playIn(s); }
+        } else if (s.classList.contains('on')) { s.classList.remove('on'); s.querySelectorAll('video').forEach(v => v.pause()); }
+      });
+      let best = cur, br = -1; vis.forEach((r, s) => { if (r > br) { br = r; best = slides.indexOf(s); } });
+      if (best !== cur && br > 0) { cur = best; $('count').textContent = (cur + 1) + ' / ' + slides.length; history.replaceState(null, '', '#' + (cur + 1)); }
+    }, { threshold: [0, 0.3, 0.6, 1] });
+    slides.forEach(s => io.observe(s));
+    slides[cur].scrollIntoView({ block: 'center' });
+  } else {
+    if (io) { io.disconnect(); io = null; }
+    slides.forEach((s, i) => { if (i !== cur) { s.classList.remove('on'); stopAll(s); } });
+    window.scrollTo(0, 0); show(cur);
+  }
+}
+addEventListener('resize', fit);
+addEventListener('keydown', e => {
+  if (['ArrowRight', 'ArrowDown', 'PageDown', ' ', 'Enter'].includes(e.key)) { if (e.target.closest('button, [role=button]') && e.key !== 'ArrowRight' && e.key !== 'ArrowDown') return; e.preventDefault(); next(); }
+  else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); prev(); }
+  else if (e.key === 'Home') goTo(0);
+  else if (e.key === 'End') goTo(slides.length - 1);
+  else if (e.key === 'f') toggleFs();
+});
+// a click on the slide advances (left fifth: back); controls on the slide keep their own click
+stage.addEventListener('click', e => {
+  if (scrollMode || e.target.closest('button, a, video, [role=button], .speed, .vtools')) return;
+  (e.clientX < innerWidth * 0.2 ? prev : next)();
+});
+let tx = null;
+addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+addEventListener('touchend', e => { if (tx === null || scrollMode) return; const dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 40) (dx < 0 ? next : prev)(); tx = null; });
+const toggleFs = () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen().catch(() => {});
+$('prev').onclick = prev; $('next').onclick = next; $('fs').onclick = toggleFs; $('view').onclick = () => setMode(!scrollMode);
+let idle;
+addEventListener('mousemove', () => { document.body.classList.add('active'); clearTimeout(idle); idle = setTimeout(() => document.body.classList.remove('active'), 2000); });
+addEventListener('hashchange', () => { const k = (parseInt(location.hash.slice(1)) || 1) - 1; if (k !== cur) goTo(k); });
+
+// Challenge checklist: one component, the number of properties shown as met grows across the four copies
+const CH = [
+  ['Deterministic diffusion ODE', '<strong>Consistent noise-to-action mapping</strong> through a deterministic flow-based sampling process', 's-obs1', 'Steps 1–2'],
+  ['Multimodality', 'Capture <strong>diverse, task-relevant action modes</strong> instead of collapsing to a single behavior', 's-multi', 'Evidence'],
+  ['Strong priors', 'Generate <strong>meaningful, high-quality robot actions</strong> that generalize across diverse tasks', 's-priors', 'Evidence']];
+document.querySelectorAll('[data-checks]').forEach(s => {
+  const k = +s.dataset.checks;
+  const pg = s.querySelector('.progress'); if (pg) pg.innerHTML = CH.map((_, i) => `<i class="${i < k ? 'on' : ''}"></i>`).join('');
+  const focus = s.dataset.focus === '1' || (k > 0 && k < CH.length);
+  s.querySelector('.checks').classList.toggle('focus', focus);
+  s.querySelector('.checks').innerHTML = CH.map(([t, d, go, lab], i) =>
+    `<div class="check ${i < k ? 'done' : i === k && focus ? 'now' : ''}"><span class="mk">${i < k ? '✓' : ''}</span>` +
+    `<div><b>${t}</b><span>${d}</span></div></div>`).join('');
+});
+document.addEventListener('click', e => { const b = e.target.closest('button.check, .orow'); if (b) goId(b.dataset.go); });
+
+// Pipeline: select a stage for its description
+const PIPE = {
+  vlm: ['VLM', 'Writes a program once per scene from the task instruction and the initial observation.'],
+  prop: ['Motion proposals', 'At each step the program turns the current observation into weighted motion modes, sampled as action chunks (Step 1).'],
+  gmm: ['Gaussian mixture', 'The action chunk samples are approximated by a Gaussian mixture, whose diffusion score has a closed form (Step 2).'],
+  flow: ['Flow sampling', 'A deterministic flow ODE maps noise to an action chunk; steering methods such as PPS act on this flow.'],
+  act: ['Robot actions', 'The robot executes the first part of the chunk, then the loop repeats with the new observation.']};
+document.querySelectorAll('.pipe:not(.static) .box').forEach(b => {
+  const pick = () => { document.querySelectorAll('.pipe .box').forEach(x => x.classList.toggle('on', x === b));
+    const [t, d] = PIPE[b.dataset.k]; $('pipeNote').innerHTML = `<b>${t}.</b> ${d}`; };
+  b.addEventListener('click', pick); b.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
+});
+
+// Video speed per slide, and play-all
+document.querySelectorAll('.slide').forEach(s => {
+  const vids = [...s.querySelectorAll('video')], bar = s.querySelector('.speed');
+  if (!bar) return;
+  [0.5, 1, 2, 4].forEach(r => {
+    const b = document.createElement('button'); b.type = 'button'; b.textContent = r + '×'; if (r === 1) b.classList.add('active');
+    b.onclick = () => { vids.forEach(v => { v.playbackRate = r; }); bar.querySelectorAll('button').forEach(x => x.classList.toggle('active', x === b)); };
+    bar.appendChild(b);
+  });
+  const play = s.querySelector('.play');
+  if (play) play.onclick = () => vids.forEach(v => { v.currentTime = 0; v.play().catch(() => {}); });
+});
+
+// Slide 8: noise-to-action flow (base: two modes; steer: most mass to one mode)
+(() => {
+  const C = { ink: '#6d7376', base: '#355f78', steer: '#2f7d4f', grid: '#e1e5e7' };
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const gauss = () => Math.sqrt(-2 * Math.log(rnd() + 1e-9)) * Math.cos(2 * Math.PI * rnd());
+  const P = Array.from({ length: 64 }, () => ({ zx: gauss(), zy: gauss(), ex: gauss(), ey: gauss() }));
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const views = [...document.querySelectorAll('canvas.iflow')].map(cv => ({ cv, steer: cv.dataset.mode === 'steer' }));
+  function draw(v, t) {
+    const cv = v.cv, W = 300, H = 176, k = 2;
+    if (cv.width !== W * k) { cv.width = W * k; cv.height = H * k; }
+    const g = cv.getContext('2d'); g.setTransform(k, 0, 0, k, 0, 0); g.clearRect(0, 0, W, H);
+    const x0 = 46, x1 = W - 52, yc = H / 2 - 6, top = { y: H * 0.27 }, bot = { y: H * 0.68 };
+    const col = v.steer ? C.steer : C.base;
+    g.strokeStyle = C.grid; g.lineWidth = 1; g.setLineDash([3, 4]);
+    g.beginPath(); g.moveTo(x0, 14); g.lineTo(x0, H - 26); g.moveTo(x1, 14); g.lineTo(x1, H - 26); g.stroke(); g.setLineDash([]);
+    const blob = (y, a, c, dashed) => {
+      const r = g.createRadialGradient(x1, y, 2, x1, y, 22);
+      r.addColorStop(0, c + Math.round(a * 255).toString(16).padStart(2, '0')); r.addColorStop(1, c + '00');
+      g.fillStyle = r; g.beginPath(); g.arc(x1, y, 22, 0, 7); g.fill();
+      if (dashed) { g.strokeStyle = C.ink + '88'; g.setLineDash([3, 3]); g.beginPath(); g.arc(x1, y, 15, 0, 7); g.stroke(); g.setLineDash([]); }
+    };
+    if (v.steer) { blob(top.y, 0.45, C.steer); blob(bot.y, 0, C.base, true); } else { blob(top.y, 0.3, C.base); blob(bot.y, 0.3, C.base); }
+    const s = t < 0 ? 0 : t > 1 ? 1 : t, e = s * s * (3 - 2 * s);
+    for (const p of P) {
+      const sy = yc + p.zy * 22, sx = x0 + p.zx * 9;
+      const toTop = v.steer ? p.zy < 1.1 : p.zy < 0;
+      const ty = (toTop ? top.y : bot.y) + p.ey * 6, tx = x1 + p.ex * 6;
+      const cx = (sx + tx) / 2, cy = sy * 0.35 + ty * 0.65;
+      const at = u => [(1 - u) * (1 - u) * sx + 2 * (1 - u) * u * cx + u * u * tx, (1 - u) * (1 - u) * sy + 2 * (1 - u) * u * cy + u * u * ty];
+      g.strokeStyle = col + '33'; g.lineWidth = 1; g.beginPath(); g.moveTo(sx, sy);
+      for (let i = 1; i <= 24; i++) { const u = e * i / 24; const [x, y] = at(u); g.lineTo(x, y); }
+      g.stroke();
+      const [hx, hy] = at(e); g.fillStyle = col; g.beginPath(); g.arc(hx, hy, 2.4, 0, 7); g.fill();
+    }
+    if (v.steer) {
+      g.strokeStyle = C.steer; g.fillStyle = C.steer; g.lineWidth = 2;
+      const ax = x1 + 30; g.beginPath(); g.moveTo(ax, bot.y - 4); g.quadraticCurveTo(ax + 12, (top.y + bot.y) / 2, ax, top.y + 12); g.stroke();
+      g.beginPath(); g.moveTo(ax, top.y + 6); g.lineTo(ax - 5, top.y + 15); g.lineTo(ax + 5, top.y + 14); g.closePath(); g.fill();
+      g.font = '700 11px Inter, sans-serif'; g.textAlign = 'center'; g.fillText('steer', ax + 4, bot.y + 12);
+    }
+    g.fillStyle = C.ink; g.font = '600 11px Inter, sans-serif'; g.textAlign = 'center';
+    g.fillText('noise', x0, H - 10); g.fillText('actions', x1, H - 10);
+  }
+  const T = 3400;
+  function frame(ms) {
+    for (const v of views) {
+      if (!v.cv.closest('.slide').classList.contains('on')) continue;
+      draw(v, still ? 1 : ((ms % T) / T) * 1.35 - 0.1);
+    }
+    requestAnimationFrame(frame);
+  }
+  views.forEach(v => draw(v, 1));
+  requestAnimationFrame(frame);
+})();
+
+// Slide 8: trajectory story (code -> proposals -> denoised path families -> steered)
+document.querySelectorAll('canvas.istory').forEach(cv => {
+  const steps = [...cv.closest('.slide').querySelectorAll('.istep')];
+  const W = 1100, H = 290, K = 2; cv.width = W * K; cv.height = H * K;
+  const g = cv.getContext('2d');
+  const C = { ink: '#202528', muted: '#6d7376', base: '#355f78', steer: '#2f7d4f', prop: '#7f98a6', noise: '#a3adb2', obj: '#93a0a7' };
+  const CODE = [
+    [['# "Put the mug on the rack"', '#8fa3ad']],
+    [['handle', '#e4ebee'], [' = ', '#e4ebee'], ['find', '#b9dfc4'], ['(', '#e4ebee'], ['"mug handle"', '#e7bd7e'], [')', '#e4ebee']],
+    [['for', '#8cc4e6'], [' side ', '#e4ebee'], ['in', '#8cc4e6'], [' [', '#e4ebee'], ['"left"', '#e7bd7e'], [', ', '#e4ebee'], ['"right"', '#e7bd7e'], [']:', '#e4ebee']],
+    [['    ', '#e4ebee'], ['propose', '#b9dfc4'], ['(', '#e4ebee'], ['grasp', '#b9dfc4'], ['(handle, side))', '#e4ebee']],
+  ];
+  const NCH = CODE.reduce((n, l) => n + l.reduce((m, t) => m + t[0].length, 0), 0);
+  const S = [440, 150], MUG = [915, 150], A = [866, 102], B = [866, 198], CA = [660, 20], CB = [660, 280], NPT = 30;
+  const quad = (p, c, q, u) => [(1 - u) * (1 - u) * p[0] + 2 * (1 - u) * u * c[0] + u * u * q[0], (1 - u) * (1 - u) * p[1] + 2 * (1 - u) * u * c[1] + u * u * q[1]];
+  const pathOf = (c, q) => Array.from({ length: NPT }, (_, i) => quad(S, c, q, i / (NPT - 1)));
+  let seed = 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const gs = () => Math.sqrt(-2 * Math.log(rnd() + 1e-9)) * Math.cos(2 * Math.PI * rnd());
+  const props = [];
+  for (const [c, q] of [[CA, A], [CB, B]]) for (let j = 0; j < 6; j++) props.push(pathOf([c[0] + gs() * 34, c[1] + gs() * 14], [q[0] + gs() * 4, q[1] + gs() * 4]));
+  const mA = pathOf(CA, A), mB = pathOf(CB, B);
+  const NT = 14, clampY = y => Math.max(44, Math.min(H - 12, y));
+  const traj = Array.from({ length: NT }, () => {
+    const ph = [rnd() * 6.3, rnd() * 6.3, rnd() * 6.3], am = [gs() * 60, gs() * 30, gs() * 16], ax = gs() * 30, off = gs() * 7;
+    const noisy = Array.from({ length: NPT }, (_, i) => {
+      const u = i / (NPT - 1), env = Math.pow(u, 0.7);
+      return [S[0] + u * 400 + env * ax * Math.sin(2 * u + ph[0]),
+              clampY(S[1] + env * (am[0] * Math.sin(1.3 * Math.PI * u + ph[0]) + am[1] * Math.sin(2.7 * Math.PI * u + ph[1]) + am[2] * Math.sin(5 * Math.PI * u + ph[2])))];
+    });
+    const bias = noisy.slice(NPT / 2).reduce((m, p) => m + p[1] - S[1], 0);
+    return { noisy, bias, off };
+  });
+  [...traj].sort((p, q) => p.bias - q.bias).forEach((tr, k) => { tr.up = k < NT / 2; });
+  const shift = (m, off) => m.map(([x, y], i) => [x, y + off * Math.sin(Math.PI * i / (NPT - 1))]);
+  traj.forEach(tr => { tr.base = shift(tr.up ? mA : mB, tr.off); tr.steer = shift(mA, tr.off); });
+  const clamp = v => v < 0 ? 0 : v > 1 ? 1 : v, ease = v => v * v * (3 - 2 * v);
+  const lerp = (p, q, a) => p.map((pt, i) => [pt[0] + (q[i][0] - pt[0]) * a, pt[1] + (q[i][1] - pt[1]) * a]);
+  function line(pts, col, w, alpha, frac = 1, dash) {
+    const n = Math.max(2, Math.round(frac * pts.length)); g.save(); g.globalAlpha = alpha; g.strokeStyle = col; g.lineWidth = w;
+    g.lineCap = 'round'; g.lineJoin = 'round'; if (dash) g.setLineDash(dash);
+    g.beginPath(); g.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < n; i++) g.lineTo(pts[i][0], pts[i][1]); g.stroke(); g.restore();
+  }
+  function rrect(x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+  function text(str, x, y, col, font, align = 'left', alpha = 1) { g.save(); g.globalAlpha = alpha; g.fillStyle = col; g.font = font; g.textAlign = align; g.fillText(str, x, y); g.restore(); }
+  const CAP = ['The VLM writes code that proposes grasps from the left and from the right',
+               'The proposals define a Gaussian mixture: noise denoises into it in closed form',
+               'Steering reshapes the same policy toward the task, here the left grasp'];
+  const LOOP = 12000;
+  function draw(t) {
+    g.setTransform(K, 0, 0, K, 0, 0); g.clearRect(0, 0, W, H);
+    const phase = t < 3600 ? 0 : t < 7600 ? 1 : 2;
+    // code panel
+    g.fillStyle = '#1f2a30'; rrect(10, 10, 330, H - 20, 9); g.fill();
+    text('VLM OUTPUT', 30, 40, '#8fa3ad', '700 12px Inter, sans-serif');
+    let left = Math.floor(clamp(t / 2600) * NCH);
+    g.font = '14.5px ui-monospace, "SF Mono", Menlo, Consolas, monospace';
+    CODE.forEach((ln, i) => {
+      let x = 30; const y = 88 + i * 30;
+      if (i === 3 && t > 2600 && t < 4400) { g.save(); g.globalAlpha = 0.18; g.fillStyle = '#8cc4e6'; g.fillRect(20, y - 19, 312, 27); g.restore(); }
+      for (const [str, col] of ln) { const k = Math.max(0, Math.min(str.length, left)); left -= k; if (!k) continue; g.fillStyle = col; g.fillText(str.slice(0, k), x, y); x += g.measureText(str.slice(0, k)).width; }
+    });
+    // scene
+    g.fillStyle = '#f4f6f6'; rrect(360, 10, W - 370, H - 20, 9); g.fill();
+    text(CAP[phase], 382, 38, C.muted, '600 14px Inter, sans-serif');
+    g.fillStyle = '#ffffff'; g.strokeStyle = C.obj; g.lineWidth = 2; g.beginPath(); g.arc(MUG[0], MUG[1], 40, 0, 7); g.fill(); g.stroke();
+    g.strokeStyle = '#c7ced2'; g.beginPath(); g.arc(MUG[0], MUG[1], 31, 0, 7); g.stroke();
+    g.strokeStyle = C.obj; g.lineWidth = 7; g.lineCap = 'round'; g.beginPath(); g.arc(MUG[0] - 52, MUG[1], 13, Math.PI / 2, 3 * Math.PI / 2); g.stroke();
+    text('mug', MUG[0], MUG[1] + 62, C.muted, '600 12px Inter, sans-serif', 'center');
+    g.fillStyle = '#4a5459'; g.fillRect(S[0] - 30, S[1] - 9, 16, 18); g.fillRect(S[0] - 14, S[1] - 12, 16, 4); g.fillRect(S[0] - 14, S[1] + 8, 16, 4);
+    text('gripper', S[0] - 16, S[1] + 34, C.muted, '600 12px Inter, sans-serif', 'center');
+    const ghost = clamp((t - 7600) / 600);
+    if (t > 3600) { const a = clamp((t - 3600) / 800); line(mA, C.base, 26, 0.13 * a); line(mB, C.base, 26, 0.13 * a * (1 - ghost)); if (ghost) line(mB, C.muted, 1.5, 0.55 * ghost, 1, [5, 5]); }
+    if (t > 2600) {
+      const fr = clamp((t - 2600) / 1000), al = 0.9 - 0.65 * clamp((t - 3600) / 800);
+      props.forEach((pp, i) => line(pp, C.prop, 1.5, i >= 6 ? al * (1 - 0.7 * ghost) : al, fr, [4, 4]));
+      const la = clamp((t - 3000) / 500);
+      text('from the left', MUG[0] + 46, A[1] - 8, C.base, '700 13px Inter, sans-serif', 'left', la);
+      text('from the right', MUG[0] + 46, B[1] + 18, C.base, '700 13px Inter, sans-serif', 'left', la * (1 - 0.6 * ghost));
+    }
+    if (t > 4400) {
+      const vis = clamp((t - 4400) / 500);
+      let al, tgt, col;
+      if (t < 8200) { al = ease(clamp((t - 4900) / 2100)); tgt = 'base'; col = C.base; }
+      else if (t < 8600) { al = 1 - clamp((t - 8200) / 400); tgt = 'base'; col = C.base; }
+      else { al = ease(clamp((t - 8600) / 2000)); tgt = 'steer'; col = C.steer; }
+      for (const tr of traj) {
+        const pts = lerp(tr.noisy, tr[tgt], al);
+        line(pts, C.noise, 1.4, vis * (1 - al) * 0.9); line(pts, col, 2, vis * al);
+        const e = pts[NPT - 1]; g.save(); g.globalAlpha = vis; g.fillStyle = al > 0.5 ? col : C.noise; g.beginPath(); g.arc(e[0], e[1], 3, 0, 7); g.fill(); g.restore();
+      }
+    }
+    if (ghost) {
+      g.save(); g.globalAlpha = ghost; g.strokeStyle = C.steer; g.fillStyle = C.steer; g.lineWidth = 3; g.lineCap = 'round';
+      g.beginPath(); g.moveTo(745, 208); g.quadraticCurveTo(770, 162, 747, 122); g.stroke();
+      g.beginPath(); g.moveTo(744, 110); g.lineTo(739, 126); g.lineTo(755, 123); g.closePath(); g.fill();
+      g.font = '800 14px Inter, sans-serif'; g.textAlign = 'left'; g.fillText('steer', 772, 170); g.restore();
+    }
+    steps.forEach((el, i) => { el.classList.toggle('on', i === phase); el.classList.toggle('done', i < phase); });
+  }
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const slide = cv.closest('.slide');
+  let t0 = null, wasOn = false;
+  function frame(ms) {
+    const on = slide.classList.contains('on');
+    if (on && !wasOn) t0 = ms;
+    wasOn = on;
+    if (on) draw(still ? 11000 : (ms - t0) % LOOP);
+    requestAnimationFrame(frame);
+  }
+  draw(11000);
+  requestAnimationFrame(frame);
+});
+
+// Slide 11: GMM decompose -> anneal (closed form) -> recompose and score
+(() => {
+  const cv = document.querySelector('canvas.gmmflow'); if (!cv) return;
+  const slide = cv.closest('.slide'), steps = [...slide.querySelectorAll('.istep')], rows = [...slide.querySelectorAll('.eqr')];
+  const W = 720, H = 290, K = 2; cv.width = W * K; cv.height = H * K;
+  const g = cv.getContext('2d');
+  const comp = [{ w: 0.34, m: -1.6, s: 0.30, c: '#4a82c3' }, { w: 0.40, m: 0.0, s: 0.45, c: '#2e9e8f' }, { w: 0.26, m: 1.3, s: 0.25, c: '#e0954a' }];
+  const X0 = -3.4, X1 = 3.4, PX0 = 30, PX1 = 690, BASE = 206, SC = 360, N = 220;
+  const px = x => PX0 + (x - X0) / (X1 - X0) * (PX1 - PX0);
+  const npdf = (x, m, v) => Math.exp(-(x - m) * (x - m) / (2 * v)) / Math.sqrt(2 * Math.PI * v);
+  const clamp = v => v < 0 ? 0 : v > 1 ? 1 : v, ease = v => v * v * (3 - 2 * v);
+  const sched = t => ({ a: Math.cos(Math.PI * t / 2), s: Math.sin(Math.PI * t / 2) });
+  const cpar = (k, t) => { const { a, s } = sched(t); return { m: a * k.m, v: a * a * k.s * k.s + s * s }; };
+  function curve(f, col, w, alpha, fill, dash) {
+    g.save(); g.globalAlpha = alpha; g.beginPath(); g.moveTo(px(X0), BASE);
+    for (let i = 0; i <= N; i++) { const x = X0 + (X1 - X0) * i / N; g.lineTo(px(x), BASE - SC * f(x)); }
+    if (fill) { g.lineTo(px(X1), BASE); g.closePath(); g.fillStyle = fill; g.fill(); }
+    g.beginPath(); for (let i = 0; i <= N; i++) { const x = X0 + (X1 - X0) * i / N; const y = BASE - SC * f(x); i ? g.lineTo(px(x), y) : g.moveTo(px(x), y); }
+    g.strokeStyle = col; g.lineWidth = w; g.lineJoin = 'round'; if (dash) g.setLineDash(dash); g.stroke(); g.restore();
+  }
+  const mix = t => x => comp.reduce((acc, k) => { const q = cpar(k, t); return acc + k.w * npdf(x, q.m, q.v); }, 0);
+  const noiseAt = ms => ms < 2200 ? 0 : ms < 5600 ? 0.55 * ease((ms - 2200) / 3400) : ms < 7400 ? 0.55 : ms < 9400 ? 0.55 - 0.3 * ease((ms - 7400) / 2000) : 0.25;
+  function draw(ms) {
+    g.setTransform(K, 0, 0, K, 0, 0); g.clearRect(0, 0, W, H);
+    const t = noiseAt(ms), phase = ms < 2200 ? 0 : ms < 5600 ? 1 : 2;
+    g.strokeStyle = '#c9cfd2'; g.lineWidth = 1.5; g.beginPath(); g.moveTo(PX0, BASE); g.lineTo(PX1, BASE); g.stroke();
+    g.fillStyle = '#6d7376'; g.font = '600 12px Inter, sans-serif'; g.textAlign = 'right'; g.fillText('action x', PX1, BASE + 18);
+    // noise gauge
+    g.textAlign = 'left'; g.fillText('noise level t', 540, 30);
+    g.fillStyle = '#e9ecee'; g.fillRect(540, 38, 150, 7); g.fillStyle = '#355f78'; g.fillRect(540, 38, 150 * t / 0.55, 7);
+    const compA = clamp((ms - 700) / 800), p0solid = 1 - clamp((ms - 700) / 800);
+    const ghost = clamp((ms - 1500) / 400) * (1 - clamp((ms - 5600) / 600));
+    if (ghost) curve(mix(0), '#232c33', 1.5, 0.35 * ghost, null, [5, 5]);
+    if (compA) for (const k of comp) {
+      const q = cpar(k, t), f = x => k.w * npdf(x, q.m, q.v);
+      curve(f, k.c, 2.2, compA * (phase === 2 ? 0.75 : 1), k.c + '30');
+    }
+    if (p0solid) curve(mix(0), '#232c33', 3, p0solid);
+    const ptA = clamp((ms - 5600) / 600);
+    if (ptA) curve(mix(t), '#232c33', 3, ptA);
+    const arA = clamp((ms - 6400) / 600);
+    if (arA) {
+      g.save(); g.globalAlpha = arA; g.fillStyle = '#6d7376'; g.font = '600 12px Inter, sans-serif'; g.textAlign = 'left'; g.fillText('score', PX0, BASE + 46);
+      for (let x = -3.0; x <= 3.01; x += 0.3) {
+        let num = 0, den = 0, best = 0, bi = 0;
+        comp.forEach((k, i) => { const q = cpar(k, t), r = k.w * npdf(x, q.m, q.v); den += r; num += r * (q.m - x) / q.v; if (r > best) { best = r; bi = i; } });
+        const sc = den > 1e-12 ? num / den : 0, L = Math.max(-0.42, Math.min(0.42, sc * 0.07));
+        const x0p = px(x), x1p = px(x + L), y = BASE + 30;
+        if (Math.abs(x1p - x0p) < 2) { g.fillStyle = comp[bi].c; g.beginPath(); g.arc(x0p, y, 2, 0, 7); g.fill(); continue; }
+        g.strokeStyle = comp[bi].c; g.fillStyle = comp[bi].c; g.lineWidth = 2.2;
+        g.beginPath(); g.moveTo(x0p, y); g.lineTo(x1p, y); g.stroke();
+        const d = Math.sign(x1p - x0p); g.beginPath(); g.moveTo(x1p + d * 5, y); g.lineTo(x1p - d * 2, y - 4.5); g.lineTo(x1p - d * 2, y + 4.5); g.closePath(); g.fill();
+      }
+      g.restore();
+    }
+    steps.forEach((el, i) => { el.classList.toggle('on', i === phase); el.classList.toggle('done', i < phase); });
+    const lit = phase === 0 ? [0] : phase === 1 ? [1] : [2, 3];
+    rows.forEach((el, i) => el.classList.toggle('on', lit.includes(i)));
+  }
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches, LOOP = 11000;
+  let t0 = null, wasOn = false;
+  function frame(ms) {
+    const on = slide.classList.contains('on');
+    if (on && !wasOn) t0 = ms;
+    wasOn = on;
+    if (on) draw(still ? 8800 : (ms - t0) % LOOP);
+    requestAnimationFrame(frame);
+  }
+  draw(8800);
+  requestAnimationFrame(frame);
+})();
+
+// Slide 11: GMM in four panels (mixture -> decompose -> anneal -> recompose and score), revealed in order
+(() => {
+  const cv = document.querySelector('canvas.gmm4'); if (!cv) return;
+  const slide = cv.closest('.slide');
+  const W = 1136, H = 330, K = 2; cv.width = W * K; cv.height = H * K;
+  const g = cv.getContext('2d');
+  const comp = [{ w: 0.34, m: -1.6, s: 0.30, c: '#4a82c3' }, { w: 0.40, m: 0.0, s: 0.45, c: '#2e9e8f' }, { w: 0.26, m: 1.3, s: 0.25, c: '#e0954a' }];
+  const PW = 236, GAP = 64, X0s = [0, PW + GAP, 2 * (PW + GAP), 3 * (PW + GAP)].map(x => x + (W - (4 * PW + 3 * GAP)) / 2);
+  const BASE = 250, SC = 370, XR = 3.2, N = 160, TMAX = 0.38;
+  const npdf = (x, m, v) => Math.exp(-(x - m) * (x - m) / (2 * v)) / Math.sqrt(2 * Math.PI * v);
+  const clamp = v => v < 0 ? 0 : v > 1 ? 1 : v, ease = v => v * v * (3 - 2 * v);
+  const cpar = (k, t) => { const a = Math.cos(Math.PI * t / 2), s = Math.sin(Math.PI * t / 2); return { m: a * k.m, v: a * a * k.s * k.s + s * s }; };
+  const mix = t => x => comp.reduce((acc, k) => { const q = cpar(k, t); return acc + k.w * npdf(x, q.m, q.v); }, 0);
+  const one = (k, t) => x => { const q = cpar(k, t); return k.w * npdf(x, q.m, q.v); };
+  function curve(P, f, col, w, alpha, fill, frac = 1) {
+    const px = x => X0s[P] + (x + XR) / (2 * XR) * PW, n = Math.max(2, Math.round(N * frac));
+    g.save(); g.globalAlpha = alpha;
+    const pts = []; for (let i = 0; i <= n; i++) { const x = -XR + 2 * XR * i / N; pts.push([px(x), BASE - SC * f(x)]); }
+    if (fill) { g.beginPath(); g.moveTo(pts[0][0], BASE); pts.forEach(p => g.lineTo(p[0], p[1])); g.lineTo(pts[pts.length - 1][0], BASE); g.closePath(); g.fillStyle = fill; g.fill(); }
+    g.beginPath(); pts.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1]));
+    g.strokeStyle = col; g.lineWidth = w; g.lineJoin = 'round'; g.lineCap = 'round'; g.stroke(); g.restore();
+  }
+  function axis(P, alpha) { g.save(); g.globalAlpha = alpha; g.strokeStyle = '#232c33'; g.lineWidth = 2.5; g.beginPath(); g.moveTo(X0s[P], BASE); g.lineTo(X0s[P] + PW, BASE); g.stroke(); g.restore(); }
+  function arrow(i, lit) {
+    const x0 = X0s[i] + PW + 14, x1 = X0s[i + 1] - 14, y = BASE - 70;
+    g.save(); g.strokeStyle = g.fillStyle = lit ? '#355f78' : '#a3adb2'; g.lineWidth = 2.5;
+    g.beginPath(); g.moveTo(x0, y); g.lineTo(x1 - 8, y); g.stroke();
+    g.beginPath(); g.moveTo(x1, y); g.lineTo(x1 - 11, y - 6); g.lineTo(x1 - 11, y + 6); g.closePath(); g.fill(); g.restore();
+  }
+  function label(P, str, lit, alpha = 1) {
+    g.save(); g.globalAlpha = alpha; g.fillStyle = lit ? '#355f78' : '#6d7376'; g.font = (lit ? '800 ' : '600 ') + '18px Inter, sans-serif';
+    g.textAlign = 'center'; str.split('\n').forEach((ln, i, all) => g.fillText(ln, X0s[P] + PW / 2, BASE + 52 + (i - (all.length - 1) / 2) * 22)); g.restore();
+  }
+  const LOOP = 9600;
+  function draw(ms) {
+    g.setTransform(K, 0, 0, K, 0, 0); g.clearRect(0, 0, W, H);
+    const out = 1 - clamp((ms - 9000) / 500);
+    // 1: mixture with its components shaded
+    comp.forEach(k => curve(0, one(k, 0), k.c, 1.2, 0.55, k.c + '2e'));
+    curve(0, mix(0), '#232c33', 3, 1); axis(0, 1);
+    label(0, 'Gaussian mixture', ms < 900);
+    // 2: decompose
+    arrow(0, ms >= 600 && ms < 2900);
+    const f2 = ease(clamp((ms - 900) / 1000));
+    if (f2) { comp.forEach(k => curve(1, one(k, 0), k.c, 2.6, out, k.c + '2e', f2)); axis(1, out); }
+    label(1, 'Decompose', ms >= 900 && ms < 2900, Math.max(0.55, f2 * out));
+    // 3: anneal (each component widens in closed form; noise kernel above)
+    arrow(1, ms >= 2600 && ms < 4900);
+    const v3 = clamp((ms - 2900) / 300) * out, t3 = TMAX * ease(clamp((ms - 3100) / 1500));
+    if (v3) {
+      comp.forEach(k => curve(2, one(k, t3), k.c, 2.6, v3, k.c + '2e'));
+      axis(2, v3);
+      const kx = X0s[2] + PW / 2, ka = clamp((ms - 2900) / 400) * out;
+      g.save(); g.globalAlpha = ka; g.beginPath();
+      for (let i = 0; i <= 60; i++) { const u = -2.6 + 5.2 * i / 60, y = 70 - 52 * Math.exp(-u * u / 0.9); i ? g.lineTo(kx + u * 18, y) : g.moveTo(kx + u * 18, y); }
+      g.strokeStyle = '#9b8ac4'; g.lineWidth = 2.5; g.stroke(); g.lineTo(kx + 2.6 * 18, 70); g.lineTo(kx - 2.6 * 18, 70); g.closePath(); g.fillStyle = '#9b8ac422'; g.fill();
+      g.fillStyle = '#7d6aae'; g.font = '700 13px Inter, sans-serif'; g.textAlign = 'left'; g.fillText('+ noise', kx + 54, 58); g.restore();
+    }
+    label(2, 'Anneal', ms >= 2900 && ms < 4900, Math.max(0.55, v3));
+    // 4: recompose and compute score
+    arrow(2, ms >= 4600);
+    const v4 = clamp((ms - 4900) / 300) * out, f4 = ease(clamp((ms - 5100) / 1100));
+    if (v4) {
+      comp.forEach(k => curve(3, one(k, TMAX), k.c, 1.4, 0.6 * v4, k.c + '2e'));
+      curve(3, mix(TMAX), '#232c33', 3, v4, null, Math.max(0.01, f4)); axis(3, v4);
+      const aa = clamp((ms - 6200) / 500) * out;
+      if (aa) {
+        g.save(); g.globalAlpha = aa;
+        for (let x = -2.6; x <= 2.61; x += 0.4) {
+          let num = 0, den = 0, best = 0, bi = 0;
+          comp.forEach((k, i) => { const q = cpar(k, TMAX), r = k.w * npdf(x, q.m, q.v); den += r; num += r * (q.m - x) / q.v; if (r > best) { best = r; bi = i; } });
+          const L = Math.max(-0.5, Math.min(0.5, (num / den) * 0.12)), pxu = PW / (2 * XR);
+          const x0 = X0s[3] + (x + XR) * pxu, x1 = x0 + L * pxu, y = BASE + 18;
+          g.strokeStyle = g.fillStyle = comp[bi].c; g.lineWidth = 2;
+          if (Math.abs(x1 - x0) < 2) { g.beginPath(); g.arc(x0, y, 1.8, 0, 7); g.fill(); continue; }
+          const d = Math.sign(x1 - x0); g.beginPath(); g.moveTo(x0, y); g.lineTo(x1, y); g.stroke();
+          g.beginPath(); g.moveTo(x1 + d * 4, y); g.lineTo(x1 - d * 2, y - 4); g.lineTo(x1 - d * 2, y + 4); g.closePath(); g.fill();
+        }
+        g.restore();
+      }
+    }
+    label(3, 'Recompose and\ncompute score', ms >= 4900, Math.max(0.55, v4));
+  }
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let t0 = null, wasOn = false;
+  function frame(ms) {
+    const on = slide.classList.contains('on');
+    if (on && !wasOn) t0 = ms;
+    wasOn = on;
+    if (on) draw(still ? 8000 : (ms - t0) % LOOP);
+    requestAnimationFrame(frame);
+  }
+  draw(8000);
+  requestAnimationFrame(frame);
+})();
+
+// Slide 12: once (initial obs -> VLM -> program), then every step (real-time obs -> program -> samples)
+(() => {
+  const root = document.querySelector('.s12'); if (!root) return;
+  const slide = root.closest('.slide'), dot = root.querySelector('.s12-dot');
+  const P = id => root.querySelector('#' + id);
+  const paths = { p1: P('s12p1'), p1b: P('s12p1b'), p2: P('s12p2'), p3: P('s12p3') };
+  const len = {}; for (const k in paths) len[k] = paths[k].getTotalLength();
+  const el = { obs0: root.querySelectorAll('.s12-obs img')[0], obs1: root.querySelectorAll('.s12-obs img')[1], vlm: root.querySelector('.s12-vlm'),
+               prog: root.querySelector('.s12-prog'), out: root.querySelector('.s12-out img'), step: root.querySelector('.s12-step') };
+  // timeline: [start, end, path] legs; hits light the card a leg arrives at
+  const legs = [[0, 700, 'p1', 'obs0', 'vlm'], [700, 1100, 'p1b', 'vlm', 'prog']];
+  const STEP = 1700, NSTEP = 4, T0 = 1700;
+  for (let i = 0; i < NSTEP; i++) { const t = T0 + i * STEP; legs.push([t, t + 600, 'p2', 'obs1', 'prog', i], [t + 650, t + 1150, 'p3', 'prog', 'out', i]); }
+  const LOOP = T0 + NSTEP * STEP + 900;
+  const ease = v => v * v * (3 - 2 * v);
+  function draw(ms) {
+    let active = null;
+    for (const L of legs) if (ms >= L[0] && ms < L[1]) active = L;
+    const lit = new Set();
+    if (active) {
+      const u = ease((ms - active[0]) / (active[1] - active[0])), pt = paths[active[2]].getPointAtLength(u * len[active[2]]);
+      dot.setAttribute('cx', pt.x); dot.setAttribute('cy', pt.y); lit.add(active[3]); if (u > 0.85) lit.add(active[4]);
+    } else { dot.setAttribute('cx', -20); dot.setAttribute('cy', -20); }
+    let k = 0; for (const L of legs) if (L[2] === 'p3' && ms >= L[1] - 100) k = L[5] + 1;
+    el.step.textContent = k ? '· step ' + k : '';
+    for (const key of ['obs0', 'obs1', 'vlm', 'prog', 'out']) el[key].classList.toggle('hit', lit.has(key));
+  }
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (still) return;
+  let t0 = null, wasOn = false;
+  function frame(ms) {
+    const on = slide.classList.contains('on');
+    if (on && !wasOn) t0 = ms;
+    wasOn = on;
+    if (on) draw((ms - t0) % LOOP);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+
+// Slide 13: samples -> Gaussian mixture (one tube per mode, weight = share of samples) -> diffusion sampling
+(() => {
+  const cv = document.querySelector('canvas.gmm3'); if (!cv) return;
+  const slide = cv.closest('.slide');
+  const W = 1136, H = 340, K = 2; cv.width = W * K; cv.height = H * K;
+  const g = cv.getContext('2d');
+  const PW = 320, PH = 262, GAP = 88, X0 = [0, PW + GAP, 2 * (PW + GAP)], Y0 = 8, NPT = 26;
+  const S = [44, 131], MODES = [{ y: 46, cy: -6, n: 28, c: '#4a82c3' }, { y: 131, cy: 131, n: 20, c: '#2e9e8f' }, { y: 216, cy: 268, n: 12, c: '#e0954a' }];
+  const TOT = MODES.reduce((m, k) => m + k.n, 0); MODES.forEach(k => { k.w = k.n / TOT; });
+  let seed = 5; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const gs = () => Math.sqrt(-2 * Math.log(rnd() + 1e-9)) * Math.cos(2 * Math.PI * rnd());
+  const quad = (c, q, u) => [(1 - u) * (1 - u) * S[0] + 2 * (1 - u) * u * c[0] + u * u * q[0], (1 - u) * (1 - u) * S[1] + 2 * (1 - u) * u * c[1] + u * u * q[1]];
+  const path = (c, q) => Array.from({ length: NPT }, (_, i) => quad(c, q, i / (NPT - 1)));
+  const samples = [];
+  MODES.forEach((k, m) => { k.mean = path([160, k.cy], [282, k.y]); for (let j = 0; j < k.n; j++) samples.push({ m, pts: path([160 + gs() * 16, k.cy + gs() * 18], [282 + gs() * 5, k.y + gs() * 9]) }); });
+  const NT = 18, clampY = y => Math.max(14, Math.min(PH - 14, y));
+  const noise = Array.from({ length: NT }, () => {
+    const ph = [rnd() * 6.3, rnd() * 6.3], am = [gs() * 52, gs() * 22], off = gs() * 6;
+    const pts = Array.from({ length: NPT }, (_, i) => { const u = i / (NPT - 1), e = Math.pow(u, 0.7); return [S[0] + u * 238, clampY(S[1] + e * (am[0] * Math.sin(1.2 * Math.PI * u + ph[0]) + am[1] * Math.sin(2.8 * Math.PI * u + ph[1])))]; });
+    return { pts, off, bias: pts.slice(NPT / 2).reduce((m, p) => m + p[1], 0) };
+  });
+  // deterministic assignment: sort by where the noise points, split by the mixture weights
+  const order = [...noise].sort((p, q) => p.bias - q.bias); let acc = 0, mi = 0;
+  order.forEach((tr, r) => { while (mi < MODES.length - 1 && r >= Math.round((acc + MODES[mi].w) * NT)) { acc += MODES[mi].w; mi++; } tr.m = mi; tr.tgt = MODES[mi].mean.map(([x, y], i) => [x, y + tr.off * Math.sin(Math.PI * i / (NPT - 1))]); });
+  const clamp = v => v < 0 ? 0 : v > 1 ? 1 : v, ease = v => v * v * (3 - 2 * v);
+  const lerp = (p, q, a) => p.map((pt, i) => [pt[0] + (q[i][0] - pt[0]) * a, pt[1] + (q[i][1] - pt[1]) * a]);
+  function line(P, pts, col, w, alpha, frac = 1) {
+    const n = Math.max(2, Math.round(frac * pts.length)); g.save(); g.globalAlpha = alpha; g.strokeStyle = col; g.lineWidth = w; g.lineCap = 'round'; g.lineJoin = 'round';
+    g.beginPath(); for (let i = 0; i < n; i++) { const x = X0[P] + pts[i][0], y = Y0 + pts[i][1]; i ? g.lineTo(x, y) : g.moveTo(x, y); } g.stroke(); g.restore();
+  }
+  function rr(x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+  function frameP(P, alpha) {
+    g.save(); g.globalAlpha = alpha; g.fillStyle = '#f3f5f6'; rr(X0[P], Y0, PW, PH, 10); g.fill();
+    g.fillStyle = '#4a5459'; const x = X0[P] + S[0], y = Y0 + S[1]; g.fillRect(x - 24, y - 8, 14, 16); g.fillRect(x - 10, y - 11, 13, 4); g.fillRect(x - 10, y + 7, 13, 4); g.restore();
+  }
+  function arrow(i, lit) {
+    const x0 = X0[i] + PW + 16, x1 = X0[i + 1] - 16, y = Y0 + PH / 2;
+    g.save(); g.strokeStyle = g.fillStyle = lit ? '#355f78' : '#a3adb2'; g.lineWidth = 2.5;
+    g.beginPath(); g.moveTo(x0, y); g.lineTo(x1 - 8, y); g.stroke(); g.beginPath(); g.moveTo(x1, y); g.lineTo(x1 - 11, y - 6); g.lineTo(x1 - 11, y + 6); g.closePath(); g.fill(); g.restore();
+  }
+  function label(P, str, lit, alpha = 1) {
+    g.save(); g.globalAlpha = alpha; g.fillStyle = lit ? '#355f78' : '#6d7376'; g.font = (lit ? '800 ' : '600 ') + '18px Inter, sans-serif';
+    g.textAlign = 'center'; g.fillText(str, X0[P] + PW / 2, Y0 + PH + 34); g.restore();
+  }
+  function tubes(P, alpha, weights) {
+    MODES.forEach(k => { line(P, k.mean, k.c, 24, 0.2 * alpha); line(P, k.mean, k.c, 2.5, alpha); });
+    if (weights) MODES.forEach(k => { g.save(); g.globalAlpha = weights; g.fillStyle = k.c; g.font = '800 14px Inter, sans-serif'; g.textAlign = 'right';
+      g.fillText('w = ' + k.w.toFixed(2), X0[P] + PW - 10, Y0 + k.y + (k.y < 100 ? 26 : k.y > 160 ? -16 : 26)); g.restore(); });
+  }
+  const LOOP = 10200;
+  function draw(ms) {
+    g.setTransform(K, 0, 0, K, 0, 0); g.clearRect(0, 0, W, H);
+    const out = 1 - clamp((ms - 9500) / 500);
+    // 1: action chunk samples
+    frameP(0, 1);
+    const f1 = ease(clamp(ms / 1400));
+    samples.forEach(sm => line(0, sm.pts, '#6f8794', 1.2, 0.55, Math.max(0.02, f1)));
+    label(0, 'Action Chunk Samples', ms < 2600);
+    // 2: Gaussian mixture model
+    arrow(0, ms >= 2300 && ms < 5000);
+    const v2 = clamp((ms - 2600) / 300) * out;
+    if (v2) {
+      frameP(1, v2);
+      samples.forEach(sm => line(1, sm.pts, '#6f8794', 1, 0.5 * v2 * (1 - 0.6 * clamp((ms - 2900) / 600))));
+      tubes(1, clamp((ms - 2900) / 600) * out, clamp((ms - 3400) / 400) * out);
+    }
+    label(1, 'Gaussian Mixture Model', ms >= 2600 && ms < 5000, Math.max(0.5, v2));
+    // 3: diffusion sampling from the mixture
+    arrow(1, ms >= 4700);
+    const v3 = clamp((ms - 5000) / 300) * out;
+    if (v3) {
+      frameP(2, v3); tubes(2, 0.55 * v3, 0);
+      const al = ease(clamp((ms - 5500) / 2100));
+      noise.forEach(tr => { const pts = lerp(tr.pts, tr.tgt, al), c = MODES[tr.m].c;
+        line(2, pts, '#a3adb2', 1.3, v3 * (1 - al)); line(2, pts, c, 1.8, v3 * al);
+        const e = pts[NPT - 1]; g.save(); g.globalAlpha = v3; g.fillStyle = al > 0.5 ? c : '#a3adb2'; g.beginPath(); g.arc(X0[2] + e[0], Y0 + e[1], 2.8, 0, 7); g.fill(); g.restore(); });
+    }
+    label(2, 'Diffusion Sampling', ms >= 5000, Math.max(0.5, v3));
+  }
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let t0 = null, wasOn = false;
+  function frame(ms) {
+    const on = slide.classList.contains('on');
+    if (on && !wasOn) t0 = ms;
+    wasOn = on;
+    if (on) draw(still ? 8600 : (ms - t0) % LOOP);
+    requestAnimationFrame(frame);
+  }
+  draw(8600);
+  requestAnimationFrame(frame);
+})();
+
+// Slide 13: reveal the three real panels in order once per visit; the last one stays lit
+(() => {
+  const root = document.querySelector('.s13'); if (!root) return;
+  const slide = root.closest('.slide'), P = [...root.querySelectorAll('.s13-p')], A = [...root.querySelectorAll('.s13-ar')];
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function set(ms) {
+    const k = still ? 2 : ms < 1600 ? 0 : ms < 3400 ? 1 : 2;
+    P.forEach((el, i) => { el.classList.toggle('shown', i <= k); el.classList.toggle('lit', i === k); });
+    A.forEach((el, i) => el.classList.toggle('lit', i === k - 1));
+  }
+  let t0 = null, wasOn = false;
+  function frame(ms) {
+    const on = slide.classList.contains('on');
+    if (on && !wasOn) t0 = ms;
+    wasOn = on;
+    if (on) set(ms - t0);
+    requestAnimationFrame(frame);
+  }
+  set(0);
+  requestAnimationFrame(frame);
+})();
+
+// Method overview: once (initial obs -> VLM -> program), then every step around the loop
+(() => {
+  const root = document.querySelector('.ov'); if (!root) return;
+  const slide = root.closest('.slide'), dot = root.querySelector('.ov-dot'), stepEl = root.querySelector('.ov-step');
+  const path = id => root.querySelector('#' + id), len = {};
+  ['ovp0', 'ovp1', 'ova1', 'ova2', 'ova3', 'ova4', 'ovl'].forEach(id => { len[id] = path(id).getTotalLength(); });
+  const box = k => k === 'init' ? root.querySelector('.ov-init img') : k === 'vlm' ? root.querySelector('.ov-vlm') : root.querySelector(`.ov-c[data-k="${k}"] .ov-m`);
+  const keys = ['init', 'vlm', 'c1', 'c2', 'c3', 'c4', 'c5'], el = Object.fromEntries(keys.map(k => [k, box(k)]));
+  const legs = [[0, 600, 'ovp0', 'init', 'vlm'], [600, 1100, 'ovp1', 'vlm', 'c2']];
+  const seq = [['ova1', 'c1', 'c2'], ['ova2', 'c2', 'c3'], ['ova3', 'c3', 'c4'], ['ova4', 'c4', 'c5'], ['ovl', 'c5', 'c1']];
+  const LEG = 520, NCYC = 3, T0 = 1300, CYC = seq.length * LEG + 200;
+  for (let c = 0; c < NCYC; c++) seq.forEach(([id, a, b], i) => { const t = T0 + c * CYC + i * LEG; legs.push([t, t + LEG - 40, id, a, b, c]); });
+  const LOOP = T0 + NCYC * CYC + 700, ease = v => v * v * (3 - 2 * v);
+  function draw(ms) {
+    let act = null; for (const L of legs) if (ms >= L[0] && ms < L[1]) act = L;
+    const lit = new Set();
+    if (act) {
+      const u = ease((ms - act[0]) / (act[1] - act[0])), pt = path(act[2]).getPointAtLength(u * len[act[2]]);
+      dot.setAttribute('cx', pt.x); dot.setAttribute('cy', pt.y); lit.add(act[3]); if (u > 0.85) lit.add(act[4]);
+    } else { dot.setAttribute('cx', -20); dot.setAttribute('cy', -20); }
+    let k = 0; for (const L of legs) if (L[2] === 'ovl' && ms >= L[1]) k = L[5] + 1;
+    stepEl.textContent = k ? '· step ' + k : '';
+    keys.forEach(key => el[key].classList.toggle('hit', lit.has(key)));
+  }
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  let t0 = null, wasOn = false;
+  function frame(ms) {
+    const on = slide.classList.contains('on');
+    if (on && !wasOn) t0 = ms;
+    wasOn = on;
+    if (on) draw((ms - t0) % LOOP);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+
+// Video slots: the "coming soon" label hides itself as soon as the planned file loads
+document.querySelectorAll('.slotbox video').forEach(v => {
+  const ok = () => { v.parentElement.classList.add('ready'); v.controls = true; };
+  v.addEventListener('loadeddata', ok); v.addEventListener('loadedmetadata', ok);
+  if (v.readyState >= 1) ok();
+});
+
+// Title slide: interactive diffusion teaser (exact probability-flow ODE of a 3-mode Gaussian mixture; cursor tilts the mode weights)
+(() => {
+  const cv = document.querySelector('canvas.teaser-cv'); if (!cv) return;
+  const slide = cv.closest('.slide'), W = 1280, H = 720, K = 1.5; cv.width = W * K; cv.height = H * K;
+  const g = cv.getContext('2d'); g.setTransform(K, 0, 0, K, 0, 0);
+  const MODES = [{ m: [1.03, 0.44], c: '#4a82c3' }, { m: [1.22, -0.44], c: '#2e9e8f' }, { m: [-0.22, -0.69], c: '#e0954a' }];
+  const SIG = 0.08, NS = 0.8, SC = 360, CX = W / 2, CY = H / 2, N = 420, STEPS = 120, RUN = 3000, HOLD = 1800;
+  const px = p => [CX + p[0] * SC, CY - p[1] * SC];
+  const gs = () => Math.sqrt(-2 * Math.log(Math.random() + 1e-9)) * Math.cos(2 * Math.PI * Math.random());
+  let P = [], step = 0, t0 = 0, cursor = null, wasOn = false;
+  const rgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+  function reset(now) { P = Array.from({ length: N }, () => ({ x: [NS * gs(), NS * gs()], k: -1 })); step = 0; t0 = now; g.fillStyle = '#f7f6f2'; g.fillRect(0, 0, W, H); }
+  function weights() {
+    const w = MODES.map(() => 1);
+    if (cursor) MODES.forEach((M, i) => { const d2 = (M.m[0] - cursor[0]) ** 2 + (M.m[1] - cursor[1]) ** 2; w[i] += 20 * Math.exp(-d2 / (2 * 0.33 * 0.33)); });
+    const z = w.reduce((a, b) => a + b, 0); return w.map(v => v / z);
+  }
+  // x_t = (1-t) x0 + t*NS*eps; velocity = E[NS*eps - x0 | x_t], closed form for the mixture
+  function vel(x, t, w) {
+    let lw = [], best = -Infinity;
+    const comp = MODES.map((M, i) => {
+      const a = 1 - t, s2 = a * a * SIG * SIG + t * t * NS * NS;
+      const dx = x[0] - a * M.m[0], dy = x[1] - a * M.m[1];
+      const l = Math.log(w[i]) - (dx * dx + dy * dy) / (2 * s2) - Math.log(s2);
+      lw.push(l); if (l > best) best = l;
+      const gain = a * SIG * SIG / s2, e0 = [M.m[0] + gain * dx, M.m[1] + gain * dy];
+      const ee = [(x[0] - a * e0[0]) / t, (x[1] - a * e0[1]) / t];
+      return [ee[0] - e0[0], ee[1] - e0[1]];
+    });
+    const r = lw.map(l => Math.exp(l - best)), z = r.reduce((a, b) => a + b, 0);
+    let v = [0, 0], kb = 0; r.forEach((ri, i) => { v[0] += ri / z * comp[i][0]; v[1] += ri / z * comp[i][1]; if (ri > r[kb]) kb = i; });
+    return [v, kb];
+  }
+  function blobs(w) {
+    MODES.forEach((M, i) => { const [x, y] = px(M.m), rad = 70, [r, gg, b] = rgb(M.c);
+      const gr = g.createRadialGradient(x, y, 2, x, y, rad); gr.addColorStop(0, `rgba(${r},${gg},${b},${0.10 + 0.45 * w[i]})`); gr.addColorStop(1, `rgba(${r},${gg},${b},0)`);
+      g.fillStyle = gr; g.beginPath(); g.arc(x, y, rad, 0, 7); g.fill(); });
+  }
+  function frame(now) {
+    const on = slide.classList.contains('on');
+    if (on && !wasOn) reset(now);
+    wasOn = on;
+    if (on) {
+      const w = weights();
+      const target = Math.min(STEPS, Math.floor((now - t0) / RUN * STEPS));
+      g.fillStyle = 'rgba(247,246,242,0.16)'; g.fillRect(0, 0, W, H);
+      blobs(w);
+      while (step < target) {
+        const t = 1 - step / STEPS, dt = 1 / STEPS, tt = Math.max(t, 0.004);
+        for (const p of P) { const [v, k] = vel(p.x, tt, w); p.px = px(p.x); p.x = [p.x[0] - dt * v[0], p.x[1] - dt * v[1]]; p.k = k; }
+        step++;
+      }
+      const prog = step / STEPS;
+      for (const p of P) {
+        const [x, y] = px(p.x), [r, gg, b] = p.k >= 0 ? rgb(MODES[p.k].c) : [120, 130, 136];
+        const mix = Math.min(1, prog * 1.3), cr = Math.round(120 + (r - 120) * mix), cgc = Math.round(130 + (gg - 130) * mix), cb = Math.round(136 + (b - 136) * mix);
+        if (p.px) { g.strokeStyle = `rgba(${cr},${cgc},${cb},0.28)`; g.lineWidth = 1.2; g.beginPath(); g.moveTo(p.px[0], p.px[1]); g.lineTo(x, y); g.stroke(); }
+        g.fillStyle = `rgba(${cr},${cgc},${cb},0.75)`; g.beginPath(); g.arc(x, y, 2.6, 0, 7); g.fill();
+      }
+      if (cursor) { const [x, y] = px(cursor); g.strokeStyle = '#2f7d4f'; g.lineWidth = 2; g.beginPath(); g.arc(x, y, 12, 0, 7); g.stroke();
+        g.fillStyle = '#2f7d4f'; g.font = '700 12px Inter, sans-serif'; g.textAlign = 'center'; g.fillText('steer', x, y - 18); }
+      g.fillStyle = '#6d7376'; g.font = '600 12px Inter, sans-serif'; g.textAlign = 'left';
+      g.fillStyle = '#f7f6f2'; g.fillRect(20, H - 34, 150, 22);
+      g.fillStyle = '#6d7376'; g.fillText(`noise t = ${(1 - prog).toFixed(2)}`, 24, H - 18);
+      if (step >= STEPS && now - t0 > RUN + HOLD) reset(now);
+    }
+    requestAnimationFrame(frame);
+  }
+  slide.addEventListener('mousemove', e => { const r = cv.getBoundingClientRect(); const x = (e.clientX - r.left) * W / r.width, y = (e.clientY - r.top) * H / r.height; cursor = [(x - CX) / SC, (CY - y) / SC]; });
+  slide.addEventListener('mouseleave', () => { cursor = null; });
+  reset(performance.now());
+  requestAnimationFrame(frame);
+})();
+
+fit();
+show((parseInt(location.hash.slice(1)) || 1) - 1);
+{ let v = new URLSearchParams(location.search).get('view'); if (!v) { try { v = localStorage.getItem('cad-view'); } catch (e) {} } if (v === 'scroll') setMode(true); }
+</script>
+</body>
+</html>
