@@ -186,6 +186,7 @@
   .bmk { width: 30px; height: 30px; margin-top: 2px; border: 2.5px solid #a3adb2; border-radius: 8px; display: grid; place-items: center; }
   .bmk.done { border: 0; border-radius: 50%; background: var(--good); color: var(--white); font-weight: 800; font-size: 17px; line-height: 1; }
   .ben-h b { display: block; font-size: 20px; letter-spacing: -0.02em; line-height: 1.2; } .ben-h div > span { display: block; margin-top: 4px; font-size: 15px; color: var(--muted); line-height: 1.35; }
+  .bens.nodesc .ben-h { min-height: 0; align-items: center; }
   .ben video { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 8px; background: #111; align-self: end; }
   .slide h2.thanks { font-size: 56px; margin-top: 18px; }
   .agenda { display: grid; grid-template-columns: 1fr 22px 1fr 22px 1fr 22px 1fr 22px 1fr 22px 1fr; align-items: stretch; }
@@ -833,8 +834,8 @@ handle = <span class="fn">find</span>(<span class="st">"mug handle"</span>)
   <p class="sub">What this formulation enables</p>
   <div class="body">
     <div class="bens">
-      <figure class="ben"><div class="ben-h"><span class="bmk"></span><div><b>Broad zero-shot capabilities</b><span>Use VLM priors without large-scale robot action pretraining</span></div></div><video src="vid/s05_general_pickup_layout13_success.mp4" poster="img/s05_pickup_poster.jpg" muted loop playsinline preload="none" aria-label="Zero-shot: two arms pick up the named spatula in clutter"></video></figure>
-      <figure class="ben"><div class="ben-h"><span class="bmk"></span><div><b>Few-shot steering for fine-grained specialization</b><span>Adapt Code-as-Diffusion with existing steering methods (e.g. PPS and DSRL)</span></div></div><video src="vid/enable_steer_square.mp4" poster="img/enable_steer_square_poster.jpg" muted loop playsinline preload="none" aria-label="PPS-steered Code-as-Diffusion places the square nut on the peg"></video></figure>
+      <figure class="ben"><div class="ben-h"><span class="bmk"></span><div><b>Broad zero-shot capabilities</b><span>VLM priors without large-scale robot data</span></div></div><video src="vid/s05_general_pickup_layout13_success.mp4" poster="img/s05_pickup_poster.jpg" muted loop playsinline preload="none" aria-label="Zero-shot: two arms pick up the named spatula in clutter"></video></figure>
+      <figure class="ben"><div class="ben-h"><span class="bmk"></span><div><b>Few-shot Task Steering</b><span>Diffusion steering with DSRL &amp; PPS</span></div></div><video src="vid/enable_steer_square.mp4" poster="img/enable_steer_square_poster.jpg" muted loop playsinline preload="none" aria-label="PPS-steered Code-as-Diffusion places the square nut on the peg"></video></figure>
       <figure class="ben"><div class="ben-h"><span class="bmk"></span><div><b>Embodiment flexibility</b><span>Efficiently adapt to single-arm, dual-arm and dexterous-hand robots</span></div></div><video src="vid/enable_embodiments.mp4" poster="img/enable_embodiments_poster.jpg" muted loop playsinline preload="none" aria-label="Four tasks: two single-arm PPS tasks, a two-arm RoboDojo task and a two-hand DexJoCo task"></video></figure>
     </div>
   </div>
@@ -1030,10 +1031,10 @@ handle = <span class="fn">find</span>(<span class="st">"mug handle"</span>)
   <h2>Code-as-Diffusion</h2>
   <p class="takeaway goal top"><span aria-hidden="true">🚀</span> Our base maintains <b>VLM priors</b> while enabling <b>few&#8209;shot steering</b> across diverse tasks and embodiments</p>
   <div class="body">
-    <div class="bens">
-      <figure class="ben done"><div class="ben-h"><span class="bmk done">✓</span><div><b>Broad zero-shot capabilities</b><span>Use VLM priors without large-scale robot action pretraining</span></div></div><video src="vid/s05_general_pickup_layout13_success.mp4" poster="img/s05_pickup_poster.jpg" muted loop playsinline preload="none" aria-label="Zero-shot: two arms pick up the named spatula in clutter"></video></figure>
-      <figure class="ben done"><div class="ben-h"><span class="bmk done">✓</span><div><b>Few-shot steering for fine-grained specialization</b><span>Adapt Code-as-Diffusion with existing steering methods (e.g. PPS and DSRL)</span></div></div><video src="vid/enable_steer_square.mp4" poster="img/enable_steer_square_poster.jpg" muted loop playsinline preload="none" aria-label="PPS-steered Code-as-Diffusion places the square nut on the peg"></video></figure>
-      <figure class="ben done"><div class="ben-h"><span class="bmk done">✓</span><div><b>Embodiment flexibility</b><span>Efficiently adapt to single-arm, dual-arm and dexterous-hand robots</span></div></div><video src="vid/enable_embodiments.mp4" poster="img/enable_embodiments_poster.jpg" muted loop playsinline preload="none" aria-label="Four tasks: two single-arm PPS tasks, a two-arm RoboDojo task and a two-hand DexJoCo task"></video></figure>
+    <div class="bens nodesc">
+      <figure class="ben done"><div class="ben-h"><span class="bmk done">✓</span><div><b>Broad zero-shot capabilities</b></div></div><video src="vid/s05_general_pickup_layout13_success.mp4" poster="img/s05_pickup_poster.jpg" muted loop playsinline preload="none" aria-label="Zero-shot: two arms pick up the named spatula in clutter"></video></figure>
+      <figure class="ben done"><div class="ben-h"><span class="bmk done">✓</span><div><b>Few-shot Task Steering</b></div></div><video src="vid/enable_steer_square.mp4" poster="img/enable_steer_square_poster.jpg" muted loop playsinline preload="none" aria-label="PPS-steered Code-as-Diffusion places the square nut on the peg"></video></figure>
+      <figure class="ben done"><div class="ben-h"><span class="bmk done">✓</span><div><b>Embodiment flexibility</b></div></div><video src="vid/enable_embodiments.mp4" poster="img/enable_embodiments_poster.jpg" muted loop playsinline preload="none" aria-label="Four tasks: two single-arm PPS tasks, a two-arm RoboDojo task and a two-hand DexJoCo task"></video></figure>
     </div>
   </div>
   <div class="foot warn">⚠ Note: Results are preliminary, and evaluations are still ongoing for some of the listed tasks.</div>
