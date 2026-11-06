@@ -164,9 +164,9 @@
   .ov-code { height: 100%; background: #1f2a30; display: grid; align-content: center; padding: 0 14px; }
   .ov-code pre { margin: 0; font: 12px/1.45 ui-monospace, "SF Mono", Menlo, Consolas, monospace; color: #e4ebee; } .ov-code .fn { color: #b9dfc4; }
   .ov .hit { border-color: var(--accent) !important; box-shadow: 0 0 0 4px #355f7833; }
-  .s15n { display: grid; grid-template-columns: repeat(2, 450px); justify-content: center; gap: 36px; }
+  .s15n { display: grid; grid-template-columns: repeat(2, 416px); justify-content: center; gap: 36px; }
   .s15n figure { margin: 0; } .s15n figcaption { height: 26px; line-height: 26px; margin-bottom: 8px; text-align: center; font-size: 19px; font-weight: 750; color: var(--ink); }
-  .s15n video { display: block; width: 450px; aspect-ratio: 640 / 500; border: 1px solid var(--line); border-radius: 10px; background: #f4f4f4; }
+  .s15n video { display: block; width: 416px; aspect-ratio: 640 / 500; border: 1px solid var(--line); border-radius: 10px; background: #f4f4f4; }
   .s15n-meta { text-align: center; font-size: 14px; color: var(--muted); }
   .pdone { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
   .pd { margin: 0; background: var(--white); border: 1px solid var(--line); border-radius: 12px; padding: 14px 14px 14px; display: grid; gap: 12px; }
@@ -308,6 +308,22 @@
   body.scroll .slide:not(.on) { display: flex !important; } body.scroll #s-title { display: grid !important; }
   body.scroll .slide.fadein { animation: none; }
   body.scroll #hud { opacity: .92; }
+  #hud #pause[aria-pressed="true"] { background: #2f7d4f; border-color: #2f7d4f; }
+  .slide video:not([controls]) { cursor: pointer; }
+  .slide video.vpaused { outline: 3px solid #2f7d4f; outline-offset: -3px; filter: saturate(.8) brightness(.96); }
+  #pbadge { position: fixed; left: 16px; bottom: 14px; z-index: 20; display: none; padding: 7px 12px; border-radius: 6px; background: #1d2326e6;
+            border: 1px solid #56646a; color: #f2f4f1; font-size: 13px; letter-spacing: .02em; }
+  body.paused #pbadge { display: block; }
+  .slide [data-step].st-hide { visibility: hidden; }
+  .slide [data-step].st-in { animation: stin .4s ease backwards; }
+  @keyframes stin { from { opacity: 0 } to { opacity: 1 } }
+  @media (prefers-reduced-motion: reduce) { .slide [data-step].st-in { animation: none; } }
+  .s15n-ctl { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: -4px; }
+  .s15n-ctl button { width: 40px; height: 32px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); color: var(--accent); font: 700 14px Inter, sans-serif; cursor: pointer; }
+  .s15n-ctl button:focus-visible, .s15n-ctl input:focus-visible { outline: 3px solid #355f7855; outline-offset: 2px; }
+  .s15n-ctl input { width: 520px; accent-color: var(--accent); cursor: pointer; }
+  .s15n-end { font: 800 18px Inter, sans-serif; color: var(--muted); width: 14px; text-align: center; }
+  .s15n-lab { font-size: 14px; font-weight: 650; color: var(--muted); margin-left: 6px; }
   @media (prefers-reduced-motion: reduce) { .slide.fadein { animation: none; } .check, .pipe .box, #hud, .istep, .eqr, .s13-p, .s13-ar { transition: none; } }
 
   .outline { display: grid; gap: 10px; max-width: 1000px; margin: 0 auto; width: 100%; }
@@ -476,18 +492,18 @@
 </section>
 
 <!-- 8 -->
-<section class="slide" id="s-idea">
+<section class="slide" id="s-idea" data-steps="3">
   <div class="sec">03 · Approach</div>
   <h2>Our Idea: Code-as-Diffusion</h2>
   <p class="takeaway goal top"><span class="lbl">Key Idea:</span> Formalize VLM-generated code into an <b>analytical diffusion policy</b></p>
   <template id="t-idea-sub"><p class="sub">Bridging zero-shot control and few-shot specialization</p></template>
   <div class="body">
     <div class="isteps" aria-hidden="true">
-      <div class="istep"><span class="n">1</span>VLM writes code</div><span class="iar">→</span>
-      <div class="istep"><span class="n">2</span>Analytical diffusion policy</div><span class="iar">→</span>
-      <div class="istep"><span class="n">3</span>Steerable actions</div>
+      <div class="istep" data-step="1"><span class="n">1</span>VLM writes code</div><span class="iar" data-step="2">→</span>
+      <div class="istep" data-step="2"><span class="n">2</span>Analytical diffusion policy</div><span class="iar" data-step="3">→</span>
+      <div class="istep" data-step="3"><span class="n">3</span>Steerable actions</div>
     </div>
-    <canvas class="istory" role="img" aria-label="A VLM writes code that proposes left and right grasps of a mug handle; noisy gripper paths denoise into these two path families; steering then sends every path to the left family"></canvas>
+    <canvas class="istory" data-step="1" role="img" aria-label="A VLM writes code that proposes left and right grasps of a mug handle; noisy gripper paths denoise into these two path families; steering then sends every path to the left family"></canvas>
   </div>
   <template id="t-idea-cards"><!-- three-card version, hidden -->
     <div class="idea3">
@@ -552,12 +568,12 @@ handle = <span class="fn">find</span>(<span class="st">"mug handle"</span>)
 </section>
 
 <!-- 12 -->
-<section class="slide" id="s-obs2">
+<section class="slide" id="s-obs2" data-steps="5">
   <div class="sec">03 · Approach</div>
   <h2>Our Idea: Code-as-Diffusion</h2>
   <p class="sub">Observation 2: GMMs Have Closed-Form Diffusion Scores</p>
   <div class="body">
-    <canvas class="gmm4" role="img" aria-label="Four panels: a Gaussian mixture; its three components decomposed; each component annealed wider by added noise; the components recomposed into the noisy mixture with score arrows"></canvas>
+    <canvas class="gmm4" data-step="1" role="img" aria-label="Four panels: a Gaussian mixture; its three components decomposed; each component annealed wider by added noise; the components recomposed into the noisy mixture with score arrows"></canvas>
     <template id="t-obs2-eq"><!-- equation version, hidden -->
     <div class="isteps" aria-hidden="true">
       <div class="istep"><span class="n">1</span>Decompose</div><span class="iar">→</span>
@@ -578,53 +594,53 @@ handle = <span class="fn">find</span>(<span class="st">"mug handle"</span>)
     </template>
     <template id="t-obs2-img"><div class="figs" style="grid-template-columns:1fr;justify-items:center"><figure style="width:1080px"><img src="img/image7.png" alt="A mixture decomposed into components, annealed, and recomposed to compute the score" style="height:320px"></figure></div></template>
   </div>
-  <p class="takeaway goal"><span aria-hidden="true">📝</span> <span class="lbl">Takeaway:</span> We should leverage <b>GMM structure</b> in our target distribution.</p>
+  <p class="takeaway goal" data-step="5"><span aria-hidden="true">📝</span> <span class="lbl">Takeaway:</span> We should leverage <b>GMM structure</b> in our target distribution.</p>
   <div class="slide-number"></div>
 
 </section>
 
 <!-- 13 -->
-<section class="slide" id="s-overview">
+<section class="slide" id="s-overview" data-steps="4">
   <div class="sec">03 · Approach</div>
   <h2>Code-as-Diffusion Method Overview</h2>
   <div class="body">
     <div class="ov">
       <svg class="ov-flow" viewBox="0 0 1136 470" aria-hidden="true">
         <defs><marker id="ovh" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#9aa5ab"/></marker></defs>
-        <rect class="ov-zone z1" x="24" y="150" width="640" height="236" rx="12" />
-        <rect class="ov-zone z2" x="676" y="150" width="436" height="236" rx="12" />
-        <text class="ov-zl" x="652" y="172" text-anchor="end">Step 1 · VLM-defined implicit distribution</text>
-        <text class="ov-zl" x="1100" y="172" text-anchor="end">Step 2 · Gaussian mixture approximation</text>
-        <path id="ovp0" d="M156 45 L 199 45" />
-        <path id="ovp1" d="M346 70 L 346 183" />
-        <path id="ova1" d="M220 261 L 254 261" />
-        <path id="ova2" d="M436 261 L 470 261" />
-        <path id="ova3" d="M652 261 L 698 261" />
-        <path id="ova4" d="M880 261 L 914 261" />
-        <path id="ovl" d="M1006 374 L 1006 428 L 130 428 L 130 376" />
-        <text class="ov-tag" x="177" y="36">once</text>
-        <text class="ov-ll" x="568" y="452">Execute the action chunk, then observe again <tspan class="ov-step"></tspan></text>
+        <rect class="ov-zone z1" data-step="3" x="24" y="150" width="640" height="236" rx="12" />
+        <rect class="ov-zone z2" data-step="4" x="676" y="150" width="436" height="236" rx="12" />
+        <text class="ov-zl" data-step="3" x="652" y="172" text-anchor="end">Step 1 · VLM-defined implicit distribution</text>
+        <text class="ov-zl" data-step="4" x="1100" y="172" text-anchor="end">Step 2 · Gaussian mixture approximation</text>
+        <path id="ovp0" data-step="2" d="M156 45 L 199 45" />
+        <path id="ovp1" data-step="2" d="M346 70 L 346 183" />
+        <path id="ova1" data-step="3" d="M220 261 L 254 261" />
+        <path id="ova2" data-step="3" d="M436 261 L 470 261" />
+        <path id="ova3" data-step="4" d="M652 261 L 698 261" />
+        <path id="ova4" data-step="4" d="M880 261 L 914 261" />
+        <path id="ovl" data-step="4" d="M1006 374 L 1006 428 L 130 428 L 130 376" />
+        <text class="ov-tag" data-step="2" x="177" y="36">once</text>
+        <text class="ov-ll" data-step="4" x="568" y="452">Execute the action chunk, then observe again <tspan class="ov-step"></tspan></text>
         <circle class="ov-dot" r="6" cx="-20" cy="-20" />
       </svg>
-      <figure class="ov-init" data-k="init" style="left:24px"><img src="img/image35.jpg" alt="Initial observation of the scene"><figcaption>Initial Observation</figcaption></figure>
-      <div class="ov-vlm" data-k="vlm" style="left:200px"><img src="img/image6.png" alt="VLM"><span><b>VLM writes the program</b><small>once per task</small></span></div>
-      <figure class="ov-c" data-k="c1" style="left:40px"><div class="ov-m"><img src="img/image14.jpg" alt="Real-time observation"></div><figcaption>Real-time Observation</figcaption></figure>
-      <figure class="ov-c" data-k="c2" style="left:256px"><div class="ov-m"><div class="ov-code"><pre><code>weights = <span class="fn">dict</span>(
+      <figure class="ov-init" data-step="1" data-k="init" style="left:24px"><img src="img/image35.jpg" alt="Initial observation of the scene"><figcaption>Initial Observation</figcaption></figure>
+      <div class="ov-vlm" data-step="2" data-k="vlm" style="left:200px"><img src="img/image6.png" alt="VLM"><span><b>VLM writes the program</b><small>once per task</small></span></div>
+      <figure class="ov-c" data-step="3" data-k="c1" style="left:40px"><div class="ov-m"><img src="img/image14.jpg" alt="Real-time observation"></div><figcaption>Real-time Observation</figcaption></figure>
+      <figure class="ov-c" data-step="2" data-k="c2" style="left:256px"><div class="ov-m"><div class="ov-code"><pre><code>weights = <span class="fn">dict</span>(
   approach=…,
   grasp=…,
   lift=…,
   carry=…,
   release=…,
 )</code></pre></div></div><figcaption>Program → mode weights</figcaption></figure>
-      <figure class="ov-c" data-k="c3" style="left:472px"><div class="ov-m"><img src="img/s13_samples.jpg" alt="Action chunk samples"></div><figcaption>Action Chunk Samples</figcaption></figure>
-      <figure class="ov-c" data-k="c4" style="left:700px"><div class="ov-m"><img src="img/s13_gmm.jpg" alt="Gaussian mixture model fitted to the samples"></div><figcaption>Gaussian Mixture Model</figcaption></figure>
-      <figure class="ov-c" data-k="c5" style="left:916px"><div class="ov-m"><video src="vid/s13_diffusion_sampling.mp4" poster="img/s13_sampling_poster.jpg" muted loop playsinline preload="none" aria-label="Diffusion sampling from the mixture"></video></div><figcaption>Diffusion Sampling</figcaption></figure>
+      <figure class="ov-c" data-step="3" data-k="c3" style="left:472px"><div class="ov-m"><img src="img/s13_samples.jpg" alt="Action chunk samples"></div><figcaption>Action Chunk Samples</figcaption></figure>
+      <figure class="ov-c" data-step="4" data-k="c4" style="left:700px"><div class="ov-m"><img src="img/s13_gmm.jpg" alt="Gaussian mixture model fitted to the samples"></div><figcaption>Gaussian Mixture Model</figcaption></figure>
+      <figure class="ov-c" data-step="4" data-k="c5" style="left:916px"><div class="ov-m"><video src="vid/s13_diffusion_sampling.mp4" poster="img/s13_sampling_poster.jpg" muted loop playsinline preload="none" aria-label="Diffusion sampling from the mixture"></video></div><figcaption>Diffusion Sampling</figcaption></figure>
     </div>
   </div>
   <div class="slide-number"></div>
 </section>
 
-<section class="slide" id="s-step1">
+<section class="slide" id="s-step1" data-steps="4">
   <div class="sec">03 · Approach</div>
   <h2>Code-as-Diffusion Method Overview</h2>
   <p class="sub">Step 1: VLM-Defined Implicit Distribution</p>
@@ -632,18 +648,18 @@ handle = <span class="fn">find</span>(<span class="st">"mug handle"</span>)
     <div class="s12">
       <svg class="s12-flow" viewBox="0 0 1136 480" aria-hidden="true">
         <defs><marker id="s12h" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#9aa5ab"/></marker></defs>
-        <path id="s12p1" d="M272 75 L 336 75" />
-        <path id="s12p1b" d="M550 120 L 550 171" />
-        <path id="s12p2" d="M272 310 L 336 310" />
-        <path id="s12p3" d="M762 310 L 826 310" />
-        <text x="304" y="64" class="s12-tag">once</text>
-        <text x="304" y="299" class="s12-tag">every step</text>
+        <path id="s12p1" data-step="1" d="M272 75 L 336 75" />
+        <path id="s12p1b" data-step="2" d="M550 120 L 550 171" />
+        <path id="s12p2" data-step="3" d="M272 310 L 336 310" />
+        <path id="s12p3" data-step="4" d="M762 310 L 826 310" />
+        <text x="304" y="64" class="s12-tag" data-step="1">once</text>
+        <text x="304" y="299" class="s12-tag" data-step="3">every step</text>
         <circle class="s12-dot" r="6" cx="-20" cy="-20" />
       </svg>
-      <figure class="s12-obs" style="top:0px"><img src="img/image35.jpg" alt="Initial observation of the scene"><figcaption>Initial Observation</figcaption></figure>
-      <figure class="s12-obs" style="top:235px"><img src="img/image14.jpg" alt="Real-time observation during the rollout"><figcaption>Real-time Observation</figcaption></figure>
-      <div class="s12-vlm"><img src="img/image6.png" alt="VLM"><span><b>VLM writes the program</b><small>once per task, from the prompt and the initial observation</small></span></div>
-      <div class="s12-prog"><div class="s12-ph">Program: observation → mode weights</div><pre><code>weights = <span class="fn">dict</span>(
+      <figure class="s12-obs" data-step="1" style="top:0px"><img src="img/image35.jpg" alt="Initial observation of the scene"><figcaption>Initial Observation</figcaption></figure>
+      <figure class="s12-obs" data-step="3" style="top:235px"><img src="img/image14.jpg" alt="Real-time observation during the rollout"><figcaption>Real-time Observation</figcaption></figure>
+      <div class="s12-vlm" data-step="1"><img src="img/image6.png" alt="VLM"><span><b>VLM writes the program</b><small>once per task, from the prompt and the initial observation</small></span></div>
+      <div class="s12-prog" data-step="2"><div class="s12-ph">Program: observation → mode weights</div><pre><code>weights = <span class="fn">dict</span>(
   approach=<span class="nu">normal</span>*(1-.70*failure)*(1-.72*purchase),
   grasp=<span class="nu">normal</span>*purchase*(.85-.50*failure),
   lift=retention*(1-up)*(1-aligned),
@@ -656,7 +672,7 @@ handle = <span class="fn">find</span>(<span class="st">"mug handle"</span>)
 <span class="kw">if</span> complete:
   weights = {k: 0. <span class="kw">for</span> k <span class="kw">in</span> weights}
   weights['hold'] = .05</code></pre></div>
-      <figure class="s12-out"><img src="img/image15.jpg" alt="Action chunk samples drawn from the program's modes"><figcaption>Action Chunk Samples <span class="s12-step"></span></figcaption></figure>
+      <figure class="s12-out" data-step="4"><img src="img/image15.jpg" alt="Action chunk samples drawn from the program's modes"><figcaption>Action Chunk Samples <span class="s12-step"></span></figcaption></figure>
     </div>
     <template id="t-step1-old"><!-- previous layout, hidden -->
     <div class="steps">
@@ -679,17 +695,17 @@ handle = <span class="fn">find</span>(<span class="st">"mug handle"</span>)
 </section>
 
 <!-- 14 -->
-<section class="slide" id="s-step2">
+<section class="slide" id="s-step2" data-steps="3">
   <div class="sec">03 · Approach</div>
   <h2>Code-as-Diffusion Method Overview</h2>
   <p class="sub">Step 2: Gaussian Mixture Approximation</p>
   <div class="body">
     <div class="s13">
-      <figure class="s13-p"><img src="img/s13_samples.jpg" alt="Action chunk samples: a fan of the program's proposed gripper paths"><figcaption>Action Chunk Samples</figcaption></figure>
-      <div class="s13-ar" aria-hidden="true">→</div>
-      <figure class="s13-p"><img src="img/s13_gmm.jpg" alt="Gaussian mixture model fitted to the samples, drawn as a tube"><figcaption>Gaussian Mixture Model</figcaption></figure>
-      <div class="s13-ar" aria-hidden="true">→</div>
-      <figure class="s13-p"><video src="vid/s13_diffusion_sampling.mp4" poster="img/s13_sampling_poster.jpg" muted loop playsinline preload="none" controls aria-label="Diffusion sampling: noisy gripper-path points denoise into an action chunk, three independent draws"></video><figcaption>Diffusion Sampling</figcaption></figure>
+      <figure class="s13-p" data-step="1"><img src="img/s13_samples.jpg" alt="Action chunk samples: a fan of the program's proposed gripper paths"><figcaption>Action Chunk Samples</figcaption></figure>
+      <div class="s13-ar" data-step="2" aria-hidden="true">→</div>
+      <figure class="s13-p" data-step="2"><img src="img/s13_gmm.jpg" alt="Gaussian mixture model fitted to the samples, drawn as a tube"><figcaption>Gaussian Mixture Model</figcaption></figure>
+      <div class="s13-ar" data-step="3" aria-hidden="true">→</div>
+      <figure class="s13-p" data-step="3"><video src="vid/s13_diffusion_sampling.mp4" poster="img/s13_sampling_poster.jpg" muted loop playsinline preload="none" controls aria-label="Diffusion sampling: noisy gripper-path points denoise into an action chunk, three independent draws"></video><figcaption>Diffusion Sampling</figcaption></figure>
     </div>
     <template id="t-step2-schematic"><canvas class="gmm3" role="img" aria-label="Three panels: sampled action chunks fan out into three modes; a Gaussian mixture with one tube per mode, weighted by sample counts; noise trajectories denoise into the tubes"></canvas></template>
     <template id="t-step2-old"><div class="arrowrow">
@@ -700,7 +716,7 @@ handle = <span class="fn">find</span>(<span class="st">"mug handle"</span>)
       <figure><img src="img/image9.gif" alt="Diffusion sampling from the mixture"><figcaption>Diffusion sampling</figcaption></figure>
     </div></template>
   </div>
-  <p class="takeaway goal"><span aria-hidden="true">💡</span> This procedure defines an <b>analytical diffusion ODE</b>.</p>
+  <p class="takeaway goal" data-step="3"><span aria-hidden="true">💡</span> This procedure defines an <b>analytical diffusion ODE</b>.</p>
   <div class="slide-number"></div>
 
 </section>
@@ -735,6 +751,13 @@ handle = <span class="fn">find</span>(<span class="st">"mug handle"</span>)
     <div class="s15n">
       <figure><figcaption>Code-as-Diffusion (Ours)</figcaption><video src="vid/s15_noise_vlm.mp4" poster="img/s15_noise_vlm_poster.png" muted loop playsinline preload="none" aria-label="Code-as-Diffusion: the wrist path of one action chunk moves smoothly from the red cube to the blue cube as the initial noise moves"></video></figure>
       <figure><figcaption>π<sub>0.5</sub></figcaption><video src="vid/s15_noise_pi.mp4" poster="img/s15_noise_pi_poster.png" muted loop playsinline preload="none" aria-label="pi 0.5: the wrist path of one action chunk moves smoothly between the cubes as the initial noise moves"></video></figure>
+    </div>
+    <div class="s15n-ctl">
+      <button type="button" class="s15n-play" aria-label="Pause both videos">❚❚</button>
+      <span class="s15n-end" aria-hidden="true">−</span>
+      <input type="range" class="s15n-range" min="0" max="1000" step="1" value="0" aria-label="Initial noise along the PCA direction">
+      <span class="s15n-end" aria-hidden="true">+</span>
+      <span class="s15n-lab">Initial noise along PCA direction</span>
     </div>
     <p class="s15n-meta">Two Cubes · “Pick up a cube.” · wrist path of one action chunk as the initial noise moves along one PCA direction</p>
   </div>
@@ -1236,11 +1259,19 @@ handle = <span class="fn">find</span>(<span class="st">"mug handle"</span>)
   <button type="button" id="prev" aria-label="Previous slide">←</button>
   <span class="count" id="count" aria-live="polite"></span>
   <button type="button" id="next" aria-label="Next slide">→</button>
+  <button type="button" id="pause" aria-pressed="false" title="Pause or play this slide's videos and animations (K)">❚❚ Pause</button>
+  <button type="button" id="replay" title="Restart this slide's videos and animations (R)">↺ Restart</button>
   <button type="button" id="view" aria-label="Switch between slideshow and scroll view">Scroll view</button>
   <button type="button" id="fs" aria-label="Full screen">Full screen</button>
 </div>
+<div id="pbadge" aria-live="polite">❚❚ Paused · press K to play</div>
 <script>
 const $ = id => document.getElementById(id);
+// Media clock: every canvas animation reads time from requestAnimationFrame; pausing freezes that time, so the
+// animations hold their current frame. REPLAY restarts the slide-entry animations (see the frame loops below).
+const CLOCK = { paused: false, off: 0, at: 0 }; let REPLAY = 0, paused = false;
+const rafNative = window.requestAnimationFrame.bind(window);
+window.requestAnimationFrame = cb => rafNative(ms => cb(CLOCK.paused ? CLOCK.at - CLOCK.off : ms - CLOCK.off));
 const stage = document.querySelector('.deck');
 const slides = [...document.querySelectorAll('.slide')];
 slides.forEach((s, i) => { const n = s.querySelector('.slide-number'); if (n) n.textContent = String(i + 1).padStart(2, '0'); });
@@ -1248,9 +1279,9 @@ let cur = 0;
 function loadNear() {   // fetch the videos of this slide and its neighbours only
   [cur - 1, cur, cur + 1].forEach(k => { const s = slides[k]; if (s) s.querySelectorAll('video[preload="none"]').forEach(v => { v.preload = 'auto'; v.load(); }); });
 }
-function playIn(sec) { sec.querySelectorAll('video').forEach(v => { try { v.currentTime = 0; } catch (e) {} const p = v.play(); if (p) p.catch(() => {}); }); }
+function playIn(sec) { if (paused) return; sec.querySelectorAll('video').forEach(v => { if (v.closest('.st-hide')) return; try { v.currentTime = 0; } catch (e) {} const p = v.play(); if (p) p.catch(() => {}); }); }
 function stopAll(sec) { sec.querySelectorAll('video').forEach(v => { v.pause(); try { v.currentTime = 0; } catch (e) {} }); }
-function show(i) {
+function show(i, step = 0) {
   i = Math.max(0, Math.min(slides.length - 1, i));
   const prev = slides[cur];
   if (prev && i !== cur) { prev.classList.remove('on', 'fadein'); stopAll(prev); }
@@ -1258,17 +1289,60 @@ function show(i) {
   const sec = slides[cur];
   sec.classList.remove('fadein'); void sec.offsetWidth; sec.classList.add('on');
   if (changed) sec.classList.add('fadein');
+  if (paused) setPaused(false);
+  setStep(sec, step);
   loadNear(); playIn(sec);
-  $('count').textContent = (cur + 1) + ' / ' + slides.length;
+  counter();
   history.replaceState(null, '', '#' + (cur + 1));
 }
 let scrollMode = false, io = null;
-function goTo(i) {
+// Build steps: a slide with data-steps="N" reveals its [data-step="k"] elements one key press at a time
+const nSteps = s => +(s.dataset.steps || 0);
+const stepOf = s => scrollMode || !nSteps(s) ? null : +(s.dataset.step || 0);   // null: free-running
+function counter() {
+  const s = slides[cur], N = nSteps(s);
+  $('count').textContent = (cur + 1) + ' / ' + slides.length + (N && !scrollMode ? ' · ' + (+(s.dataset.step || 0)) + '/' + N : '');
+}
+function setStep(s, k) {
+  const N = nSteps(s); if (!N) return;
+  k = Math.max(0, Math.min(N, k)); s.dataset.step = k;
+  s.querySelectorAll('[data-step]').forEach(el => {
+    const hide = !scrollMode && +el.dataset.step > k, was = el.classList.contains('st-hide');
+    el.classList.toggle('st-hide', hide);
+    if (was && !hide) { el.classList.remove('st-in'); el.getBoundingClientRect(); el.classList.add('st-in'); }
+    (el.tagName === 'VIDEO' ? [el] : el.querySelectorAll('video')).forEach(v => {
+      if (hide) v.pause();
+      else if (was && !paused) { try { v.currentTime = 0; } catch (e) {} const q = v.play(); if (q) q.catch(() => {}); }
+    });
+  });
+  if (s === slides[cur]) counter();
+}
+// stage clock for a step-driven animation: stage k plays R[k-1] = [start, end, loop?] once (or loops) and holds
+function stageTime(fr, slide, ms, R, loop) {
+  if (!slide.classList.contains('on')) { fr.on = false; return null; }
+  const k = stepOf(slide), key = k === null ? -1 : k;
+  if (!fr.on || fr.rp !== REPLAY || fr.key !== key) { fr.t0 = ms; fr.rp = REPLAY; fr.key = key; fr.on = true; }
+  const e = ms - fr.t0;
+  if (k === null) return e % loop;
+  if (k === 0) return R[0][0];
+  const [a, b, rep] = R[k - 1];
+  return rep ? a + e % (b - a) : Math.min(a + e, b);
+}
+function goTo(i, step = 0) {
   i = Math.max(0, Math.min(slides.length - 1, i));
-  if (!scrollMode) return show(i);
+  if (!scrollMode) return show(i, step);
   slides[i].scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' });
 }
-const next = () => goTo(cur + 1), prev = () => goTo(cur - 1);
+function next() {
+  const s = slides[cur], k = stepOf(s);
+  if (k !== null && k < nSteps(s)) return setStep(s, k + 1);
+  goTo(cur + 1);
+}
+function prev() {
+  const s = slides[cur], k = stepOf(s);
+  if (k !== null && k > 0) return setStep(s, k - 1);
+  if (cur > 0) goTo(cur - 1, nSteps(slides[cur - 1]));   // back into a stepped slide: its last step
+}
 const goId = id => goTo(slides.findIndex(s => s.id === id));
 function fit() {
   if (scrollMode) { stage.style.transform = 'none'; stage.style.zoom = Math.min(1, (innerWidth - 32) / 1280); return; }
@@ -1281,7 +1355,7 @@ function setMode(scroll) {
   try { localStorage.setItem('cad-view', scroll ? 'scroll' : 'slides'); } catch (e) {}
   fit();
   if (scroll) {
-    slides.forEach(s => { s.classList.remove('fadein'); if (s !== slides[cur]) s.classList.remove('on'); });
+    slides.forEach(s => { s.classList.remove('fadein'); if (s !== slides[cur]) s.classList.remove('on'); setStep(s, nSteps(s)); });
     const vis = new Map();
     io = new IntersectionObserver(es => {
       es.forEach(en => {
@@ -1291,7 +1365,7 @@ function setMode(scroll) {
         } else if (s.classList.contains('on')) { s.classList.remove('on'); s.querySelectorAll('video').forEach(v => v.pause()); }
       });
       let best = cur, br = -1; vis.forEach((r, s) => { if (r > br) { br = r; best = slides.indexOf(s); } });
-      if (best !== cur && br > 0) { cur = best; $('count').textContent = (cur + 1) + ' / ' + slides.length; history.replaceState(null, '', '#' + (cur + 1)); }
+      if (best !== cur && br > 0) { cur = best; counter(); history.replaceState(null, '', '#' + (cur + 1)); }
     }, { threshold: [0, 0.3, 0.6, 1] });
     slides.forEach(s => io.observe(s));
     slides[cur].scrollIntoView({ block: 'center' });
@@ -1308,10 +1382,12 @@ addEventListener('keydown', e => {
   else if (e.key === 'Home') goTo(0);
   else if (e.key === 'End') goTo(slides.length - 1);
   else if (e.key === 'f') toggleFs();
+  else if (e.key === 'k' || e.key === 'p') setPaused(!paused);
+  else if (e.key === 'r') replay();
 });
 // a click on the slide advances (left fifth: back); controls on the slide keep their own click
 stage.addEventListener('click', e => {
-  if (scrollMode || e.target.closest('button, a, video, [role=button], .speed, .vtools')) return;
+  if (scrollMode || e.target.closest('button, a, video, input, [role=button], .speed, .vtools, .s15n-ctl')) return;
   (e.clientX < innerWidth * 0.2 ? prev : next)();
 });
 let tx = null;
@@ -1362,7 +1438,7 @@ document.querySelectorAll('.slide').forEach(s => {
     bar.appendChild(b);
   });
   const play = s.querySelector('.play');
-  if (play) play.onclick = () => vids.forEach(v => { v.currentTime = 0; v.play().catch(() => {}); });
+  if (play) play.onclick = () => { if (paused) setPaused(false); vids.forEach(v => { v.currentTime = 0; v.classList.remove('vpaused'); v.play().catch(() => {}); }); };
 });
 
 // Slide 8: noise-to-action flow (base: two modes; steer: most mass to one mode)
@@ -1522,12 +1598,10 @@ document.querySelectorAll('canvas.istory').forEach(cv => {
   }
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const slide = cv.closest('.slide');
-  let t0 = null, wasOn = false;
+  const R = [[0, 3599], [3600, 7599], [7600, 11000]];   // code; diffusion policy; steering
   function frame(ms) {
-    const on = slide.classList.contains('on');
-    if (on && !wasOn) t0 = ms;
-    wasOn = on;
-    if (on) draw(still ? 11000 : (ms - t0) % LOOP);
+    const t = stageTime(frame, slide, ms, R, LOOP), k = stepOf(slide);
+    if (t !== null) draw(still ? (k ? R[k - 1][1] : 11000) : t);
     requestAnimationFrame(frame);
   }
   draw(11000);
@@ -1597,7 +1671,7 @@ document.querySelectorAll('canvas.istory').forEach(cv => {
   let t0 = null, wasOn = false;
   function frame(ms) {
     const on = slide.classList.contains('on');
-    if (on && !wasOn) t0 = ms;
+    if (on && (!wasOn || frame.rp !== REPLAY)) { t0 = ms; frame.rp = REPLAY; }
     wasOn = on;
     if (on) draw(still ? 8800 : (ms - t0) % LOOP);
     requestAnimationFrame(frame);
@@ -1690,12 +1764,10 @@ document.querySelectorAll('canvas.istory').forEach(cv => {
     label(3, 'Recompose and\ncompute score', ms >= 4900, Math.max(0.55, v4));
   }
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let t0 = null, wasOn = false;
+  const R = [[0, 599], [600, 2599], [2600, 4599], [4600, 8000], [8000, 8000]];   // mixture; decompose; anneal; recompose + score; takeaway
   function frame(ms) {
-    const on = slide.classList.contains('on');
-    if (on && !wasOn) t0 = ms;
-    wasOn = on;
-    if (on) draw(still ? 8000 : (ms - t0) % LOOP);
+    const t = stageTime(frame, slide, ms, R, LOOP), k = stepOf(slide);
+    if (t !== null) draw(still ? (k ? R[k - 1][1] : 8000) : t);
     requestAnimationFrame(frame);
   }
   draw(8000);
@@ -1723,20 +1795,18 @@ document.querySelectorAll('canvas.istory').forEach(cv => {
     const lit = new Set();
     if (active) {
       const u = ease((ms - active[0]) / (active[1] - active[0])), pt = paths[active[2]].getPointAtLength(u * len[active[2]]);
-      dot.setAttribute('cx', pt.x); dot.setAttribute('cy', pt.y); lit.add(active[3]); if (u > 0.85) lit.add(active[4]);
-    } else { dot.setAttribute('cx', -20); dot.setAttribute('cy', -20); }
+      dot.setAttribute('cx', pt.x); dot.setAttribute('cy', pt.y); dot.style.visibility = ''; lit.add(active[3]); if (u > 0.85) lit.add(active[4]);
+    } else { dot.setAttribute('cx', -20); dot.setAttribute('cy', -20); dot.style.visibility = 'hidden'; }
     let k = 0; for (const L of legs) if (L[2] === 'p3' && ms >= L[1] - 100) k = L[5] + 1;
     el.step.textContent = k ? '· step ' + k : '';
     for (const key of ['obs0', 'obs1', 'vlm', 'prog', 'out']) el[key].classList.toggle('hit', lit.has(key));
   }
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (still) return;
-  let t0 = null, wasOn = false;
+  const R = [[0, 699], [700, 1099], [T0, T0 + 599], [T0, LOOP, true]];   // obs -> VLM; program; obs -> program; samples (loop)
   function frame(ms) {
-    const on = slide.classList.contains('on');
-    if (on && !wasOn) t0 = ms;
-    wasOn = on;
-    if (on) draw((ms - t0) % LOOP);
+    const t = stageTime(frame, slide, ms, R, LOOP);
+    if (t !== null) draw(t);
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
@@ -1825,7 +1895,7 @@ document.querySelectorAll('canvas.istory').forEach(cv => {
   let t0 = null, wasOn = false;
   function frame(ms) {
     const on = slide.classList.contains('on');
-    if (on && !wasOn) t0 = ms;
+    if (on && (!wasOn || frame.rp !== REPLAY)) { t0 = ms; frame.rp = REPLAY; }
     wasOn = on;
     if (on) draw(still ? 8600 : (ms - t0) % LOOP);
     requestAnimationFrame(frame);
@@ -1839,20 +1909,17 @@ document.querySelectorAll('canvas.istory').forEach(cv => {
   const root = document.querySelector('.s13'); if (!root) return;
   const slide = root.closest('.slide'), P = [...root.querySelectorAll('.s13-p')], A = [...root.querySelectorAll('.s13-ar')];
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  function set(ms) {
-    const k = still ? 2 : ms < 1600 ? 0 : ms < 3400 ? 1 : 2;
-    P.forEach((el, i) => { el.classList.toggle('shown', i <= k); el.classList.toggle('lit', i === k); });
-    A.forEach((el, i) => el.classList.toggle('lit', i === k - 1));
+  function set(k) {   // k panels shown, the newest lit
+    P.forEach((el, i) => { el.classList.toggle('shown', i < k); el.classList.toggle('lit', i === k - 1); });
+    A.forEach((el, i) => el.classList.toggle('lit', i === k - 2));
   }
-  let t0 = null, wasOn = false;
   function frame(ms) {
-    const on = slide.classList.contains('on');
-    if (on && !wasOn) t0 = ms;
-    wasOn = on;
-    if (on) set(ms - t0);
+    const k = stepOf(slide);
+    if (k !== null) { if (slide.classList.contains('on')) set(k); }
+    else { const t = stageTime(frame, slide, ms, [], 1e9); if (t !== null) set(still ? 3 : t < 1600 ? 1 : t < 3400 ? 2 : 3); }   // scroll view: timed reveal
     requestAnimationFrame(frame);
   }
-  set(0);
+  set(3);
   requestAnimationFrame(frame);
 })();
 
@@ -1874,19 +1941,17 @@ document.querySelectorAll('canvas.istory').forEach(cv => {
     const lit = new Set();
     if (act) {
       const u = ease((ms - act[0]) / (act[1] - act[0])), pt = path(act[2]).getPointAtLength(u * len[act[2]]);
-      dot.setAttribute('cx', pt.x); dot.setAttribute('cy', pt.y); lit.add(act[3]); if (u > 0.85) lit.add(act[4]);
-    } else { dot.setAttribute('cx', -20); dot.setAttribute('cy', -20); }
+      dot.setAttribute('cx', pt.x); dot.setAttribute('cy', pt.y); dot.style.visibility = ''; lit.add(act[3]); if (u > 0.85) lit.add(act[4]);
+    } else { dot.setAttribute('cx', -20); dot.setAttribute('cy', -20); dot.style.visibility = 'hidden'; }
     let k = 0; for (const L of legs) if (L[2] === 'ovl' && ms >= L[1]) k = L[5] + 1;
     stepEl.textContent = k ? '· step ' + k : '';
     keys.forEach(key => el[key].classList.toggle('hit', lit.has(key)));
   }
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  let t0 = null, wasOn = false;
+  const R = [[-1, -1], [0, 1099], [T0, T0 + 2 * LEG - 41], [T0, LOOP, true]];   // initial observation; VLM writes the program; Step 1 (obs -> program -> samples); Step 2 and the loop
   function frame(ms) {
-    const on = slide.classList.contains('on');
-    if (on && !wasOn) t0 = ms;
-    wasOn = on;
-    if (on) draw((ms - t0) % LOOP);
+    const t = stageTime(frame, slide, ms, R, LOOP);
+    if (t !== null) draw(t);
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
@@ -1939,7 +2004,7 @@ document.querySelectorAll('.slotbox video').forEach(v => {
   }
   function frame(now) {
     const on = slide.classList.contains('on');
-    if (on && !wasOn) reset(now);
+    if (on && (!wasOn || frame.rp !== REPLAY)) { reset(now); frame.rp = REPLAY; }
     wasOn = on;
     if (on) {
       const w = weights();
@@ -1971,6 +2036,56 @@ document.querySelectorAll('.slotbox video').forEach(v => {
   slide.addEventListener('mouseleave', () => { cursor = null; });
   reset(performance.now());
   requestAnimationFrame(frame);
+})();
+
+// Media controls: pause/play and restart act on the visible slide(s); a click on a video toggles that video
+const liveSlides = () => scrollMode ? slides.filter(s => s.classList.contains('on')) : [slides[cur]];
+function setPaused(p) {
+  paused = p; document.body.classList.toggle('paused', p);
+  if (p && !CLOCK.paused) { CLOCK.at = performance.now(); CLOCK.paused = true; }
+  if (!p && CLOCK.paused) { CLOCK.off += performance.now() - CLOCK.at; CLOCK.paused = false; }
+  liveSlides().forEach(s => s.querySelectorAll('video').forEach(v => {
+    v.classList.toggle('vpaused', p);
+    if (p) v.pause(); else if (!v.closest('.st-hide')) { const q = v.play(); if (q) q.catch(() => {}); }
+  }));
+  $('pause').textContent = p ? '▶ Play' : '❚❚ Pause'; $('pause').setAttribute('aria-pressed', String(p));
+}
+function replay() {
+  REPLAY++;
+  liveSlides().forEach(s => s.querySelectorAll('video').forEach(v => { if (v.closest('.st-hide')) return; try { v.currentTime = 0; } catch (e) {} if (!paused) { const q = v.play(); if (q) q.catch(() => {}); } }));
+}
+$('pause').onclick = () => setPaused(!paused); $('replay').onclick = replay;
+document.querySelectorAll('.slide video').forEach(v => v.addEventListener('click', e => {
+  if (v.controls) return;   // planned-video slots keep their native controls
+  e.stopPropagation();
+  if (v.paused) { v.classList.remove('vpaused'); const q = v.play(); if (q) q.catch(() => {}); } else { v.pause(); v.classList.add('vpaused'); }
+}));
+
+// Slide 16: one slider sets the noise in both videos (each sweeps − to + and back); the button plays them together
+(() => {
+  const box = document.querySelector('.s15n-ctl'); if (!box) return;
+  const [va, vb] = [...document.querySelectorAll('.s15n video')], range = box.querySelector('input'), btn = box.querySelector('button');
+  let drag = false;
+  const frac = () => va.duration ? va.currentTime / va.duration : 0;
+  const noise = f => f <= 0.5 ? 2 * f : 2 * (1 - f);   // video time -> noise position (forward then back)
+  const seek = u => [va, vb].forEach(v => { if (v.duration) v.currentTime = Math.min(v.duration - 0.01, u * 0.5 * v.duration); });
+  const label = () => { const on = !va.paused; btn.textContent = on ? '❚❚' : '▶'; btn.setAttribute('aria-label', on ? 'Pause both videos' : 'Play both videos'); };
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    if (va.paused) { if (paused) setPaused(false); vb.currentTime = frac() * (vb.duration || 0); [va, vb].forEach(v => { v.classList.remove('vpaused'); const q = v.play(); if (q) q.catch(() => {}); }); }
+    else [va, vb].forEach(v => v.pause());
+  });
+  range.addEventListener('pointerdown', () => { drag = true; }); addEventListener('pointerup', () => { drag = false; });
+  range.addEventListener('input', () => { [va, vb].forEach(v => v.pause()); seek(range.value / 1000); });
+  range.addEventListener('keydown', e => e.stopPropagation());   // arrows move the slider, not the slides
+  ['play', 'pause'].forEach(ev => va.addEventListener(ev, label));
+  (function tick() {
+    if (va.closest('.slide').classList.contains('on') && !drag) {
+      if (!va.paused) range.value = Math.round(noise(frac()) * 1000);
+      if (!va.paused && vb.duration && Math.abs(vb.currentTime - frac() * vb.duration) > 0.12) vb.currentTime = frac() * vb.duration;
+    }
+    rafNative(tick);
+  })();
 })();
 
 fit();
