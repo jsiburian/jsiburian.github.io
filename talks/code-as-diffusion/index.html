@@ -931,7 +931,7 @@ handle = <span class="fn">find</span>(<span class="st">"mug handle"</span>)
   <div class="sec">05 · Results</div>
   <h2>Quantitative Results</h2>
   <div class="body">
-    <figure class="chart quant"><img src="img/s23_quant_results_original.png" alt="Success rate on the Square task: base 55%, specialist 40%, PPS 67.5%. Weight task: base 85%, specialist 60%, PPS 72.5%."></figure>
+    <figure class="chart quant"><img src="img/s23_quant_results_coefficient_03.png" alt="Success rate on the Square task: base 55%, specialist 40%, PPS with coefficient 0.3 achieved 82.5% (33 of 40). Weight task: base 85%, specialist 60%, PPS with coefficient 0.3 achieved 80% (32 of 40)."></figure>
   </div>
   <div class="foot warn">⚠ Note: Results are preliminary, and evaluations are still ongoing for some of the listed tasks.</div>
   <div class="slide-number"></div>
@@ -944,21 +944,12 @@ handle = <span class="fn">find</span>(<span class="st">"mug handle"</span>)
   <h2>Rollout Visualization (Success)</h2>
   <p class="sub">Weight Task</p>
   <div class="body">
-    <div class="vrow one pano w2"><figure class="vf"><video src="vid/s21_weight_success.mp4" poster="img/s21_weight_success_poster.jpg" muted loop playsinline preload="none" controls aria-label="Weight task success"></video><figcaption>Success example 1</figcaption></figure></div>
-    <div class="vrow one pano w2"><figure class="vf"><div class="slotbox"><video src="vid/s21_weight_success_2.mp4" muted loop playsinline preload="none" aria-label="Weight task success, examples 2 and 3"></video><span class="slot-label">Video coming soon</span></div><figcaption>Success examples 2 and 3</figcaption></figure></div>
-  </div>
-  <div class="foot warn">⚠ Note: Results are preliminary, and evaluations are still ongoing for some of the listed tasks.</div>
-  <div class="slide-number"></div>
-
-</section>
-
-<!-- 22 -->
-<section class="slide" id="s-weight-fail">
-  <div class="sec">05 · Results</div>
-  <h2>Rollout Visualization (Failure)</h2>
-  <p class="sub">Weight Task</p>
-  <div class="body">
-    <div class="vrow one pano"><figure class="vf"><video src="vid/s22_weight_failure.mp4" poster="img/s22_weight_failure_poster.jpg" muted loop playsinline preload="none" controls aria-label="Weight task failure"></video><figcaption>Failure example</figcaption></figure></div>
+    <div class="vrow wide" style="grid-template-columns:1fr 1fr;margin-top:12px">
+      <figure class="vf"><video src="vid/weight_four_paths_seed05.mp4" poster="img/weight_four_paths_seed05_poster.jpg" muted loop playsinline preload="none" controls aria-label="Weight task four-path visualization, seed 5"></video><figcaption><b>Seed 5</b></figcaption></figure>
+      <figure class="vf"><video src="vid/weight_four_paths_seed06.mp4" poster="img/weight_four_paths_seed06_poster.jpg" muted loop playsinline preload="none" controls aria-label="Weight task four-path visualization, seed 6"></video><figcaption><b>Seed 6</b></figcaption></figure>
+      <figure class="vf"><video src="vid/weight_four_paths_seed10.mp4" poster="img/weight_four_paths_seed10_poster.jpg" muted loop playsinline preload="none" controls aria-label="Weight task four-path visualization, seed 10"></video><figcaption><b>Seed 10</b></figcaption></figure>
+      <div class="legendcard"><b>Lines in each frame</b><span><i style="background:#c46bd6"></i>Code-as-Diffusion</span><span><i style="background:#f08a3c"></i>Reference</span><span><i style="background:#4f8fd8"></i>Task</span><span><i style="background:#3fae5a"></i>PPS (executed)</span><span class="ln">Four-path policy visualization · PPS weight 0.5</span></div>
+    </div>
   </div>
   <div class="foot warn">⚠ Note: Results are preliminary, and evaluations are still ongoing for some of the listed tasks.</div>
   <div class="slide-number"></div>
@@ -972,28 +963,10 @@ handle = <span class="fn">find</span>(<span class="st">"mug handle"</span>)
   <p class="sub">Square Task</p>
   <div class="body">
     <div class="vrow wide" style="grid-template-columns:1fr 1fr;margin-top:12px">
-      <figure class="vf"><video src="vid/s23_square_success_seed20.mp4" poster="img/image18.jpg" muted loop playsinline preload="none" controls aria-label="Square success, seed 20"></video><figcaption><b>Seed 20</b></figcaption></figure>
-      <figure class="vf"><div class="slotbox"><video src="vid/s23_square_success_seed24.mp4" poster="img/image19.jpg" muted loop playsinline preload="none" aria-label="Square success, seed 24"></video><span class="slot-label">Video coming soon</span></div><figcaption><b>Seed 24</b></figcaption></figure>
-      <figure class="vf"><div class="slotbox"><video src="vid/s23_square_success_seed21.mp4" poster="img/image12.jpg" muted loop playsinline preload="none" aria-label="Square success, seed 21"></video><span class="slot-label">Video coming soon</span></div><figcaption><b>Seed 21</b></figcaption></figure>
-      <div class="legendcard"><b>Lines in each frame</b><span><i style="background:#c46bd6"></i>Code-as-Diffusion</span><span><i style="background:#f08a3c"></i>Reference</span><span><i style="background:#4f8fd8"></i>Task</span><span><i style="background:#3fae5a"></i>PPS (executed)</span><span class="ln">Same observation and noise · PPS weight 0.5</span></div>
-    </div>
-  </div>
-  <div class="foot warn">⚠ Note: Results are preliminary, and evaluations are still ongoing for some of the listed tasks.</div>
-  <div class="slide-number"></div>
-
-</section>
-
-<!-- 24 -->
-<section class="slide" id="s-square-fail">
-  <div class="sec">05 · Results</div>
-  <h2>Rollout Visualization (Failure)</h2>
-  <p class="sub">Square Task</p>
-  <div class="body">
-    <div class="vrow wide" style="grid-template-columns:1fr 1fr;margin-top:12px">
-      <figure class="vf"><video src="vid/s24_square_failure_seed16.mp4" poster="img/image16.jpg" muted loop playsinline preload="none" controls aria-label="Square failure, seed 16"></video><figcaption><b>Seed 16</b></figcaption></figure>
-      <figure class="vf"><div class="slotbox"><video src="vid/s24_square_failure_seed8.mp4" poster="img/image33.jpg" muted loop playsinline preload="none" aria-label="Square failure, seed 8"></video><span class="slot-label">Video coming soon</span></div><figcaption><b>Seed 8</b></figcaption></figure>
-      <figure class="vf"><div class="slotbox"><video src="vid/s24_square_failure_seed9.mp4" poster="img/image25.jpg" muted loop playsinline preload="none" aria-label="Square failure, seed 9"></video><span class="slot-label">Video coming soon</span></div><figcaption><b>Seed 9</b></figcaption></figure>
-      <div class="legendcard"><b>Lines in each frame</b><span><i style="background:#c46bd6"></i>Code-as-Diffusion</span><span><i style="background:#f08a3c"></i>Reference</span><span><i style="background:#4f8fd8"></i>Task</span><span><i style="background:#3fae5a"></i>PPS (executed)</span><span class="ln">Same observation and noise · PPS weight 0.5</span></div>
+      <figure class="vf"><video src="vid/square_four_paths_seed20.mp4" poster="img/square_four_paths_seed20_poster.jpg" muted loop playsinline preload="none" controls aria-label="Square task four-path visualization, seed 20"></video><figcaption><b>Seed 20</b></figcaption></figure>
+      <figure class="vf"><video src="vid/square_four_paths_seed24.mp4" poster="img/square_four_paths_seed24_poster.jpg" muted loop playsinline preload="none" controls aria-label="Square task four-path visualization, seed 24"></video><figcaption><b>Seed 24</b></figcaption></figure>
+      <figure class="vf"><video src="vid/square_four_paths_seed21.mp4" poster="img/square_four_paths_seed21_poster.jpg" muted loop playsinline preload="none" controls aria-label="Square task four-path visualization, seed 21"></video><figcaption><b>Seed 21</b></figcaption></figure>
+      <div class="legendcard"><b>Lines in each frame</b><span><i style="background:#c46bd6"></i>Code-as-Diffusion</span><span><i style="background:#f08a3c"></i>Reference</span><span><i style="background:#4f8fd8"></i>Task</span><span><i style="background:#3fae5a"></i>PPS (executed)</span><span class="ln">Four-path policy visualization · PPS weight 0.5</span></div>
     </div>
   </div>
   <div class="foot warn">⚠ Note: Results are preliminary, and evaluations are still ongoing for some of the listed tasks.</div>
@@ -1126,6 +1099,25 @@ handle = <span class="fn">find</span>(<span class="st">"mug handle"</span>)
 
 </section>
 </template>
+
+<section class="slide" id="s-limitations">
+  <div class="sec">05 · Results</div>
+  <h2>Current Limitations</h2>
+  <div class="body">
+    <div class="vrow wide" style="grid-template-columns:1fr 1fr;margin-top:18px">
+      <figure class="vf"><video src="vid/capsule_four_paths_seed09.mp4" poster="img/capsule_four_paths_seed09_poster.jpg" muted loop playsinline preload="none" controls aria-label="Capsule insertion four-path visualization, seed 9"></video></figure>
+      <figure class="vf"><video src="vid/capsule_four_paths_seed15.mp4" poster="img/capsule_four_paths_seed15_poster.jpg" muted loop playsinline preload="none" controls aria-label="Capsule insertion four-path visualization, seed 15"></video></figure>
+      <figure class="vf"><video src="vid/capsule_four_paths_seed17.mp4" poster="img/capsule_four_paths_seed17_poster.jpg" muted loop playsinline preload="none" controls aria-label="Capsule insertion four-path visualization, seed 17"></video></figure>
+      <div class="legendcard" style="display:flex;align-items:center;padding:28px 34px">
+        <ul style="margin:0;padding-left:24px;color:#20272b;font-size:22px;font-weight:650;line-height:1.45">
+          <li>Struggles with articulations.</li>
+          <li style="margin-top:18px">Occlusions still need to be addressed.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="slide-number"></div>
+</section>
 
 <section class="slide" id="s-benefits-done">
   <div class="sec">05 · Results</div>
