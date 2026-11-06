@@ -43,6 +43,37 @@
   .vc.good .mk { background: var(--good); } .vc.bad .mk { background: var(--bad); }
   .vc .nm { font-size: 19px !important; } .vc.good .nm { color: var(--good) !important; } .vc.bad .nm { color: var(--bad) !important; }
   .vc .ct { text-align: left !important; font-size: 16px !important; }
+  .rdpair { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+  .rdgrp .rdlab { text-align: center; font-size: 20px; font-weight: 750; color: var(--ink); padding-bottom: 6px; border-bottom: 2px solid var(--line); }
+  .rdgrp .vrow { margin-top: 10px; gap: 12px; }
+  .rdgrp .vf figcaption { font-size: 14.5px; line-height: 1.3; } .rdgrp .vf figcaption .ct { font-size: 13px !important; }
+  #s-rd-fail .rdgrp .vf figcaption .nm { color: var(--bad) !important; }   /* failure descriptions in red */
+  /* appendix: how PPS / DSRL work */
+  .apx-grid { display: grid; grid-template-columns: 500px 1fr; gap: 22px; align-items: stretch; }
+  .apx-card { background: var(--white); border: 1px solid var(--line); border-radius: 12px; padding: 16px 20px; }
+  .apx-h { font-size: 13px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+  .apx-v { display: grid; gap: 4px; justify-items: stretch; }
+  .apx-box { border: 1.5px solid #9fb3bf; border-radius: 10px; padding: 9px 14px; text-align: center; font-weight: 700; font-size: 19px; background: #fbfbf9; }
+  .apx-box small { display: block; font-weight: 500; font-size: 14px; color: var(--muted); margin-top: 2px; }
+  .apx-box.base { border-color: var(--accent); background: #e6eef3; color: var(--accent); }
+  .apx-box.task { border-color: var(--good); background: #e7f2eb; color: var(--good); }
+  .apx-arr { display: grid; grid-template-columns: 34px 1fr; align-items: center; gap: 6px; padding: 2px 0 2px 70px; color: var(--muted); font-size: 14.5px; line-height: 1.3; }
+  .apx-arr .a { font-size: 24px; color: #8c979d; text-align: center; line-height: 1; }
+  .apx-arr .demo { display: inline-block; padding: 1px 8px; border-radius: 999px; background: #e7f2eb; color: var(--good); font-weight: 700; font-size: 13px; }
+  .apx-eq { font-family: "STIX Two Text", Georgia, serif; font-size: 29px; text-align: center; padding: 6px 0 14px; color: var(--ink); }
+  .apx-eq .b { color: var(--accent); } .apx-eq .t { color: var(--good); } .apx-eq .r { color: #6b8696; }
+  .apx-notes { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+  .apx-notes li { display: grid; grid-template-columns: 26px 1fr; gap: 8px; font-size: 17px; line-height: 1.35; color: #3c4245; }
+  .apx-notes .k { width: 24px; height: 24px; border-radius: 50%; background: var(--soft); display: grid; place-items: center; font-size: 13px; font-weight: 800; color: var(--muted); margin-top: 1px; }
+  .apx-cite { text-align: center; font-size: 15px; color: var(--muted); margin-top: 10px; }
+  .apx-loop { width: 100%; display: block; }
+  .apx-loop .bx { fill: #fbfbf9; stroke: #9fb3bf; stroke-width: 1.5; } .apx-loop .bx.base { fill: #e6eef3; stroke: #355f78; } .apx-loop .bx.pol { fill: #e7f2eb; stroke: #2f7d4f; }
+  .apx-loop text { font-family: Inter, sans-serif; } .apx-loop .t1 { font-size: 19px; font-weight: 700; fill: #202528; text-anchor: middle; }
+  .apx-loop .t2 { font-size: 14px; font-weight: 500; fill: #6d7376; text-anchor: middle; } .apx-loop .lb { font-size: 15px; font-weight: 700; fill: #6d7376; text-anchor: middle; }
+  .apx-loop .ar { fill: none; stroke: #8c979d; stroke-width: 2; } .apx-loop .ar.rl { stroke: #2f7d4f; stroke-dasharray: 6 5; }
+  .apx-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 6px; }
+  .apx-3 .apx-card { padding: 14px 18px; } .apx-3 b { display: block; font-size: 18px; margin-bottom: 4px; color: var(--ink); } .apx-3 span { font-size: 16px; color: #4a5054; line-height: 1.35; }
+  #s-rw-gap .vc { align-items: center; } #s-rw-gap .vc .nm { font-size: 16px !important; white-space: nowrap; }   /* slide 4: both captions on one line */
   .subtitle { max-width: 1100px; color: var(--muted); font-size: 30px; line-height: 1.3; letter-spacing: -0.02em; }
   .authors { margin-top: 26px; font-size: 20px; color: var(--muted); } .authors b { color: var(--ink); font-weight: 650; }
   .lead { margin: 4px 0 0; font-size: 22px; line-height: 1.35; color: var(--ink); font-weight: 600; max-width: 1100px; }
@@ -108,7 +139,7 @@
   .istep.done { color: var(--accent); border-color: #b7cbd8; }
   .istep.on { background: var(--accent); border-color: var(--accent); color: var(--white); } .istep.on .n { background: rgba(255,255,255,.22); }
   .iar { color: var(--muted); font-size: 22px; }
-  .istory { display: block; width: 100%; aspect-ratio: 1100 / 290; border: 1px solid var(--line); border-radius: 10px; background: var(--white); }
+  .istory { display: block; width: 100%; aspect-ratio: 1100 / 400; border: 1px solid var(--line); border-radius: 10px; background: var(--white); }
   .s12 { position: relative; width: 1136px; height: 480px; margin: 0 auto; }
   .s12-flow { position: absolute; inset: 0; width: 1136px; height: 480px; overflow: visible; }
   .s12-flow path { fill: none; stroke: #9aa5ab; stroke-width: 2.5; marker-end: url(#s12h); }
@@ -429,26 +460,27 @@
 </section>
 
 <!-- 4 -->
-<section class="slide" id="s-rw-gap">
+<section class="slide" id="s-rw-gap" data-steps="3">
   <div class="sec">02 · Background</div>
   <h2>VLM-Based Robotic Control</h2>
   <p class="sub">VLMs offer broad priors and promising zero-shot manipulation,<br><span class="neg">but lack a natural interface for fine-grained task specialization</span></p>
   <div class="body">
     <div class="vs">
-      <figure class="vf"><video src="vid/s05_general_pickup_layout13_success.mp4" poster="img/s05_pickup_poster.jpg" muted loop playsinline preload="none" controls aria-label="Code-as-Diffusion picks up the named spatula among many objects"></video>
-        <figcaption class="vc good"><span class="mk">✓</span><span><span class="nm">Good at reasoning and broad priors</span></span></figcaption></figure>
-      <figure class="vf"><video src="vid/s05_insert_tubes_layout5_failure.mp4" poster="img/s05_tubes_poster.jpg" muted loop playsinline preload="none" controls aria-label="Code-as-Diffusion holds a tube above the rack; it never goes into the hole"></video>
+      <figure class="vf" data-step="1"><video src="vid/s05_general_pickup_layout13_success.mp4" poster="img/s05_pickup_poster.jpg" muted loop playsinline preload="none" controls aria-label="Code-as-Diffusion picks up the named spatula among many objects"></video>
+        <figcaption class="vc good"><span class="mk">✓</span><span><span class="nm">Good at reasoning, broad priors, failure recovery</span></span></figcaption></figure>
+      <figure class="vf" data-step="2"><video src="vid/s05_insert_tubes_layout5_failure.mp4" poster="img/s05_tubes_poster.jpg" muted loop playsinline preload="none" controls aria-label="Code-as-Diffusion holds a tube above the rack; it never goes into the hole"></video>
         <figcaption class="vc bad"><span class="mk">✗</span><span><span class="nm">Fails at fine-grained dexterity and specialization</span></span></figcaption></figure>
     </div>
   </div>
+  <p class="takeaway goal" data-step="3"><span aria-hidden="true">🤔</span> What are some ways to specialize or “steer” policies to fine-grained actions?</p>
   <div class="slide-number"></div>
 </section>
 
 <!-- 5 -->
 <section class="slide" id="s-rw-steer">
   <div class="sec">02 · Background</div>
-  <h2>Policy Steering</h2>
-  <p class="sub">Few-shot specialization without modifying the base policy,<br><span class="neg">but it assumes a trained diffusion or flow-matching policy</span></p>
+  <h2>Diffusion Policy Steering</h2>
+  <p class="sub">Policy steering enables few-shot specialization and steering to task-specific behavior,<br><span class="neg">but it assumes a trained diffusion or flow-matching policy</span></p>
   <div class="body">
     <div class="figs two vids5">
       <figure><video src="vid/s05_dsrl_pi0_toaster.mp4" poster="img/s05_dsrl_poster.jpg" muted loop playsinline preload="none" controls aria-label="DSRL: nine rollouts of pi0 with the learned noise policy putting bread in a toaster"></video><figcaption><span class="nm">DSRL: Diffusion Steering via Reinforcement Learning</span><span class="ct">Wagenmaker et al., 2025</span></figcaption></figure>
@@ -460,7 +492,7 @@
 </section>
 
 <!-- 6 -->
-<section class="slide" id="s-goal">
+<section class="slide" id="s-goal" data-steps="1">
   <div class="sec">02 · Background</div>
   <h2>Research Goal</h2>
   <p class="sub">How can we connect these two paradigms?</p>
@@ -470,7 +502,7 @@
       <div class="pcard"><h3>Policy steering</h3><video src="vid/s06_pps_flower.mp4" poster="img/s06_pps_poster.jpg" muted loop playsinline preload="none" controls aria-label="Proxy Policy Steering: a robot puts a flower into a vase"></video><div class="verdict"><span class="pill yes">Strength</span>Can specialize, few-shot</div><div class="verdict"><span class="pill no">Gap</span>Needs a diffusion policy, often from large-scale training</div></div>
     </div>
   </div>
-  <p class="takeaway goal"><span class="lbl">Goal:</span> can we turn VLM-based control into a <b>steerable diffusion process</b>, without large-scale training?</p>
+  <p class="takeaway goal" data-step="1"><span class="lbl">Goal:</span> can we turn VLM-based control into a <b>steerable diffusion process</b>, without large-scale training?</p>
   <div class="slide-number"></div>
 
 </section>
@@ -479,14 +511,14 @@
 <section class="slide" id="s-insight">
   <div class="sec">03 · Approach</div>
   <h2>Key Insight: Training-Free Diffusion</h2>
-  <p class="sub">Training-free diffusion enables analytical diffusion without training a denoiser,<br><span class="neg">but existing methods typically rely on predefined dynamics, costs, or constraints</span></p>
+  <p class="sub">Training-free diffusion enables generative sampling without training a denoising network,<br><span class="neg">but existing approaches often rely on predefined dynamics, costs, or constraints.</span></p>
   <div class="body">
     <div class="figs two" style="grid-template-columns:0.9fr 1.1fr">
       <figure><img src="img/image2.png" alt="Model-Based Diffusion: forward and backward process with a model-based score" style="height:280px"><figcaption><span class="nm">Model-Based Diffusion</span><span class="ct">Pan et al., NeurIPS 2024</span></figcaption></figure>
       <figure><video src="vid/s07_dialmpc.mp4" poster="img/image3.jpg" muted loop playsinline preload="none" controls aria-label="DIAL-MPC" style="height:280px"></video><figcaption><span class="nm">DIAL-MPC</span><span class="ct">Xue et al., ICRA 2025</span></figcaption></figure>
     </div>
   </div>
-  <p class="takeaway goal"><span aria-hidden="true">🤔</span> What if we instead build the action distribution directly from <b>prompting a VLM</b>?</p>
+  <p class="takeaway goal"><span aria-hidden="true">🤔</span> What if we instead construct the action distribution from <b>direct VLM prompting</b>?</p>
   <div class="slide-number"></div>
 
 </section>
@@ -495,7 +527,7 @@
 <section class="slide" id="s-idea" data-steps="3">
   <div class="sec">03 · Approach</div>
   <h2>Our Idea: Code-as-Diffusion</h2>
-  <p class="takeaway goal top"><span class="lbl">Key Idea:</span> Formalize VLM-generated code into an <b>analytical diffusion policy</b></p>
+  <p class="takeaway goal top"><span class="lbl">Key Idea:</span> Formalize VLM-generated code into an <b>analytical, training-free diffusion policy</b></p>
   <template id="t-idea-sub"><p class="sub">Bridging zero-shot control and few-shot specialization</p></template>
   <div class="body">
     <div class="isteps" aria-hidden="true">
@@ -503,7 +535,7 @@
       <div class="istep" data-step="2"><span class="n">2</span>Analytical diffusion policy</div><span class="iar" data-step="3">→</span>
       <div class="istep" data-step="3"><span class="n">3</span>Steerable actions</div>
     </div>
-    <canvas class="istory" data-step="1" role="img" aria-label="A VLM writes code that proposes left and right grasps of a mug handle; noisy gripper paths denoise into these two path families; steering then sends every path to the left family"></canvas>
+    <canvas class="istory" data-step="1" role="img" aria-label="On a robot kitchen scene, a VLM writes code that proposes grasping the lemon or the apple; noisy gripper paths denoise into these two path families; steering then sends every path to the lemon"></canvas>
   </div>
   <template id="t-idea-cards"><!-- three-card version, hidden -->
     <div class="idea3">
@@ -986,6 +1018,26 @@ handle = <span class="fn">find</span>(<span class="st">"mug handle"</span>)
 </section>
 
 <!-- 26 -->
+<section class="slide" id="s-rd-ok">
+  <div class="sec">05 · Results</div>
+  <h2>Rollout Visualization (Success)</h2>
+  <p class="sub">Code-as-Diffusion shows reliable zero-shot performance on general tasks</p>
+  <div class="body">
+    <div class="rdpair">
+      <div class="rdgrp"><div class="rdlab">Stack Bowls</div><div class="vrow two">
+        <figure class="vf"><video src="vid/s26_bowls_a.mp4" poster="img/image21.jpg" muted loop playsinline preload="none" controls aria-label="Stack bowls success"></video></figure>
+        <figure class="vf"><video src="vid/s26_bowls_b.mp4" poster="img/image27.jpg" muted loop playsinline preload="none" controls aria-label="Stack bowls success"></video></figure>
+      </div></div>
+      <div class="rdgrp"><div class="rdlab">General Pick-Up</div><div class="vrow two">
+        <figure class="vf"><video src="vid/s27_pickup_a.mp4" poster="img/image29.jpg" muted loop playsinline preload="none" controls aria-label="General pick-up success"></video><figcaption><span class="nm">“Pick up the blue race toy car”</span></figcaption></figure>
+        <figure class="vf"><video src="vid/s27_pickup_b.mp4" poster="img/image28.jpg" muted loop playsinline preload="none" controls aria-label="General pick-up success"></video><figcaption><span class="nm">“Pick up the white toy car”</span></figcaption></figure>
+      </div></div>
+    </div>
+  </div>
+  <div class="foot warn">⚠ Note: Results are preliminary, and evaluations are still ongoing for some of the listed tasks.</div>
+  <div class="slide-number"></div>
+</section>
+<template id="t-s-rd-ok1"><!-- combined into s-rd-ok (user 11-06) -->
 <section class="slide" id="s-rd-ok1">
   <div class="sec">05 · Results</div>
   <h2>Rollout Visualization (Success)</h2>
@@ -1000,8 +1052,10 @@ handle = <span class="fn">find</span>(<span class="st">"mug handle"</span>)
   <div class="slide-number"></div>
 
 </section>
+</template>
 
 <!-- 27 -->
+<template id="t-s-rd-ok2"><!-- combined into s-rd-ok (user 11-06) -->
 <section class="slide" id="s-rd-ok2">
   <div class="sec">05 · Results</div>
   <h2>Rollout Visualization (Success)</h2>
@@ -1016,8 +1070,29 @@ handle = <span class="fn">find</span>(<span class="st">"mug handle"</span>)
   <div class="slide-number"></div>
 
 </section>
+</template>
 
 <!-- 28 -->
+<section class="slide" id="s-rd-fail">
+  <div class="sec">05 · Results</div>
+  <h2>Rollout Visualization (Failure)</h2>
+  <p class="sub">However, fine-grained tasks remain a challenge, which few-shot steering can solve</p>
+  <div class="body">
+    <div class="rdpair">
+      <div class="rdgrp"><div class="rdlab">Bottles to Bin</div><div class="vrow two">
+        <figure class="vf"><video src="vid/s28_bottles_a.mp4" poster="img/image24.jpg" muted loop playsinline preload="none" controls aria-label="Bottles to bin failure"></video><figcaption><span class="nm">Drops a bottle while lifting</span></figcaption></figure>
+        <figure class="vf"><video src="vid/s28_bottles_b.mp4" poster="img/image23.jpg" muted loop playsinline preload="none" controls aria-label="Bottles to bin failure"></video><figcaption><span class="nm">Drops a bottle in the handover</span></figcaption></figure>
+      </div></div>
+      <div class="rdgrp"><div class="rdlab">Insert Tubes</div><div class="vrow two">
+        <figure class="vf"><video src="vid/s29_tubes_a.mp4" poster="img/image22.jpg" muted loop playsinline preload="none" controls aria-label="Insert tubes failure"></video><figcaption><span class="nm">Releases a tube too high</span></figcaption></figure>
+        <figure class="vf"><video src="vid/s29_tubes_b.mp4" poster="img/image32.jpg" muted loop playsinline preload="none" controls aria-label="Insert tubes failure"></video><figcaption><span class="nm">Tube not seated in the rack</span></figcaption></figure>
+      </div></div>
+    </div>
+  </div>
+  <div class="foot warn">⚠ Note: Results are preliminary, and evaluations are still ongoing for some of the listed tasks.</div>
+  <div class="slide-number"></div>
+</section>
+<template id="t-s-rd-fail1"><!-- combined into s-rd-fail (user 11-06) -->
 <section class="slide" id="s-rd-fail1">
   <div class="sec">05 · Results</div>
   <h2>Rollout Visualization (Failure)</h2>
@@ -1032,8 +1107,10 @@ handle = <span class="fn">find</span>(<span class="st">"mug handle"</span>)
   <div class="slide-number"></div>
 
 </section>
+</template>
 
 <!-- 29 -->
+<template id="t-s-rd-fail2"><!-- combined into s-rd-fail (user 11-06) -->
 <section class="slide" id="s-rd-fail2">
   <div class="sec">05 · Results</div>
   <h2>Rollout Visualization (Failure)</h2>
@@ -1048,6 +1125,7 @@ handle = <span class="fn">find</span>(<span class="st">"mug handle"</span>)
   <div class="slide-number"></div>
 
 </section>
+</template>
 
 <section class="slide" id="s-benefits-done">
   <div class="sec">05 · Results</div>
@@ -1064,12 +1142,14 @@ handle = <span class="fn">find</span>(<span class="st">"mug handle"</span>)
   <div class="slide-number"></div>
 </section>
 
+<template id="t-summary"><!-- Summary & Next Steps, hidden (user 11-06) -->
 <section class="slide" id="s-summary">
   <div class="sec">06 · Discussion</div>
   <h2>Summary &amp; Next Steps</h2>
   <div class="body"></div>
   <div class="slide-number"></div>
 </section>
+</template>
 
 <section class="slide" id="s-thanks">
   <h2 class="thanks">Thank you for listening!</h2>
@@ -1079,10 +1159,169 @@ handle = <span class="fn">find</span>(<span class="st">"mug handle"</span>)
       <div class="istep"><span class="n">2</span>Analytical diffusion policy</div><span class="iar">→</span>
       <div class="istep"><span class="n">3</span>Steerable actions</div>
     </div>
-    <canvas class="istory" role="img" aria-label="A VLM writes code that proposes left and right grasps of a mug handle; noisy gripper paths denoise into these two path families; steering then sends every path to the left family"></canvas>
+    <canvas class="istory" role="img" aria-label="On a robot kitchen scene, a VLM writes code that proposes grasping the lemon or the apple; noisy gripper paths denoise into these two path families; steering then sends every path to the lemon"></canvas>
   </div>
   <div class="slide-number"></div>
 </section>
+
+<section class="slide" id="s-apx-pps">
+  <div class="sec">Appendix</div>
+  <h2>How PPS Works</h2>
+  <p class="sub">Steer a frozen diffusion policy with the difference of two small proxy models</p>
+  <div class="body">
+    <div class="apx-grid">
+      <div class="apx-card">
+        <div class="apx-h">1 · Train two small proxies (offline)</div>
+        <div class="apx-v">
+          <div class="apx-box base">Base policy<small>frozen diffusion / flow policy, e.g. π<sub>0.5</sub></small></div>
+          <div class="apx-arr"><span class="a">↓</span><span>distill the base's velocity along its own denoising path</span></div>
+          <div class="apx-box">Reference proxy <i>v</i><sub>ref</sub><small>a small copy of the base's behavior</small></div>
+          <div class="apx-arr"><span class="a">↓</span><span>initialize from the reference, then fine-tune on <span class="demo">a few task demos</span></span></div>
+          <div class="apx-box task">Task proxy <i>v</i><sub>task</sub><small>the same model, shifted toward the demos</small></div>
+        </div>
+      </div>
+      <div class="apx-card">
+        <div class="apx-h">2 · Steer at every denoising step</div>
+        <div class="apx-eq"><i>v</i><sub>t</sub> = <span class="b"><i>v</i><sub>base</sub></span>(<i>x</i><sub>t</sub>, <i>t</i>) + <i>γ</i> · ( <span class="t"><i>v</i><sub>task</sub></span>(<i>x</i><sub>t</sub>, <i>t</i>) − <span class="r"><i>v</i><sub>ref</sub></span>(<i>x</i><sub>t</sub>, <i>t</i>) )</div>
+        <ul class="apx-notes">
+          <li><span class="k">1</span><span><b>The reference matches the base</b>, so the difference <i>v</i><sub>task</sub> − <i>v</i><sub>ref</sub> isolates what the demos changed</span></li>
+          <li><span class="k">2</span><span><b>Shared initialization</b>: both proxies make the same errors away from the demos, and these cancel in the difference</span></li>
+          <li><span class="k">3</span><span><b>The base is never modified</b>; <i>γ</i> sets the steering strength (about 0.5)</span></li>
+        </ul>
+      </div>
+    </div>
+    <p class="apx-cite">PPS: Proxy Policy Steering, 2025 · analogous to proxy-tuning of language models</p>
+  </div>
+  <p class="takeaway">Few-shot specialization of a frozen policy, but it needs a <b>diffusion or flow policy</b> to steer</p>
+  <div class="slide-number"></div>
+</section>
+
+<section class="slide" id="s-apx-dsrl">
+  <div class="sec">Appendix</div>
+  <h2>How DSRL Works</h2>
+  <p class="sub">Use reinforcement learning to choose the initial noise of a frozen diffusion policy</p>
+  <div class="body">
+    <div class="apx-card" style="padding:10px 14px">
+      <svg class="apx-loop" viewBox="0 0 1110 250" role="img" aria-label="The observation goes to a small noise policy trained with reinforcement learning; it outputs the initial noise; the frozen diffusion policy denoises that noise into an action; the environment returns a reward, which updates the noise policy">
+        <defs><marker id="apxh" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#8c979d"/></marker>
+              <marker id="apxg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#2f7d4f"/></marker></defs>
+        <rect class="bx" x="10" y="40" width="170" height="92" rx="10"/><text class="t1" x="95" y="80">Observation</text><text class="t2" x="95" y="104">state <tspan font-style="italic">s</tspan></text>
+        <rect class="bx pol" x="250" y="30" width="230" height="112" rx="10"/><text class="t1" x="365" y="72" fill="#2f7d4f">Noise policy</text><text class="t2" x="365" y="96">π<tspan baseline-shift="sub" font-size="11">w</tspan>(<tspan font-style="italic">w</tspan> | <tspan font-style="italic">s</tspan>), small, trained with RL</text><text class="t2" x="365" y="118">(e.g. SAC)</text>
+        <rect class="bx base" x="560" y="30" width="250" height="112" rx="10"/><text class="t1" x="685" y="72" fill="#355f78">Frozen diffusion policy</text><text class="t2" x="685" y="96">denoises the chosen noise <tspan font-style="italic">w</tspan></text><text class="t2" x="685" y="118">into an action <tspan font-style="italic">a</tspan></text>
+        <rect class="bx" x="890" y="40" width="200" height="92" rx="10"/><text class="t1" x="990" y="80">Environment</text><text class="t2" x="990" y="104">executes <tspan font-style="italic">a</tspan></text>
+        <path class="ar" d="M180 86 L 244 86" marker-end="url(#apxh)"/>
+        <path class="ar" d="M480 86 L 554 86" marker-end="url(#apxh)"/><text class="lb" x="517" y="76">noise <tspan font-style="italic">w</tspan></text>
+        <path class="ar" d="M810 86 L 884 86" marker-end="url(#apxh)"/><text class="lb" x="847" y="76">action <tspan font-style="italic">a</tspan></text>
+        <path class="ar rl" d="M990 132 L 990 205 L 365 205 L 365 148" marker-end="url(#apxg)"/>
+        <text class="lb" x="680" y="232" fill="#2f7d4f">reward <tspan font-style="italic">r</tspan> and next state → reinforcement-learning update of the noise policy</text>
+      </svg>
+    </div>
+    <div class="apx-3">
+      <div class="apx-card"><b>The action is the noise</b><span>The RL agent chooses the diffusion policy's initial noise, not the robot's actions.</span></div>
+      <div class="apx-card"><b>Stays on the base's support</b><span>Every chosen noise is decoded by the frozen base, so actions stay base-like.</span></div>
+      <div class="apx-card"><b>Black-box and sample-efficient</b><span>Needs only the base's sampler, no weights or gradients; off-policy RL learns from few rollouts.</span></div>
+    </div>
+    <p class="apx-cite">DSRL: Diffusion Steering via Reinforcement Learning · Wagenmaker et al., 2025</p>
+  </div>
+  <div class="slide-number"></div>
+</section>
+
+<section class="slide" id="s-apx-mbd">
+  <div class="sec">Appendix</div>
+  <h2>How MBD Works</h2>
+  <p class="sub">Diffusion-style trajectory optimization with a known dynamics model, no training</p>
+  <div class="body">
+    <div class="apx-grid">
+      <div class="apx-card">
+        <div class="apx-h">One reverse step · repeated from high to low noise</div>
+        <div class="apx-v">
+          <div class="apx-box">Sample <i>N</i> candidate trajectories<small>around the current noisy trajectory <i>Y</i><sub>i</sub></small></div>
+          <div class="apx-arr"><span class="a">↓</span><span>roll out each candidate with the dynamics model</span></div>
+          <div class="apx-box base">Weight by cost<small><i>w</i><sub>j</sub> ∝ exp(−<i>J</i>(<i>Y</i><sub>j</sub>) / <i>λ</i>)</small></div>
+          <div class="apx-arr"><span class="a">↓</span><span>the weighted mean is the denoised estimate</span></div>
+          <div class="apx-box task">Step toward <i>Ȳ</i><sub>0</sub><small>less noise, then repeat</small></div>
+        </div>
+      </div>
+      <div class="apx-card">
+        <div class="apx-h">Target and Monte Carlo score</div>
+        <div class="apx-eq" style="font-size:26px;padding-bottom:4px"><i>p</i><sub>0</sub>(<i>Y</i>) ∝ exp(−<i>J</i>(<i>Y</i>) / <i>λ</i>)</div>
+        <div class="apx-eq" style="font-size:26px;padding:2px 0 4px"><span class="b"><i>Ȳ</i><sub>0</sub></span> = Σ<sub><i>j</i></sub> <i>w</i><sub>j</sub><i>Y</i><sub>j</sub> / Σ<sub><i>j</i></sub> <i>w</i><sub>j</sub></div>
+        <div class="apx-eq" style="font-size:26px;padding-top:2px">∇ log <i>p</i><sub>i</sub>(<i>Y</i><sub>i</sub>) ≈ ( √<i>ᾱ</i><sub>i</sub> <span class="b"><i>Ȳ</i><sub>0</sub></span> − <i>Y</i><sub>i</sub> ) / (1 − <i>ᾱ</i><sub>i</sub>)</div>
+        <ul class="apx-notes">
+          <li><span class="k">1</span><span><b>No denoising network</b>: the score comes from the model and the cost</span></li>
+          <li><span class="k">2</span><span><b>Annealing</b>: broad search at high noise, refinement at low noise</span></li>
+        </ul>
+      </div>
+    </div>
+    <p class="apx-cite">MBD: Model-Based Diffusion for Trajectory Optimization · Pan et al., NeurIPS 2024</p>
+  </div>
+  <p class="takeaway">Training-free, but it needs a <b>dynamics model and a cost</b> designed for each task</p>
+  <div class="slide-number"></div>
+</section>
+
+<section class="slide" id="s-apx-dial">
+  <div class="sec">Appendix</div>
+  <h2>How DIAL-MPC Works</h2>
+  <p class="sub">Diffusion-inspired annealing turns MBD into a real-time MPC solver, no training</p>
+  <div class="body">
+    <div class="apx-grid">
+      <div class="apx-card">
+        <div class="apx-h">Every control step · receding horizon</div>
+        <div class="apx-v">
+          <div class="apx-box">Warm start<small>the previous plan, shifted by one step</small></div>
+          <div class="apx-arr"><span class="a">↓</span><span>repeat for a few iterations, with less noise each time</span></div>
+          <div class="apx-box base">Sample, roll out, reweight<small>action sequences around the plan; full robot model; weights ∝ exp(−<i>J</i> / <i>λ</i>)</small></div>
+          <div class="apx-arr"><span class="a">↓</span><span>the weighted mean becomes the new plan</span></div>
+          <div class="apx-box task">Execute the first action<small>then observe and plan again</small></div>
+        </div>
+      </div>
+      <div class="apx-card">
+        <div class="apx-h">Dual-loop annealing</div>
+        <svg viewBox="0 0 520 170" style="width:100%;display:block" role="img" aria-label="Sampling noise shrinks over the iterations and grows along the horizon">
+          <defs><marker id="dlh" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#8c979d"/></marker></defs>
+          <text x="10" y="18" style="font:700 14px Inter,sans-serif;fill:#6d7376">noise per action, by iteration (rows) and horizon step (columns)</text>
+          <g>
+            <rect x="60" y="34" width="56" height="28" rx="4" fill="#355f78" opacity=".35"/><rect x="122" y="34" width="56" height="28" rx="4" fill="#355f78" opacity=".5"/><rect x="184" y="34" width="56" height="28" rx="4" fill="#355f78" opacity=".65"/><rect x="246" y="34" width="56" height="28" rx="4" fill="#355f78" opacity=".8"/><rect x="308" y="34" width="56" height="28" rx="4" fill="#355f78" opacity=".95"/>
+            <rect x="60" y="68" width="56" height="28" rx="4" fill="#355f78" opacity=".2"/><rect x="122" y="68" width="56" height="28" rx="4" fill="#355f78" opacity=".3"/><rect x="184" y="68" width="56" height="28" rx="4" fill="#355f78" opacity=".42"/><rect x="246" y="68" width="56" height="28" rx="4" fill="#355f78" opacity=".55"/><rect x="308" y="68" width="56" height="28" rx="4" fill="#355f78" opacity=".68"/>
+            <rect x="60" y="102" width="56" height="28" rx="4" fill="#355f78" opacity=".08"/><rect x="122" y="102" width="56" height="28" rx="4" fill="#355f78" opacity=".14"/><rect x="184" y="102" width="56" height="28" rx="4" fill="#355f78" opacity=".2"/><rect x="246" y="102" width="56" height="28" rx="4" fill="#355f78" opacity=".28"/><rect x="308" y="102" width="56" height="28" rx="4" fill="#355f78" opacity=".36"/>
+          </g>
+          <text x="52" y="53" text-anchor="end" style="font:600 13px Inter,sans-serif;fill:#6d7376">iter 1</text><text x="52" y="122" text-anchor="end" style="font:600 13px Inter,sans-serif;fill:#6d7376">iter N</text>
+          <path d="M378 40 L 378 124" stroke="#8c979d" stroke-width="2" marker-end="url(#dlh)"/><text x="390" y="64" style="font:700 14px Inter,sans-serif;fill:#202528">trajectory level:</text><text x="390" y="84" style="font:500 14px Inter,sans-serif;fill:#6d7376">less noise</text><text x="390" y="102" style="font:500 14px Inter,sans-serif;fill:#6d7376">each iteration</text>
+          <path d="M60 148 L 362 148" stroke="#8c979d" stroke-width="2" marker-end="url(#dlh)"/><text x="60" y="166" style="font:700 14px Inter,sans-serif;fill:#202528">action level: <tspan style="font-weight:500;fill:#6d7376">more noise for later actions in the horizon</tspan></text>
+        </svg>
+        <ul class="apx-notes" style="margin-top:8px">
+          <li><span class="k">1</span><span><b>Full-order, torque-level control</b> of legged robots in real time</span></li>
+          <li><span class="k">2</span><span><b>No learned model or policy</b>; it still needs the robot model and a designed cost</span></li>
+        </ul>
+      </div>
+    </div>
+    <p class="apx-cite">DIAL-MPC: Diffusion-Inspired Annealing for Legged MPC · Xue et al., ICRA 2025</p>
+  </div>
+  <div class="slide-number"></div>
+</section>
+
+<section class="slide" id="s-apx-cfd">
+  <div class="sec">Appendix</div>
+  <h2>Closed-Form Diffusion Models</h2>
+  <p class="sub">The score of a noised finite training set has a closed form, so no denoising network is needed</p>
+  <div class="body">
+    <div class="apx-card" style="padding:14px 24px">
+      <div class="apx-h">Noised training set {<i>x</i><sub>1</sub>, …, <i>x</i><sub>N</sub>} and its exact score</div>
+      <div class="apx-eq" style="font-size:27px;padding:2px 0 6px"><i>p</i><sub>t</sub>(<i>x</i>) = <span style="font-size:22px">1/<i>N</i></span> Σ<sub><i>i</i></sub> 𝒩(<i>x</i>; <i>α</i><sub>t</sub><i>x</i><sub>i</sub>, <i>σ</i><sub>t</sub><sup>2</sup><i>I</i>) &nbsp;&nbsp;⟹&nbsp;&nbsp; ∇ log <i>p</i><sub>t</sub>(<i>x</i>) = Σ<sub><i>i</i></sub> <span class="b"><i>γ</i><sub>i</sub>(<i>x</i>)</span> ( <i>α</i><sub>t</sub><i>x</i><sub>i</sub> − <i>x</i> ) / <i>σ</i><sub>t</sub><sup>2</sup></div>
+      <p style="margin:0;text-align:center;font-size:16px;color:var(--muted)"><i>γ</i><sub>i</sub>(<i>x</i>): softmax weight of training point <i>i</i> at <i>x</i>, from −‖<i>x</i> − <i>α</i><sub>t</sub><i>x</i><sub>i</sub>‖<sup>2</sup> / 2<i>σ</i><sub>t</sub><sup>2</sup></p>
+    </div>
+    <div class="apx-3">
+      <div class="apx-card"><b>The exact score memorizes</b><span>Sampling with it returns the training points themselves, so it generates nothing new.</span></div>
+      <div class="apx-card"><b>Smoothing generalizes</b><span>Smoothing the closed-form score gives new samples between nearby training points; a nearest-neighbor estimate keeps it fast, even on CPUs.</span></div>
+      <div class="apx-card"><b>Link to Code-as-Diffusion</b><span>Our Step 2 is a smoothed closed-form diffusion whose "training set" is the action chunks sampled from the VLM's program.</span></div>
+    </div>
+    <p class="apx-cite">Closed-Form Diffusion Models · Scarvelis, Sáez de Ocáriz Borde &amp; Solomon, TMLR 2025 (arXiv 2310.12395)</p>
+  </div>
+  <p class="takeaway">Training-free diffusion from a set of samples: Code-as-Diffusion gets these samples from a <b>VLM-written program</b></p>
+  <div class="slide-number"></div>
+</section>
+
+
 
 <!-- 30 -->
 <template id="t-open"><!-- hidden for now -->
@@ -1497,84 +1736,101 @@ document.querySelectorAll('.slide').forEach(s => {
   requestAnimationFrame(frame);
 })();
 
-// Slide 8: trajectory story (code -> proposals -> denoised path families -> steered)
+// Slide 8: trajectory story on the robot scene (code -> proposals -> denoised path families -> steered)
 document.querySelectorAll('canvas.istory').forEach(cv => {
   const steps = [...cv.closest('.slide').querySelectorAll('.istep')];
-  const W = 1100, H = 290, K = 2; cv.width = W * K; cv.height = H * K;
+  const W = 1100, H = 400, K = 3; cv.width = W * K; cv.height = H * K;
   const g = cv.getContext('2d');
-  const C = { ink: '#202528', muted: '#6d7376', base: '#355f78', steer: '#2f7d4f', prop: '#7f98a6', noise: '#a3adb2', obj: '#93a0a7' };
+  const C = { ink: '#202528', muted: '#6d7376', base: '#2f6f9a', steer: '#2f7d4f', prop: '#ffffff', noise: '#c3cbcf' };
   const CODE = [
-    [['# "Put the mug on the rack"', '#8fa3ad']],
-    [['handle', '#e4ebee'], [' = ', '#e4ebee'], ['find', '#b9dfc4'], ['(', '#e4ebee'], ['"mug handle"', '#e7bd7e'], [')', '#e4ebee']],
-    [['for', '#8cc4e6'], [' side ', '#e4ebee'], ['in', '#8cc4e6'], [' [', '#e4ebee'], ['"left"', '#e7bd7e'], [', ', '#e4ebee'], ['"right"', '#e7bd7e'], [']:', '#e4ebee']],
-    [['    ', '#e4ebee'], ['propose', '#b9dfc4'], ['(', '#e4ebee'], ['grasp', '#b9dfc4'], ['(handle, side))', '#e4ebee']],
+    [['# "Put a fruit on the scale"', '#8fa3ad']],
+    [['fruits', '#e4ebee'], [' = ', '#e4ebee'], ['find', '#b9dfc4'], ['([', '#e4ebee'], ['"lemon"', '#e7bd7e'], [', ', '#e4ebee'], ['"apple"', '#e7bd7e'], ['])', '#e4ebee']],
+    [['for', '#8cc4e6'], [' f ', '#e4ebee'], ['in', '#8cc4e6'], [' fruits:', '#e4ebee']],
+    [['    ', '#e4ebee'], ['propose', '#b9dfc4'], ['(', '#e4ebee'], ['grasp', '#b9dfc4'], ['(f))', '#e4ebee']],
   ];
   const NCH = CODE.reduce((n, l) => n + l.reduce((m, t) => m + t[0].length, 0), 0);
-  const S = [440, 150], MUG = [915, 150], A = [866, 102], B = [866, 198], CA = [660, 20], CB = [660, 280], NPT = 30;
+  // photo: HD Weight scene (1920 x 1080 render, crop x 360-1800, y 140-875 = img/s08_weight_scene_hd.jpg), drawn at (345, 10) scaled 0.5174
+  const img = new Image(); img.src = 'img/s08_weight_scene_hd.jpg';
+  const PX = 345, PY = 10, SC = 745 / 1440, SRC = [0, 0, 1440, 735], OFF = [360, 140];
+  const P = (sx, sy) => [PX + (sx - OFF[0]) * SC, PY + (sy - OFF[1]) * SC];   // full-frame HD pixels -> canvas
+  const S = P(728, 372), LEM = P(1145, 695), APP = P(1295, 712), NPT = 30;
+  const CL = P(1080, 420), CA = P(1250, 440);         // control points: over the fruit, then down
   const quad = (p, c, q, u) => [(1 - u) * (1 - u) * p[0] + 2 * (1 - u) * u * c[0] + u * u * q[0], (1 - u) * (1 - u) * p[1] + 2 * (1 - u) * u * c[1] + u * u * q[1]];
   const pathOf = (c, q) => Array.from({ length: NPT }, (_, i) => quad(S, c, q, i / (NPT - 1)));
   let seed = 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
   const gs = () => Math.sqrt(-2 * Math.log(rnd() + 1e-9)) * Math.cos(2 * Math.PI * rnd());
   const props = [];
-  for (const [c, q] of [[CA, A], [CB, B]]) for (let j = 0; j < 6; j++) props.push(pathOf([c[0] + gs() * 34, c[1] + gs() * 14], [q[0] + gs() * 4, q[1] + gs() * 4]));
-  const mA = pathOf(CA, A), mB = pathOf(CB, B);
-  const NT = 14, clampY = y => Math.max(44, Math.min(H - 12, y));
+  for (const [c, q] of [[CL, LEM], [CA, APP]]) for (let j = 0; j < 6; j++) props.push(pathOf([c[0] + gs() * 22, c[1] + gs() * 14], [q[0] + gs() * 3, q[1] + gs() * 3]));
+  const mL = pathOf(CL, LEM), mA = pathOf(CA, APP);
+  const M = [(LEM[0] + APP[0]) / 2, (LEM[1] + APP[1]) / 2], D = [M[0] - S[0], M[1] - S[1]], DL = Math.hypot(D[0], D[1]);
+  const N = [-D[1] / DL, D[0] / DL];                  // across the motion; the lemon lies on the + side
+  const NT = 14;
   const traj = Array.from({ length: NT }, () => {
-    const ph = [rnd() * 6.3, rnd() * 6.3, rnd() * 6.3], am = [gs() * 60, gs() * 30, gs() * 16], ax = gs() * 30, off = gs() * 7;
+    const ph = [rnd() * 6.3, rnd() * 6.3, rnd() * 6.3], am = [gs() * 40, gs() * 22, gs() * 12], off = gs() * 5;
     const noisy = Array.from({ length: NPT }, (_, i) => {
-      const u = i / (NPT - 1), env = Math.pow(u, 0.7);
-      return [S[0] + u * 400 + env * ax * Math.sin(2 * u + ph[0]),
-              clampY(S[1] + env * (am[0] * Math.sin(1.3 * Math.PI * u + ph[0]) + am[1] * Math.sin(2.7 * Math.PI * u + ph[1]) + am[2] * Math.sin(5 * Math.PI * u + ph[2])))];
+      const u = i / (NPT - 1), env = Math.pow(u, 0.7), a = env * (am[0] * Math.sin(1.3 * Math.PI * u + ph[0]) + am[1] * Math.sin(2.7 * Math.PI * u + ph[1]) + am[2] * Math.sin(5 * Math.PI * u + ph[2]));
+      return [S[0] + u * D[0] + a * N[0], S[1] + u * D[1] + a * N[1]];
     });
-    const bias = noisy.slice(NPT / 2).reduce((m, p) => m + p[1] - S[1], 0);
+    const bias = noisy.slice(NPT / 2).reduce((m, p) => m + (p[0] - S[0]) * N[0] + (p[1] - S[1]) * N[1], 0);
     return { noisy, bias, off };
   });
-  [...traj].sort((p, q) => p.bias - q.bias).forEach((tr, k) => { tr.up = k < NT / 2; });
-  const shift = (m, off) => m.map(([x, y], i) => [x, y + off * Math.sin(Math.PI * i / (NPT - 1))]);
-  traj.forEach(tr => { tr.base = shift(tr.up ? mA : mB, tr.off); tr.steer = shift(mA, tr.off); });
+  [...traj].sort((p, q) => q.bias - p.bias).forEach((tr, k) => { tr.lem = k < NT / 2; });
+  const shift = (m, off) => m.map(([x, y], i) => [x + off * N[0] * Math.sin(Math.PI * i / (NPT - 1)), y + off * N[1] * Math.sin(Math.PI * i / (NPT - 1))]);
+  traj.forEach(tr => { tr.base = shift(tr.lem ? mL : mA, tr.off); tr.steer = shift(mL, tr.off); });
   const clamp = v => v < 0 ? 0 : v > 1 ? 1 : v, ease = v => v * v * (3 - 2 * v);
   const lerp = (p, q, a) => p.map((pt, i) => [pt[0] + (q[i][0] - pt[0]) * a, pt[1] + (q[i][1] - pt[1]) * a]);
-  function line(pts, col, w, alpha, frac = 1, dash) {
-    const n = Math.max(2, Math.round(frac * pts.length)); g.save(); g.globalAlpha = alpha; g.strokeStyle = col; g.lineWidth = w;
-    g.lineCap = 'round'; g.lineJoin = 'round'; if (dash) g.setLineDash(dash);
-    g.beginPath(); g.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < n; i++) g.lineTo(pts[i][0], pts[i][1]); g.stroke(); g.restore();
+  function line(pts, col, w, alpha, frac = 1, dash, halo) {
+    const n = Math.max(2, Math.round(frac * pts.length)); if (alpha <= 0) return;
+    g.save(); g.globalAlpha = alpha; g.lineCap = 'round'; g.lineJoin = 'round'; if (dash) g.setLineDash(dash);
+    const trace = () => { g.beginPath(); g.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < n; i++) g.lineTo(pts[i][0], pts[i][1]); };
+    if (halo) { g.strokeStyle = 'rgba(255,255,255,0.85)'; g.lineWidth = w + 2.5; trace(); g.stroke(); }
+    g.strokeStyle = col; g.lineWidth = w; trace(); g.stroke(); g.restore();
   }
   function rrect(x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
   function text(str, x, y, col, font, align = 'left', alpha = 1) { g.save(); g.globalAlpha = alpha; g.fillStyle = col; g.font = font; g.textAlign = align; g.fillText(str, x, y); g.restore(); }
-  const CAP = ['The VLM writes code that proposes grasps from the left and from the right',
+  function tag(str, x, y, col, alpha) {   // label on a white pill, readable over the photo
+    if (alpha <= 0) return; g.save(); g.globalAlpha = alpha; g.font = '700 13px Inter, sans-serif';
+    const w = g.measureText(str).width + 16; g.fillStyle = 'rgba(255,255,255,0.92)'; rrect(x, y - 15, w, 22, 11); g.fill();
+    g.fillStyle = col; g.fillText(str, x + 8, y); g.restore();
+  }
+  function ring(p, col, alpha, dashed) {
+    if (alpha <= 0) return; g.save(); g.globalAlpha = alpha; g.lineWidth = 2.5; g.strokeStyle = 'rgba(255,255,255,0.9)';
+    g.beginPath(); g.arc(p[0], p[1] + 14, 24, 0, 7); g.stroke(); g.strokeStyle = col; g.lineWidth = 2; if (dashed) g.setLineDash([5, 4]);
+    g.beginPath(); g.arc(p[0], p[1] + 14, 24, 0, 7); g.stroke(); g.restore();
+  }
+  const CAP = ['The VLM writes code that proposes grasping the lemon or the apple',
                'The proposals define a Gaussian mixture: noise denoises into it in closed form',
-               'Steering reshapes the same policy toward the task, here the left grasp'];
+               'Steering reshapes the same policy toward the task, here the lemon'];
   const LOOP = 12000;
   function draw(t) {
     g.setTransform(K, 0, 0, K, 0, 0); g.clearRect(0, 0, W, H);
     const phase = t < 3600 ? 0 : t < 7600 ? 1 : 2;
     // code panel
-    g.fillStyle = '#1f2a30'; rrect(10, 10, 330, H - 20, 9); g.fill();
-    text('VLM OUTPUT', 30, 40, '#8fa3ad', '700 12px Inter, sans-serif');
+    g.fillStyle = '#1f2a30'; rrect(10, 10, 322, H - 20, 9); g.fill();
+    text('VLM OUTPUT', 30, 42, '#8fa3ad', '700 12px Inter, sans-serif');
     let left = Math.floor(clamp(t / 2600) * NCH);
-    g.font = '14.5px ui-monospace, "SF Mono", Menlo, Consolas, monospace';
+    g.font = '14px ui-monospace, "SF Mono", Menlo, Consolas, monospace';
     CODE.forEach((ln, i) => {
-      let x = 30; const y = 88 + i * 30;
-      if (i === 3 && t > 2600 && t < 4400) { g.save(); g.globalAlpha = 0.18; g.fillStyle = '#8cc4e6'; g.fillRect(20, y - 19, 312, 27); g.restore(); }
+      let x = 30; const y = 96 + i * 34;
+      if (i === 3 && t > 2600 && t < 4400) { g.save(); g.globalAlpha = 0.18; g.fillStyle = '#8cc4e6'; g.fillRect(20, y - 21, 308, 30); g.restore(); }
       for (const [str, col] of ln) { const k = Math.max(0, Math.min(str.length, left)); left -= k; if (!k) continue; g.fillStyle = col; g.fillText(str.slice(0, k), x, y); x += g.measureText(str.slice(0, k)).width; }
     });
-    // scene
-    g.fillStyle = '#f4f6f6'; rrect(360, 10, W - 370, H - 20, 9); g.fill();
-    text(CAP[phase], 382, 38, C.muted, '600 14px Inter, sans-serif');
-    g.fillStyle = '#ffffff'; g.strokeStyle = C.obj; g.lineWidth = 2; g.beginPath(); g.arc(MUG[0], MUG[1], 40, 0, 7); g.fill(); g.stroke();
-    g.strokeStyle = '#c7ced2'; g.beginPath(); g.arc(MUG[0], MUG[1], 31, 0, 7); g.stroke();
-    g.strokeStyle = C.obj; g.lineWidth = 7; g.lineCap = 'round'; g.beginPath(); g.arc(MUG[0] - 52, MUG[1], 13, Math.PI / 2, 3 * Math.PI / 2); g.stroke();
-    text('mug', MUG[0], MUG[1] + 62, C.muted, '600 12px Inter, sans-serif', 'center');
-    g.fillStyle = '#4a5459'; g.fillRect(S[0] - 30, S[1] - 9, 16, 18); g.fillRect(S[0] - 14, S[1] - 12, 16, 4); g.fillRect(S[0] - 14, S[1] + 8, 16, 4);
-    text('gripper', S[0] - 16, S[1] + 34, C.muted, '600 12px Inter, sans-serif', 'center');
+    g.fillStyle = '#2b383f'; g.fillRect(30, H - 112, 286, 1);
+    g.font = '600 14px Inter, sans-serif'; g.fillStyle = '#e4ebee';
+    { let y = H - 84, ln = ''; for (const wd of CAP[phase].split(' ')) { const tryLn = ln ? ln + ' ' + wd : wd; if (g.measureText(tryLn).width > 286) { g.fillText(ln, 30, y); y += 21; ln = wd; } else ln = tryLn; } g.fillText(ln, 30, y); }
+    // robot scene
+    g.save(); rrect(PX, PY, W - PX - 10, H - 20, 9); g.clip();
+    g.fillStyle = '#eef1f1'; g.fillRect(PX, PY, W - PX - 10, H - 20);
+    if (img.complete && img.naturalWidth) g.drawImage(img, SRC[0], SRC[1], SRC[2], SRC[3], PX, PY, SRC[2] * SC, SRC[3] * SC);
+    g.fillStyle = 'rgba(255,255,255,0.12)'; g.fillRect(PX, PY, W - PX - 10, H - 20);
     const ghost = clamp((t - 7600) / 600);
-    if (t > 3600) { const a = clamp((t - 3600) / 800); line(mA, C.base, 26, 0.13 * a); line(mB, C.base, 26, 0.13 * a * (1 - ghost)); if (ghost) line(mB, C.muted, 1.5, 0.55 * ghost, 1, [5, 5]); }
+    if (t > 3600) { const a = clamp((t - 3600) / 800); line(mL, C.base, 22, 0.16 * a); line(mA, C.base, 22, 0.16 * a * (1 - ghost)); if (ghost) line(mA, C.muted, 1.5, 0.7 * ghost, 1, [5, 5], true); }
     if (t > 2600) {
-      const fr = clamp((t - 2600) / 1000), al = 0.9 - 0.65 * clamp((t - 3600) / 800);
-      props.forEach((pp, i) => line(pp, C.prop, 1.5, i >= 6 ? al * (1 - 0.7 * ghost) : al, fr, [4, 4]));
-      const la = clamp((t - 3000) / 500);
-      text('from the left', MUG[0] + 46, A[1] - 8, C.base, '700 13px Inter, sans-serif', 'left', la);
-      text('from the right', MUG[0] + 46, B[1] + 18, C.base, '700 13px Inter, sans-serif', 'left', la * (1 - 0.6 * ghost));
+      const fr = clamp((t - 2600) / 1000), al = 0.95 - 0.6 * clamp((t - 3600) / 800), la = clamp((t - 3000) / 500);
+      props.forEach((pp, i) => line(pp, C.base, 1.4, i >= 6 ? al * (1 - 0.7 * ghost) : al, fr, [4, 4], true));
+      ring(LEM, ghost ? C.steer : C.base, la, false); ring(APP, C.base, la * (1 - 0.6 * ghost), ghost > 0);
+      tag('grasp lemon', LEM[0] - 128, LEM[1] + 22, ghost > 0.5 ? C.steer : C.base, la);
+      tag('grasp apple', APP[0] + 30, APP[1] + 40, C.base, la * (1 - 0.6 * ghost));
     }
     if (t > 4400) {
       const vis = clamp((t - 4400) / 500);
@@ -1584,26 +1840,34 @@ document.querySelectorAll('canvas.istory').forEach(cv => {
       else { al = ease(clamp((t - 8600) / 2000)); tgt = 'steer'; col = C.steer; }
       for (const tr of traj) {
         const pts = lerp(tr.noisy, tr[tgt], al);
-        line(pts, C.noise, 1.4, vis * (1 - al) * 0.9); line(pts, col, 2, vis * al);
-        const e = pts[NPT - 1]; g.save(); g.globalAlpha = vis; g.fillStyle = al > 0.5 ? col : C.noise; g.beginPath(); g.arc(e[0], e[1], 3, 0, 7); g.fill(); g.restore();
+        line(pts, '#7d878c', 1.3, vis * (1 - al) * 0.9, 1, null, true); line(pts, col, 2.2, vis * al, 1, null, true);
+        const e = pts[NPT - 1]; g.save(); g.globalAlpha = vis; g.fillStyle = '#fff'; g.beginPath(); g.arc(e[0], e[1], 4.4, 0, 7); g.fill();
+        g.fillStyle = al > 0.5 ? col : '#7d878c'; g.beginPath(); g.arc(e[0], e[1], 3, 0, 7); g.fill(); g.restore();
       }
     }
-    if (ghost) {
-      g.save(); g.globalAlpha = ghost; g.strokeStyle = C.steer; g.fillStyle = C.steer; g.lineWidth = 3; g.lineCap = 'round';
-      g.beginPath(); g.moveTo(745, 208); g.quadraticCurveTo(770, 162, 747, 122); g.stroke();
-      g.beginPath(); g.moveTo(744, 110); g.lineTo(739, 126); g.lineTo(755, 123); g.closePath(); g.fill();
-      g.font = '800 14px Inter, sans-serif'; g.textAlign = 'left'; g.fillText('steer', 772, 170); g.restore();
+    if (ghost) {   // steer arrow: from the apple family toward the lemon
+      const a0 = [APP[0] + 38, APP[1] - 30], a1 = [LEM[0] + 30, LEM[1] - 40], cc = [APP[0] + 16, LEM[1] - 74];
+      g.save(); g.globalAlpha = ghost; g.lineCap = 'round';
+      g.strokeStyle = 'rgba(255,255,255,0.9)'; g.lineWidth = 6; g.beginPath(); g.moveTo(a0[0], a0[1]); g.quadraticCurveTo(cc[0], cc[1], a1[0], a1[1]); g.stroke();
+      g.strokeStyle = C.steer; g.lineWidth = 3; g.beginPath(); g.moveTo(a0[0], a0[1]); g.quadraticCurveTo(cc[0], cc[1], a1[0], a1[1]); g.stroke();
+      const ang = Math.atan2(a1[1] - cc[1], a1[0] - cc[0]); g.fillStyle = C.steer; g.beginPath(); g.moveTo(a1[0] + 9 * Math.cos(ang), a1[1] + 9 * Math.sin(ang));
+      g.lineTo(a1[0] + 9 * Math.cos(ang + 2.4), a1[1] + 9 * Math.sin(ang + 2.4)); g.lineTo(a1[0] + 9 * Math.cos(ang - 2.4), a1[1] + 9 * Math.sin(ang - 2.4)); g.closePath(); g.fill();
+      g.restore(); tag('steer', cc[0] + 18, cc[1] + 12, C.steer, ghost);
     }
+    g.restore();
+    g.strokeStyle = '#d9dfe2'; g.lineWidth = 1; rrect(PX, PY, W - PX - 10, H - 20, 9); g.stroke();
     steps.forEach((el, i) => { el.classList.toggle('on', i === phase); el.classList.toggle('done', i < phase); });
   }
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const slide = cv.closest('.slide');
   const R = [[0, 3599], [3600, 7599], [7600, 11000]];   // code; diffusion policy; steering
+  const SLOW = 1.4, RS = R.map(([a, b]) => [a * SLOW, b * SLOW]);   // play 1.4x slower
   function frame(ms) {
-    const t = stageTime(frame, slide, ms, R, LOOP), k = stepOf(slide);
-    if (t !== null) draw(still ? (k ? R[k - 1][1] : 11000) : t);
+    const t = stageTime(frame, slide, ms, RS, LOOP * SLOW), k = stepOf(slide);
+    if (t !== null) draw(still ? (k ? R[k - 1][1] : 11000) : t / SLOW);
     requestAnimationFrame(frame);
   }
+  img.onload = () => draw(11000);
   draw(11000);
   requestAnimationFrame(frame);
 });
