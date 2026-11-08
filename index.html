@@ -7,6 +7,19 @@
   <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
   <title>Jeremy Siburian</title>
 
+  <!-- Search result and link preview text -->
+  <meta name="description" content="Master's student at The University of Tokyo developing learning and planning methods for sample-efficient, generalizable robot manipulation.">
+  <link rel="canonical" href="https://jsiburian.github.io/">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://jsiburian.github.io/">
+  <meta property="og:title" content="Jeremy Siburian">
+  <meta property="og:description" content="Master's student at The University of Tokyo developing learning and planning methods for sample-efficient, generalizable robot manipulation.">
+  <meta property="og:image" content="https://jsiburian.github.io/res/figs/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Jeremy Siburian, learning and planning for robot manipulation, The University of Tokyo">
+  <meta name="twitter:card" content="summary_large_image">
+
   <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="96x96" href="res/icons/utokyo.png">
 
@@ -22,11 +35,22 @@
   <link href="res/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
+  <!-- Google Font: Asap (same typeface as andyzeng.github.io) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Asap:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+
   <style>
+    body {
+      font-family: 'Asap', roboto, sans-serif;
+    }
+    b, strong {
+      font-weight: 600;
+    }
+
     .header {
       width: auto;
       max-width: auto;
-      font-family: Arial;
       padding: 2rem 1rem;
     }
 
@@ -129,7 +153,10 @@
       color: #208799;
     }
     .paper-filter button:focus:not(:focus-visible),
-    .news-toggle button:focus:not(:focus-visible) {
+    .news-toggle button:focus:not(:focus-visible),
+    .link-badges button:focus:not(:focus-visible),
+    .media-zoom:focus:not(:focus-visible),
+    #media-dialog button:focus:not(:focus-visible) {
       outline: none;
     }
     .paper-filter button[aria-pressed="true"] {
@@ -146,6 +173,107 @@
     }
     .show-recent .older {
       display: none;
+    }
+    .link-badges button.badge {
+      cursor: pointer;
+    }
+    .link-badges .badge[aria-expanded="true"] {
+      background: #f3f4f6;
+    }
+    .tldr {
+      margin-top: 6px;
+      padding-left: 10px;
+      font-size: 15px;
+      color: #333333;
+      border-left: 2px solid #d1d5db;
+    }
+    .bibtex {
+      margin: 6px 0 0;
+      padding: 8px 10px;
+      font-size: 12px;
+      color: #333333;
+      white-space: pre-wrap;
+      background: #f3f4f6;
+      border-radius: 4px;
+    }
+    .media-zoom {
+      position: relative;
+      display: block;
+      width: 96%;
+      padding: 0;
+      border: 0;
+      background: none;
+      cursor: zoom-in;
+    }
+    .media-zoom i {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      padding: 6px;
+      font-size: 13px;
+      color: #ffffff;
+      background: rgba(0, 0, 0, 0.55);
+      border-radius: 4px;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+    .media-zoom:hover i,
+    .media-zoom:focus-visible i {
+      opacity: 1;
+    }
+    @media (hover: none) {
+      .media-zoom i {
+        opacity: 1;
+      }
+    }
+    #media-dialog {
+      width: min(960px, 94vw);
+      padding: 0;
+      border: 0;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    /* these videos have no high-resolution source, so keep them from looking blurry */
+    #media-dialog.low-res {
+      width: min(640px, 94vw);
+    }
+    #media-dialog::backdrop {
+      background: rgba(0, 0, 0, 0.75);
+    }
+    #media-dialog video,
+    #media-dialog img {
+      display: block;
+      width: 100%;
+      max-height: calc(94vh - 48px);
+      object-fit: contain;
+    }
+    #media-dialog video {
+      background: #000000;
+    }
+    .media-zoom img {
+      width: 100%;
+      height: auto;
+    }
+    .media-caption {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 14px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #333333;
+    }
+    .media-caption button {
+      padding: 0 4px;
+      border: 0;
+      background: none;
+      font-size: 18px;
+      color: #666666;
+      cursor: pointer;
+    }
+    .media-caption button:hover {
+      color: #208799;
     }
   </style>
 
@@ -203,6 +331,51 @@
       button.textContent = expanded ? "Show less" : "Show more";
       button.setAttribute("aria-expanded", String(expanded));
     }
+
+    function toggleTldr(button) {
+      const tldr = button.closest(".paper").querySelector(".tldr");
+      tldr.hidden = !tldr.hidden;
+      button.setAttribute("aria-expanded", String(!tldr.hidden));
+    }
+
+    function copyBibtex(button) {
+      const bibtex = button.closest(".paper").querySelector(".bibtex");
+      const label = button.querySelector("span");
+      // if the browser blocks copying, show the entry so it can be selected by hand
+      const showBibtex = () => { bibtex.hidden = false; };
+      if (!navigator.clipboard) return showBibtex();
+      navigator.clipboard.writeText(bibtex.textContent.trim()).then(() => {
+        label.textContent = "Copied!";
+        setTimeout(() => { label.textContent = "BibTeX"; }, 1500);
+      }, showBibtex);
+    }
+
+    function openMedia(button) {
+      const thumbnail = button.querySelector("video, img");
+      const isImage = thumbnail.tagName === "IMG";
+      const dialog = document.getElementById("media-dialog");
+      const video = dialog.querySelector("video");
+      const image = dialog.querySelector("img");
+      dialog.classList.toggle("low-res", !thumbnail.dataset.large);
+      video.hidden = isImage;
+      image.hidden = !isImage;
+      if (isImage) {
+        image.src = thumbnail.dataset.large || thumbnail.src;
+        image.alt = thumbnail.alt;
+      } else {
+        video.style.aspectRatio = thumbnail.clientWidth + " / " + thumbnail.clientHeight;
+        video.src = thumbnail.dataset.large || thumbnail.dataset.src;
+      }
+      dialog.querySelector("span").textContent = button.closest(".paper").querySelector("font b").textContent.trim();
+      dialog.showModal();
+    }
+
+    function closeMedia(dialog) {
+      const video = dialog.querySelector("video");
+      video.removeAttribute("src");
+      video.load();
+      dialog.querySelector("img").removeAttribute("src");
+    }
   </script>
 
 </head>
@@ -234,11 +407,12 @@
         <a href="https://scholar.google.com/citations?user=Dy8iau4AAAAJ&hl=en&oi=ao" target="_blank" rel="noopener noreferrer">Yutaka Matsuo</a>.
         <!-- <div class="small-div"></div> -->
         I am currently a visiting researcher at Cornell University, working with <a href="https://kuanfang.github.io/" target="_blank" rel="noopener noreferrer">Kuan Fang</a>.
-        I have also been fortunate to receive mentorship from <a href="https://jiayuanm.com/" target="_blank" rel="noopener noreferrer">Jiayuan Mao</a>.
+        <!-- I have also been fortunate to receive mentorship from <a href="https://jiayuanm.com/" target="_blank" rel="noopener noreferrer">Jiayuan Mao</a>. -->
         <div class="small-div"></div>
-        I have spent time at <a href="https://www.omron.com/sinicx/en/" target="_blank" rel="noopener noreferrer">OMRON SINIC X</a> as a robotics research intern and at <a href="https://asia.daimlertruck.com/en/" target="_blank" rel="noopener noreferrer">Daimler Trucks Asia</a> as a research intern.
-        I received my B.Eng. in Mechanical Engineering from <a href="https://www.waseda.jp/fsci/en/" target="_blank" rel="noopener noreferrer">Waseda University</a>, where I was advised by
+        Previously, I received my B.Eng. in Mechanical Engineering from <a href="https://www.waseda.jp/fsci/en/" target="_blank" rel="noopener noreferrer">Waseda University</a>, where I was advised by
         <a href="https://scholar.google.com/citations?user=J1lw6cwAAAAJ&hl=en&oi=ao" target="_blank" rel="noopener noreferrer">Shigeki Sugano</a>.
+        I was also a research intern at <a href="https://www.omron.com/sinicx/en/" target="_blank" rel="noopener noreferrer">OMRON SINIC X</a> mentored by
+        <a href="https://scholar.google.com/citations?user=Khb7qw8AAAAJ&hl=en&oi=ao" target="_blank" rel="noopener noreferrer">Masashi Hamaya</a>.
         <div class="small-div"></div>
         <!-- If you would like to chat about life, career plans, or research ideas related to AI/ML/robotics, feel free to email me! -->
       </div>
@@ -250,10 +424,10 @@
   <h3> News </h3>
   <ul>
     <li>
-      Sep 2026: 2 papers were accepted to CoRL 2026, see you in Austin!
+      Sep 2026: <a href="https://arxiv.org/abs/2607.08974" target="_blank" rel="noopener noreferrer">CLAP</a> was accepted to CoRL 2026.
     </li>
     <li>
-      Jun 2026: 2 papers (PHASE and ViLaIn-TAMP) were accepted to IROS 2026, see you in Pittsburgh!
+      Jun 2026: <a href="https://www.arxiv.org/abs/2506.03270" target="_blank" rel="noopener noreferrer">ViLaIn-TAMP</a> and <a href="https://arxiv.org/abs/2609.30889" target="_blank" rel="noopener noreferrer">PHASE</a> were accepted to IROS 2026.
     </li>
     <!-- <li>
       Jun 2026: Started as a visiting scholar at <a href="https://www.cs.cornell.edu/" target="_blank" rel="noopener noreferrer">Cornell CS</a> working with <a href="https://kuanfang.github.io/" target="_blank" rel="noopener noreferrer">Kuan Fang</a>.
@@ -283,13 +457,17 @@
   <!-- publications come here -->
   <!-- <h3> Papers <font size="3" style="font-weight:normal">(*Equal Technical Contribution, †Equal Advising)</font></h3> -->
   <h3> Research <font size="3" style="font-weight:normal"></font></h3>
+  <div style="font-size:13px; color:#666;">*Equal contribution</div>
   <!-- My ultimate research goal is develop autonomous robots that can be incorporated in our daily lives. 
   I envision robots that can perform long-horizon planning in complex environments, continuously learn new skills throughout their lifetime, while interacting naturally with humans. 
   To this end, my current research interests revolve around <b>foundation models for decision-making</b>, <b>continual skill learning</b>, and <b>human-robot interaction</b>. -->
-  I develop learning and planning methods for sample-efficient, generalizable robot manipulation, with a focus on dexterous and long-horizon tasks.
+  <!-- I develop learning and planning methods for sample-efficient, generalizable robot manipulation, with a focus on dexterous and long-horizon tasks.
   I am interested in how robots can build useful models of the physical world and use them to reason, plan, and improve through interaction.
   My goal is to develop world models that co-evolve with the agent’s experience and capabilities, enabling robots to reuse prior knowledge and continually learn over time.
-  I am particularly interested in world models, inference-time adaptation, and self-directed learning.
+  I am particularly interested in world models, inference-time adaptation, and self-directed learning. -->
+  <!-- I develop data-efficient learning and planning methods for generalizable robot manipulation.
+  I aim to build structured, action-conditioned world models that capture object interactions and physical dynamics, enabling robots to predict action outcomes, plan long-horizon tasks, and transfer contact-rich skills.
+  I am particularly interested in physical world representations, world-model-guided robot learning, and test-time adaptation through interaction. -->
 
   <!---- Last Count is Jul 10 ---->
   <div class="paper-filter">
@@ -300,8 +478,11 @@
 
   <div class="row align-items-center paper selected">
     <div class="col-md-4 align-column-center">
-      <video playsinline autoplay loop muted data-src="res/figs/clap_teaser.mp4" width="96%" preload="none"
-             style="border-radius:10px;"></video>
+      <button type="button" class="media-zoom" aria-label="Enlarge CLAP video" onclick="openMedia(this)">
+        <video playsinline autoplay loop muted data-src="res/figs/clap_teaser.mp4" data-large="res/figs/large/clap_teaser.mp4" poster="res/figs/posters/clap_teaser.jpg" width="100%" preload="none"
+               style="border-radius:10px;"></video>
+        <i class="fas fa-expand"></i>
+      </button>
     </div>
     <div class="col-md-8" style="padding-left: 0;">
       <font size="4"> <b> CLAP: Direct VLM-to-VLA Adaptation via Language-Action Grounding </b></font><br>
@@ -313,14 +494,25 @@
         <script>document.write(cambel_cc);</script>,
         <script>document.write(nishimura);</script>*
       </div>
-      <span style="font-size:13px; color:#666;">*Equal contribution</span><br>
+      <!-- <span style="font-size:13px; color:#666;">*Equal contribution</span><br> -->
       <a href="https://2026.corl.org/" target="_blank" rel="noopener noreferrer">
         Conference on Robot Learning (CoRL) 2026
       </a>
       <div class="link-badges">
         <a href="https://arxiv.org/abs/2607.08974" class="badge" target="_blank" rel="noopener noreferrer"><i class="fas fa-book"></i>Paper</a>
         <a href="https://omron-sinicx.github.io/clap/" class="badge" target="_blank" rel="noopener noreferrer"><i class="fas fa-globe"></i>Website</a>
+        <button type="button" class="badge" aria-expanded="false" onclick="toggleTldr(this)"><i class="fas fa-lightbulb"></i>TL;DR</button>
+        <button type="button" class="badge" onclick="copyBibtex(this)"><i class="fas fa-quote-right"></i><span aria-live="polite">BibTeX</span></button>
       </div>
+      <div class="tldr" hidden>
+        Pretrained vision-language models can be directly converted into vision-language-action models by prepending each numeric action sequence with a natural-language description, without changing the backbone architecture. With only a single epoch of fine-tuning, a 2B model achieves 90.8% on LIBERO.
+      </div>
+      <pre class="bibtex" hidden>@inproceedings{ishitoya2026clap,
+  title     = {{CLAP}: Direct {VLM}-to-{VLA} Adaptation via Language-Action Grounding},
+  author    = {Ishitoya, Yuri and Siburian, Jeremy and Hamaya, Masashi and Saito, Kuniaki and Beltran-Hernandez, Cristian C. and Nishimura, Mai},
+  booktitle = {Conference on Robot Learning (CoRL)},
+  year      = {2026}
+}</pre>
     </div>
   </div>
   <div class="content-div"></div>
@@ -328,8 +520,11 @@
 
   <div class="row align-items-center paper selected">
     <div class="col-md-4 align-column-center">
-      <video playsinline autoplay loop muted data-src="res/figs/vilain-tamp-demo-video.mp4" width="96%" preload="none"
-             style="border-radius:10px;"></video>
+      <button type="button" class="media-zoom" aria-label="Enlarge ViLaIn-TAMP video" onclick="openMedia(this)">
+        <video playsinline autoplay loop muted data-src="res/figs/vilain-tamp-demo-video.mp4" data-large="res/figs/large/vilain-tamp-demo-video.mp4" poster="res/figs/posters/vilain-tamp-demo-video.jpg" width="100%" preload="none"
+               style="border-radius:10px;"></video>
+        <i class="fas fa-expand"></i>
+      </button>
     </div>
     <div class="col-md-8" style="padding-left: 0;">
       <font size="4"> <b> Grounded Vision-Language Interpreter for Integrated Task and Motion Planning </b></font><br>
@@ -341,7 +536,7 @@
         <script>document.write(gorner);</script>,
         <script>document.write(hashimoto);</script>
       </div>
-      <span style="font-size:13px; color:#666;">*Equal contribution</span><br>
+      <!-- <span style="font-size:13px; color:#666;">*Equal contribution</span><br> -->
       <a href="https://iros-pittsburgh.org/" target="_blank" rel="noopener noreferrer">
         International Conference on Intelligent Robots and Systems (IROS) 2026
       </a> <br>
@@ -354,10 +549,18 @@
         <a href="https://omron-sinicx.github.io/ViLaIn-TAMP/" class="badge" target="_blank" rel="noopener noreferrer"><i class="fas fa-globe"></i>Website</a>
         <!-- <a href="https://x.com/irmakkguzey/status/1991898960341193064" class="badge" target="_blank"><i
           class="fas fa-comment-dots"></i>Summary</a> -->
+        <button type="button" class="badge" aria-expanded="false" onclick="toggleTldr(this)"><i class="fas fa-lightbulb"></i>TL;DR</button>
+        <button type="button" class="badge" onclick="copyBibtex(this)"><i class="fas fa-quote-right"></i><span aria-live="polite">BibTeX</span></button>
       </div>
-      <!-- <div class="authors">
-        A neuro-symbolic framework that grounds multimodal inputs into structured programmatic representations with VLMs, then solves the low-level motion with TAMP.
-      </div> -->
+      <div class="tldr" hidden>
+        Vision-language models can translate multimodal inputs into structured PDDL specifications, which task and motion planning verifies for feasibility before execution. Feeding motion failures back as constraints to refine the specification enables verifiable, interpretable bimanual manipulation, demonstrated on a physical dual-arm robot.
+      </div>
+      <pre class="bibtex" hidden>@inproceedings{siburian2026vilain,
+  title     = {Grounded Vision-Language Interpreter for Long-Horizon Bimanual Task and Motion Planning},
+  author    = {Siburian, Jeremy and Shirai, Keisuke and Beltran-Hernandez, Cristian C. and Hamaya, Masashi and G{\"o}rner, Michael and Hashimoto, Atsushi},
+  booktitle = {IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
+  year      = {2026}
+}</pre>
     </div>
   </div>
   <div class="content-div"></div>
@@ -365,8 +568,11 @@
 
   <div class="row align-items-center paper selected">
     <div class="col-md-4 align-column-center">
-      <video playsinline autoplay loop muted data-src="res/figs/PHASE_Teaser_Website.mp4" width="96%" preload="none"
-             style="border-radius:10px;"></video>
+      <button type="button" class="media-zoom" aria-label="Enlarge PHASE video" onclick="openMedia(this)">
+        <video playsinline autoplay loop muted data-src="res/figs/PHASE_Teaser_Website.mp4" data-large="res/figs/large/PHASE_Teaser_Website.mp4" poster="res/figs/posters/PHASE_Teaser_Website.jpg" width="100%" preload="none"
+               style="border-radius:10px;"></video>
+        <i class="fas fa-expand"></i>
+      </button>
     </div>
     <div class="col-md-8" style="padding-left: 0;">
       <font size="4"> <b> PHASE: Compliance-Enabled Tactile Phase Retrieval for Few-Shot Insertion Learning </b></font><br>
@@ -384,10 +590,18 @@
       <div class="link-badges">
         <a href="https://arxiv.org/abs/2609.30889" class="badge" target="_blank" rel="noopener noreferrer"><i class="fas fa-book"></i>Paper</a>
         <a href="https://omron-sinicx.github.io/phase/" class="badge" target="_blank" rel="noopener noreferrer"><i class="fas fa-globe"></i>Website</a>
+        <button type="button" class="badge" aria-expanded="false" onclick="toggleTldr(this)"><i class="fas fa-lightbulb"></i>TL;DR</button>
+        <button type="button" class="badge" onclick="copyBibtex(this)"><i class="fas fa-quote-right"></i><span aria-live="polite">BibTeX</span></button>
       </div>
-      <!-- <div class="authors">
-        A retrieval-based approach for contact-rich robot manipulation that leverages multimodal tactile signals to extract structured phases, enabling efficient few-shot policy learning.
-      </div> -->
+      <div class="tldr" hidden>
+        A compliant wrist lets robots sustain contact throughout insertion, producing tactile and force signals that reveal the phases of a task. Retrieving prior experience phase by phase enables few-shot insertion learning, improving success rates by 13 percentage points over the strongest non-phase-aware baseline.
+      </div>
+      <pre class="bibtex" hidden>@inproceedings{siburian2026phase,
+  title     = {{PHASE}: Compliance-Enabled Tactile Phase Retrieval for Few-Shot Insertion Learning},
+  author    = {Siburian, Jeremy and Beltran-Hernandez, Cristian C. and Matsushima, Tatsuya and Iwasawa, Yusuke and Hamaya, Masashi and Nishimura, Mai},
+  booktitle = {IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
+  year      = {2026}
+}</pre>
     </div>
   </div>
   <div class="content-div"></div>
@@ -395,8 +609,51 @@
 
   <div class="row align-items-center paper">
     <div class="col-md-4 align-column-center">
-      <video playsinline autoplay loop muted data-src="res/figs/tameso.mp4" width="96%" preload="none"
-             style="border-radius:10px;"></video>
+      <button type="button" class="media-zoom" aria-label="Enlarge error detection figure" onclick="openMedia(this)">
+        <img src="res/figs/online_error_detection.jpg" data-large="res/figs/large/online_error_detection.jpg" width="800" height="344" loading="lazy"
+             alt="Robot failures marked on a video timeline, each with a predicted time span and a cause-and-effect description" style="border-radius:10px;">
+        <i class="fas fa-expand"></i>
+      </button>
+    </div>
+    <div class="col-md-8" style="padding-left: 0;">
+      <font size="4"> <b> Online Robot Manipulation Error Detection and Description </b></font><br>
+      <div class="authors">
+        Yung-Shun Chan,
+        <a href="https://ksaito-ut.github.io/" target="_blank" rel="noopener noreferrer">Kuniaki Saito</a>,
+        <script>document.write(cambel_cc);</script>,
+        <b> Jeremy Siburian</b>,
+        <script>document.write(hamaya);</script>,
+        Chun-Yi Lee
+      </div>
+      <a href="https://2026.corl.org/" target="_blank" rel="noopener noreferrer">
+        Conference on Robot Learning (CoRL) 2026
+      </a>
+      <div class="link-badges">
+        <a href="https://omron-sinicx.github.io/Online_Robot_Error_Detection/" class="badge" target="_blank" rel="noopener noreferrer"><i class="fas fa-globe"></i>Website</a>
+        <button type="button" class="badge" aria-expanded="false" onclick="toggleTldr(this)"><i class="fas fa-lightbulb"></i>TL;DR</button>
+        <button type="button" class="badge" onclick="copyBibtex(this)"><i class="fas fa-quote-right"></i><span aria-live="polite">BibTeX</span></button>
+      </div>
+      <div class="tldr" hidden>
+        Robot manipulation failures can be detected as the video streams, predicting when each failure begins and ends along with a natural-language cause-and-effect description. Pre-training on temporally grounded annotations generated automatically from unlabeled DROID trajectories yields a 73% relative gain in failure localization.
+      </div>
+      <pre class="bibtex" hidden>@inproceedings{chan2026online,
+  title     = {Online Robot Manipulation Error Detection and Description},
+  author    = {Chan, Yung-Shun and Saito, Kuniaki and Beltran-Hernandez, Cristian Camilo and Siburian, Jeremy and Hamaya, Masashi and Lee, Chun-Yi},
+  booktitle = {Conference on Robot Learning (CoRL)},
+  year      = {2026}
+}</pre>
+    </div>
+  </div>
+  <div class="content-div"></div>
+
+
+  <div class="row align-items-center paper">
+    <div class="col-md-4 align-column-center">
+      <button type="button" class="media-zoom" aria-label="Enlarge Tactile Memory video" onclick="openMedia(this)">
+        <video playsinline autoplay loop muted data-src="res/figs/tameso.mp4" poster="res/figs/posters/tameso.jpg" width="100%" preload="none"
+               style="border-radius:10px;"></video>
+        <i class="fas fa-expand"></i>
+      </button>
     </div>
     <div class="col-md-8" style="padding-left: 0;">
       <font size="4"> <b> Tactile Memory with Soft Robot: Robust Object Insertion via Masked Encoding and Soft Wrist</b></font><br>
@@ -408,20 +665,38 @@
         <script>document.write(cambel_cc);</script>,
         <script>document.write(hamaya);</script>
       </div>
-      <span style="font-size:13px; color:#666;">*Equal contribution</span><br>
+      <!-- <span style="font-size:13px; color:#666;">*Equal contribution</span><br> -->
       Robotics and Automation Letters (RA-L) 2026
       <div class="link-badges">
         <a href="https://arxiv.org/abs/2601.19275" class="badge" target="_blank" rel="noopener noreferrer"><i class="fas fa-book"></i>Paper</a>
+        <button type="button" class="badge" aria-expanded="false" onclick="toggleTldr(this)"><i class="fas fa-lightbulb"></i>TL;DR</button>
+        <button type="button" class="badge" onclick="copyBibtex(this)"><i class="fas fa-quote-right"></i><span aria-live="polite">BibTeX</span></button>
       </div>
+      <div class="tldr" hidden>
+        A soft wrist allows safe contact exploration during data collection, while tactile memory reuses past demonstrations through retrieval. Masked encoding of tactile, force-torque, and proprioceptive signals enables robust insertion that adapts to unseen pegs and conditions, without explicit subtask segmentation.
+      </div>
+      <pre class="bibtex" hidden>@article{kamijo2026tactile,
+  title   = {Tactile Memory with Soft Robot: Robust Object Insertion via Masked Encoding and Soft Wrist},
+  author  = {Kamijo, Tatsuya and Nishimura, Mai and Shibasaki, Nodoka and Siburian, Jeremy and Beltran-Hernandez, Cristian C. and Hamaya, Masashi},
+  journal = {IEEE Robotics and Automation Letters},
+  volume  = {11},
+  number  = {7},
+  pages   = {7844--7851},
+  year    = {2026},
+  doi     = {10.1109/LRA.2026.3692097}
+}</pre>
     </div>
   </div>
   <div class="content-div"></div>
 
 
-  <div class="row align-items-center paper">
+  <div class="row align-items-center paper selected">
     <div class="col-md-4 align-column-center">
-      <video playsinline autoplay loop muted data-src="res/figs/icra24_cooking.mp4" width="96%" preload="none"
-             style="border-radius:10px;"></video>
+      <button type="button" class="media-zoom" aria-label="Enlarge cooking TAMP video" onclick="openMedia(this)">
+        <video playsinline autoplay loop muted data-src="res/figs/icra24_cooking.mp4" poster="res/figs/posters/icra24_cooking.jpg" width="100%" preload="none"
+               style="border-radius:10px;"></video>
+        <i class="fas fa-expand"></i>
+      </button>
     </div>
     <div class="col-md-8" style="padding-left: 0;">
       <font size="4"> <b> Integrated Task and Motion Planning for Real-World Cooking Tasks </b></font><br>
@@ -430,7 +705,7 @@
         <script>document.write(cambel_cc);</script>*,
         <script>document.write(hamaya);</script>
       </div>
-      <span style="font-size:13px; color:#666;">*Equal contribution</span><br>
+      <!-- <span style="font-size:13px; color:#666;">*Equal contribution</span><br> -->
       <a href="https://sice-si.org/SII2025/" target="_blank" rel="noopener noreferrer">
         International Symposium on System Integrations (SII) 2025
         </a> <br>
@@ -445,10 +720,20 @@
         <!-- <a href="https://jc-bao.github.io/spider-project/" class="badge" target="_blank"><i class="fas fa-globe"></i>Website</a> -->
         <!-- <a href="https://x.com/ChaoyiPan/status/1989355247580729561" class="badge" target="_blank"><i
           class="fas fa-comment-dots"></i>Summary</a> -->
+        <button type="button" class="badge" aria-expanded="false" onclick="toggleTldr(this)"><i class="fas fa-lightbulb"></i>TL;DR</button>
+        <button type="button" class="badge" onclick="copyBibtex(this)"><i class="fas fa-quote-right"></i><span aria-live="polite">BibTeX</span></button>
       </div>
-      <!-- <div class="authors">
-        A modular, hybrid planning framework for bimanual manipulation that integrates task and motion planning (TAMP), VLM-based perception, and RL-learned skills.
-      </div> -->
+      <div class="tldr" hidden>
+        Task and motion planning can be combined with vision-language perception and reinforcement-learned skills in a modular, hybrid framework, enabling bimanual robots to perform real-world cooking tasks.
+      </div>
+      <pre class="bibtex" hidden>@inproceedings{siburian2025practical,
+  title     = {Practical Task and Motion Planning for Robotic Food Preparation},
+  author    = {Siburian, Jeremy and Beltran-Hernandez, Cristian C. and Hamaya, Masashi},
+  booktitle = {IEEE/SICE International Symposium on System Integration (SII)},
+  pages     = {1229--1234},
+  year      = {2025},
+  doi       = {10.1109/SII59315.2025.10870896}
+}</pre>
     </div>
   </div>
   <div class="content-div"></div>
@@ -534,7 +819,7 @@
 <div class="container">
   <div class="row align-items-center" style="font-size:14px; color:#555;">
     <div class="col-12 text-center">
-      Last updated: Sep 2026.
+      Last updated: Nov 2026.
       Template source from
       <a href="https://haozhi.io/" target="_blank" rel="noopener noreferrer">here</a>.
     </div>
@@ -542,5 +827,16 @@
 </div>
 
 <div class="section-div"></div>
+
+<dialog id="media-dialog" onclick="if (event.target === this) this.close()" onclose="closeMedia(this)">
+  <div>
+    <video controls autoplay loop muted playsinline></video>
+    <img alt="">
+    <div class="media-caption">
+      <span></span>
+      <button type="button" aria-label="Close" autofocus onclick="this.closest('dialog').close()"><i class="fas fa-xmark"></i></button>
+    </div>
+  </div>
+</dialog>
 
 </html>
